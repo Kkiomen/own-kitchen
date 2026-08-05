@@ -6,6 +6,7 @@ use App\Http\Controllers\CookingController;
 use App\Http\Controllers\DeviceLinkController;
 use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\PantryController;
+use App\Http\Controllers\PantryPhotoController;
 use App\Http\Controllers\PriceHistoryController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ShoppingListController;
@@ -57,6 +58,18 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/lodowka', [PantryController::class, 'index'])->name('pantry.index');
     Route::post('/lodowka', [PantryController::class, 'store'])->name('pantry.store');
+    /*
+     * Declared before `/lodowka/{pantryItem}` for the same reason
+     * `/zakupy/sklepy` is: "zdjecie" must never be read as an item id.
+     *
+     * Throttled because reading one costs a call to a paid model — a stuck
+     * finger on the shutter is the only way this app can spend real money.
+     */
+    Route::post('/lodowka/zdjecie', [PantryPhotoController::class, 'read'])
+        ->middleware('throttle:12,1')
+        ->name('pantry.photo.read');
+    Route::post('/lodowka/zdjecie/zapisz', [PantryPhotoController::class, 'confirm'])
+        ->name('pantry.photo.confirm');
     Route::patch('/lodowka/{pantryItem}', [PantryController::class, 'update'])->name('pantry.update');
     Route::delete('/lodowka/{pantryItem}', [PantryController::class, 'destroy'])->name('pantry.destroy');
 

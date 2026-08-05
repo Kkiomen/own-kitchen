@@ -10,6 +10,7 @@ use App\Enums\StorageLocation;
 use App\Models\Ingredient;
 use App\Models\PantryItem;
 use App\Models\Unit;
+use App\Pantry\PutAway;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -24,7 +25,10 @@ use Inertia\Response;
  */
 class PantryController extends Controller
 {
-    public function __construct(private readonly IngredientEmoji $emoji) {}
+    public function __construct(
+        private readonly IngredientEmoji $emoji,
+        private readonly PutAway $putAway,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -52,6 +56,12 @@ class PantryController extends Controller
 
         return Inertia::render('Pantry/Index', [
             'sections' => $sections,
+            /*
+             * No OpenAI key, no camera button. A button that always answers 404
+             * is worse than no button — and the endpoints behind it answer 404
+             * too, so the two cannot disagree.
+             */
+            'photoEnabled' => config('vision.key') !== '',
             'units' => Unit::query()
                 ->orderBy('dimension')
                 ->get(['id', 'code', 'symbol', 'name'])
@@ -91,23 +101,9 @@ class PantryController extends Controller
     {
         $data = $this->validated($request);
 
-        /*
-         * The same product in the same place is one row, not two: two "cheese"
-         * entries in the fridge would make every amount comparison wrong.
-         */
-        PantryItem::query()->updateOrCreate(
-            [
-                'user_id' => $request->user()->id,
-                'ingredient_id' => $data['ingredient_id'],
-                'location' => $data['location'],
-            ],
-            [
-                'quantity' => $data['quantity'],
-                'unit_id' => $data['unit_id'],
-                'expires_at' => $data['expires_at'],
-                'note' => $data['note'],
-            ],
-        );
+        // One product in one place is one row. The rule lives in `PutAway`,
+        // because a photograph of the shelf is a second way to state it.
+        $this->putAway->put($request->user()->id, $data);
 
         return back();
     }
@@ -145,7 +141,7 @@ class PantryController extends Controller
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array{ingredient_id: int, location: string, quantity: float|null, unit_id: int|null, expires_at: string|null, note: string|null}
      */
     private function validated(Request $request): array
     {
@@ -173,7 +169,14 @@ class PantryController extends Controller
             ]);
         }
 
-        return $data;
+        return [
+            'ingredient_id' => (int) $data['ingredient_id'],
+            'location' => (string) $data['location'],
+            'quantity' => $data['quantity'] === null ? null : (float) $data['quantity'],
+            'unit_id' => $data['unit_id'] === null ? null : (int) $data['unit_id'],
+            'expires_at' => $data['expires_at'] === null ? null : (string) $data['expires_at'],
+            'note' => $data['note'] === null ? null : (string) $data['note'],
+        ];
     }
 
     private function authoriseOwnership(Request $request, PantryItem $item): void

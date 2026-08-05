@@ -71,6 +71,8 @@ class HandleInertiaRequests extends Middleware
                 'plan' => fn (): mixed => $request->session()->get('plan'),
                 'generated' => fn (): mixed => $request->session()->get('generated'),
                 'swapped' => fn (): mixed => $request->session()->get('swapped'),
+                /** What a photograph of a shelf found, and then what was saved. */
+                'pantry' => fn (): mixed => $request->session()->get('pantry'),
             ],
         ];
     }

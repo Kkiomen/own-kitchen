@@ -58,6 +58,25 @@ declare module '@inertiajs/core' {
                     list: string;
                     listId: number;
                 };
+                /**
+                 * A photographed shelf: first what was recognised, then — once
+                 * the cook has corrected it — how much of it was written down.
+                 */
+                pantry?: {
+                    spotted?: {
+                        /** What the model wrote, kept whether or not it matched. */
+                        spotted: string;
+                        /** Null when nothing in the catalogue is called that. */
+                        ingredientId: number | null;
+                        name: string | null;
+                        emoji: string | null;
+                        quantity: number | null;
+                        unitId: number | null;
+                        unit: string | null;
+                        location: string;
+                    }[];
+                    added?: number;
+                };
                 /** What "wygeneruj tydzień" filled in. */
                 generated?: {
                     added: number;

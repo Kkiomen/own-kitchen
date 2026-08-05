@@ -367,6 +367,24 @@ The product list is shipped whole (~900 rows, minus equipment) and filtered in t
 
 `RecipeCard` shows the shortfall — "masz wszystko" / "brakuje 2" — gated on `hasPantry` and silent past two, where a number stops being a nudge and becomes a shopping list. The modal marks lines you already hold with a green "masz" and **never marks the ones you lack**: on a half-catalogued kitchen that would put a warning on nearly every line of every recipe. Both exist so the chip can be checked; a filter nobody can verify is a filter nobody trusts.
 
+### Reading a shelf off a photograph (`app/Vision`)
+
+Point the phone at an open fridge and the products land in the kitchen. Ports and adapters again — `Contracts/FridgeReader` is the port, `Drafts/SpottedItem` the boundary, `OpenAiFridgeReader` the only class that knows OpenAI exists, `Providers/VisionServiceProvider` the composition root. Swapping the model, the provider or the whole approach is one binding.
+
+**A photo may never invent a product, and this is the rule the module exists to keep.** `FridgePhoto` calls `IngredientResolver::match()` and never `resolve()` — the same rule, for the same reason, as shop leaflets. A shelf is full of things the catalogue has no name for: a foreign label, a leftovers box, a bottle of something. Through `resolve()` each would create a product permanently owning its spelling as an alias, and the next recipe import would resolve real ingredient lines onto it. That is the "Sos:" incident with a camera attached. An unmatched line is kept with its raw text and pointed at a product by hand; nothing is dropped and nothing is guessed.
+
+**Nothing is written until somebody confirms it.** Two endpoints, because they are two different moments: `POST /lodowka/zdjecie` costs a call to a paid model and writes nothing, `POST /lodowka/zdjecie/zapisz` writes and costs nothing. Between them is a review screen. A model reading "śmietana" off a tub of yoghurt is a normal Tuesday, and a kitchen that silently gained a product is a shopping list that quietly stops buying it.
+
+- **The unit vocabulary is enforced in the JSON schema, not afterwards.** The allowed codes are sent as an `enum`, so the model is structurally unable to answer "słoiczek". An amount with no unit is dropped rather than kept — the pantry refuses one, so proposing one would be proposing an error.
+- **The prompt asks for the nominative singular** ("cebula", not "cebuli"). Everything downstream is the importer's alias table, built from recipe text; asking for the form we can look up is free, teaching the matcher a second declension is not. It also says twice to list only what is visible, because the failure mode of a vision model on a dark shelf is to fill the gap with the groceries a fridge *usually* holds.
+- **Duplicates are folded before they reach the screen** — two tubs of yoghurt would otherwise be two rows racing each other on save, and the pantry keeps one row per product per place. Identical units add; anything else becomes "some, amount unknown" rather than a number nobody stated.
+- **`App\Pantry\PutAway` is why that rule is not written twice.** The kitchen form and a photograph are two ways to state what is on a shelf, and both go through it. (`Trolley::stockUp()` deliberately does the opposite: unpacking shopping *adds* to what is there.)
+- **The photo is shrunk to 1280 px in the browser**, before the upload. The slow part is a phone pushing twelve megabytes over mobile data, and no server-side resizing makes that upload shorter. The model is also billed by the pixel.
+- **No key, no feature.** `config('vision.key')` empty hides the button and makes both endpoints 404 — not 403, like registration and another account's shelves. Reading is throttled `12,1`: a stuck finger on the shutter is the only way this app can spend real money.
+- `phpunit.xml` forces a fake key and a fake host, for the reason the pricing client already documents — a suite that quietly spends money is not a failure anybody notices quickly. `tests/Feature/FridgePhotoTest.php` fakes the reader and pins all of the above; what a live model says about a given picture changes between runs, and none of these rules are about its eyesight.
+
+Measured on a real fridge photo: 7 products in 4.8 s, every one matched to the catalogue, and the pasta filed to the pantry while the fruit went to the fridge.
+
 ## The week's meals (`app/Planning`)
 
 `meal_plan_entries` is one meal on one day: `user_id`, `date`, `slot` (`MealSlot`), and **either** a `recipe_id` **or** a `note`, never both and never neither. A note ("kanapki", "obiad u rodziców") is a real plan that simply has no ingredients, so the shopping passes over it and counts it; both halves of that are reported to the screen.

@@ -34,6 +34,14 @@
         <env name="TRAVEL_CACHE_STORE" value="array"/>
         <!-- Never the real deals app: a test must not depend on it being up. -->
         <env name="TRAVEL_API_URL" value="http://deals.test"/>
+        <!--
+            Never a real key and never api.openai.com. The fridge-photo tests
+            fake the reader, so nothing should reach the network — this is what
+            makes "should" into "cannot", and a suite that quietly spends money
+            is not a failure anybody notices quickly.
+        -->
+        <env name="OPENAI_API_KEY" value="test-key"/>
+        <env name="OPENAI_API_URL" value="http://openai.test"/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>

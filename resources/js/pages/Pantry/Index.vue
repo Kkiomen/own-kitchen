@@ -4,6 +4,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppIcon from '@/components/AppIcon.vue';
 import AppNav from '@/components/AppNav.vue';
+import FridgeScan from '@/components/FridgeScan.vue';
 import IngredientLabel from '@/components/IngredientLabel.vue';
 import { formatQuantity } from '@/lib/quantity';
 import { destroy, store, update } from '@/routes/pantry';
@@ -42,6 +43,8 @@ const props = defineProps<{
     units: { id: number; symbol: string; name: string }[];
     ingredients: PantryProduct[];
     expiringSoon: number;
+    /** False when no OpenAI key is configured — then there is no camera at all. */
+    photoEnabled: boolean;
 }>();
 
 const sheetOpen = ref(false);
@@ -225,16 +228,27 @@ watch(sheetOpen, (open) => {
         </AppHeader>
 
         <main class="mx-auto max-w-6xl px-4 py-6 pb-24 sm:px-8 sm:pb-6">
-            <!-- One way in, whatever shelf the thing belongs on. -->
-            <button
-                ref="addButton"
-                type="button"
-                class="mb-8 flex h-13 w-full items-center justify-center gap-2 rounded-full bg-accent text-base font-semibold text-ink transition-colors hover:bg-accent-strong hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-strong"
-                @click="openSheet"
-            >
-                <AppIcon name="plus" />
-                Dodaj zakupy
-            </button>
+            <!-- One way in, whatever shelf the thing belongs on. The camera is
+                 a second way to say the same thing, and deliberately the quieter
+                 of the two: typing it in always works, a photo sometimes does. -->
+            <div class="mb-8 space-y-2">
+                <button
+                    ref="addButton"
+                    type="button"
+                    class="flex h-13 w-full items-center justify-center gap-2 rounded-full bg-accent text-base font-semibold text-ink transition-colors hover:bg-accent-strong hover:text-paper focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-strong"
+                    @click="openSheet"
+                >
+                    <AppIcon name="plus" />
+                    Dodaj zakupy
+                </button>
+
+                <FridgeScan
+                    v-if="photoEnabled"
+                    :sections="sections"
+                    :units="units"
+                    :ingredients="ingredients"
+                />
+            </div>
 
             <section
                 v-for="section in sections"
