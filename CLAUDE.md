@@ -179,6 +179,14 @@ One household, one account, two phones. There are no per-user roles and no owner
 
 `tests/Feature/Auth/DeviceLinkTest.php` pins expiry, single use, supersession, hashing and the unauthenticated case. If you change the flow, those tests are the specification.
 
+## Search engines
+
+Sign-up is open to friends, but the app is not something to be *found*: you come here because somebody gave you the address. So nothing is indexable — by any engine, not only Google.
+
+**The `X-Robots-Tag` header is the load-bearing half; `robots.txt` is not.** `Disallow: /` asks a crawler not to *fetch* a page, and a page nobody fetched is a page whose "do not index" nobody read — so a URL linked from anywhere else can still be listed by its address alone. `App\Http\Middleware\PreventIndexing` therefore sets `noindex, nofollow, noarchive, noimageindex` on **every** response, and is registered globally rather than on the `web` group so a route added later cannot forget it. The same directive is repeated as a `<meta name="robots">` in `app.blade.php`, which survives a host that strips headers.
+
+`noimageindex` is not padding: nearly every screen carries a recipe photo, and image search is a way in that ignores the page around it. `tests/Feature/PreventIndexingTest.php` pins the header on a signed-in page, on the login page, on a redirect and on `/up`.
+
 ## Look and feel
 
 **White page, cool neutral greys, one green accent.** The palette lives in `resources/css/app.css` as `@theme` tokens — **use them, never raw Tailwind greys**: `paper` / `paper-raised` / `paper-sunk` for surfaces, `ink` / `ink-muted` / `ink-faint` for text, `rule` / `rule-strong` for hairlines, `flag` and `leaf` for the review and meal-prep annotations. Dark mode was deliberately removed: a second palette would halve the attention each gets.

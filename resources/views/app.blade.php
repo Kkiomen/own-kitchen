@@ -8,6 +8,11 @@
         <meta name="theme-color" content="#55b850">
         <meta name="description" content="Domowa książka kucharska: przepisy, składniki i gotowanie krok po kroku.">
 
+        {{-- Private household app. The header set by App\Http\Middleware\PreventIndexing
+             says the same thing to every response; this repeats it where a crawler
+             looks first, and survives a host that strips headers. --}}
+        <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
+
         <link rel="manifest" href="/manifest.webmanifest">
 
         {{-- iOS ignores the manifest for these, so they are repeated by hand. --}}

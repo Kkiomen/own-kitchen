@@ -1,2 +1,11 @@
+# A private kitchen for one household. Nothing here is meant to be found by
+# anybody who was not handed the address, so no crawler is welcome anywhere.
+#
+# This is only the polite half. It asks a crawler not to fetch a page, and a
+# page nobody fetched is a page whose "do not index" nobody read — so a URL
+# linked from elsewhere could still be listed by its address alone. What
+# actually keeps this out of an index is the `X-Robots-Tag` header on every
+# response (App\Http\Middleware\PreventIndexing) and the meta tag in the
+# layout. Both are needed; neither replaces the other.
 User-agent: *
-Disallow:
+Disallow: /
