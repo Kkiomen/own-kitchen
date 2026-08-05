@@ -164,7 +164,8 @@ Note the hazard if that ever changes: a recipe appears in several of a site's ca
 
 One household, one account, two phones. There are no per-user roles and no ownership on any record — everything in the catalogue is shared, which is the point.
 
-- **Sign-up closes itself.** `App\Auth\Registration::isOpen()` returns true only while no account exists; after that `/rejestracja` answers **404**, not 403, because a 403 would confirm to a stranger that this address has an account. `ALLOW_REGISTRATION=true|false` overrides it. `DatabaseSeeder` therefore creates **no user** — a seeded account would lock the real owner out of the only sign-up form there is.
+- **Sign-up is open**, and that is a deliberate reversal. `App\Auth\Registration::isOpen()` used to return true only while no account existed — one household, one account, everyone else joins by scanning a code — and the app is now shared with friends, so the form has to be there for people who do not live here. The data model needed no change: the catalogue is shared and everything personal (the kitchen, the lists, the week) is scoped to `user_id` already, so a new account gets an empty kitchen and the same ten thousand recipes. `ALLOW_REGISTRATION=false` closes it again, and closed means **404**, not 403 — a 403 confirms there is something here worth having. The POST is throttled `6,1` like the login form, because an open sign-up is a write endpoint a stranger can call. `DatabaseSeeder` still creates **no user**.
+- **`account:create` and `account:password` are the way in without the form.** A container started from an imported database already has accounts, and there is no password-reset e-mail here (`MAIL_MAILER=log`, and a household app has nowhere to send one from). Reaching the command line already means owning the machine, so neither command grants anything that was being withheld.
 - **`App\Auth\DeviceLink`** issues and redeems the codes. The second phone scans a QR, opens `/dolacz/{token}` and is signed in.
 
 **The QR code is a credential. Treat every one of these as load-bearing:**
@@ -201,6 +202,28 @@ Typeface is **Poppins** (loaded via `bunny()` in `vite.config.ts`), one family f
 **Products are the one deliberate exception, and only products.** A control has to take the ink colour and match a stroke weight; a carrot beside the word "Marchewka" is doing a different job — it is what makes one row findable in a list of forty, and colour is exactly what does that. Nine hundred drawn vegetables were never going to happen either. So `components/IngredientLabel.vue` is the only place emoji appear, and every product name goes through it. Do not extend this to buttons, chips or appliances.
 
 **Touch targets are ≥44px and this has been measured, not assumed.** An earlier pass claimed it and was wrong: filter chips were 36px and a checkbox was 13px. When changing controls, re-measure — the browser can list every offender in one query over `getBoundingClientRect()`.
+
+## Running it in Docker
+
+```bash
+docker compose up -d --build        # http://localhost:8001
+docker compose logs -f app
+docker compose exec app php artisan recipes:quality
+```
+
+Two containers off one image (`compose.yaml`): `app` serves the site, `scheduler` runs `php artisan schedule:work` so the leaflet and price refreshes happen by themselves. No cron, no supervisor, nothing to configure after `up`.
+
+**The first start imports the real database, and that is the whole point.** `database/` is mounted read-only at `/seed`, and the entrypoint copies `database.sqlite` into the `kitchen-data` volume — but **only when the volume has none**, so it can never overwrite what the container has been writing to. Two details it would be wrong without: the copy takes the `-wal` sidecar too (the database runs in WAL mode, so the newest writes may still be in the log and SQLite replays it on first open), and it leaves `-shm` behind, because that is a memory map that gets rebuilt and a stale one is worse than none. With nothing to import it starts empty and runs the seeders instead — that path exists so a fresh clone works, not because anybody should use it: re-crawling the catalogue is days of polite requests.
+
+Nothing else reads `/seed` again, so **Herd and Docker never write to the same file**. They are two copies of the household's data from that moment on; pick one to use.
+
+- **The `.env` lives on the volume**, at `/data/.env`, seeded from `.env.docker` and then left alone. It holds the `APP_KEY`, and a new key on every rebuild would sign both phones out and make anything encrypted unreadable.
+- **`APP_URL` matters more than it looks.** The device-link QR encodes it, so a code generated with `localhost:8001` sends the second phone to *its own* localhost. Set `KITCHEN_URL=http://192.168.x.x:8001` before scanning.
+- **`SERVER_NAME=:8001`** — a bare port, so Caddy serves plain HTTP. A hostname there makes it go looking for a certificate for a machine that is not on the internet.
+- **The build stage needs PHP *and* Node in one image**, which is why it starts from the FrankenPHP image and adds Node rather than the reverse: the Wayfinder Vite plugin shells out to `php artisan wayfinder:generate` mid-build, and a Node-only stage would produce an app whose typed route helpers are missing.
+- **The database is not baked into the image** (`.dockerignore`): 49 MB of household data in a layer, stale the moment it is built.
+- The scheduler runs `KITCHEN_ROLE=scheduler`, which skips the migrate-and-seed half of the entrypoint and waits on the app's health check first. Two containers racing to migrate one SQLite file on a cold start is the kind of thing that works nineteen times out of twenty. They do share `storage`, deliberately: the crawler's page cache lives there, so a re-run of the import in either container is free.
+- `scripts\install-scheduler.ps1` is the Herd/Windows equivalent and is **not** needed here — one scheduler at a time, or two writers land on the same SQLite file.
 
 ## Installed app (PWA)
 
@@ -247,6 +270,10 @@ Presentation helpers live in `resources/js/lib/recipe-display.ts` — appliance 
 **Every product name renders through `components/IngredientLabel.vue`** — emoji plus name, with the emoji `aria-hidden` (the name beside it already says what it is) in a fixed-width column so a list of names has a straight left edge. `inline` drops that column for a chip inside a run of text. Adding a screen that names a product means using this component and shipping an `emoji` on that payload.
 
 The modal has a "pokaż oryginalny tekst" toggle showing each line's `raw_text`. It exists to verify imports against the source; keep it.
+
+**Reading a recipe for a different number of portions is done on the server, and that placement is the feature.** `App\Catalogue\RecipeScale` multiplies the *loaded* `RecipeIngredient` rows before anything asks them anything, so the amounts, the "masz" marker on each line and the shortfall the shopping button writes down are all answers about the same number of portions. Scaling in the browser would leave the other two speaking about the original recipe — invisible until somebody is at the hob. The modal reloads with `?porcje=N` (`only: ['recipe']`, `replace`), and **the shopping-list post carries the same `porcje`**, or the button would quietly buy for the recipe's own portions.
+
+Three things it must keep doing: `raw_text` is never scaled (it is the evidence "pokaż oryginalny tekst" exists to show); both `$recipe->ingredients` *and* `$step->ingredients` are scaled, because they are separate hydrations of overlapping rows; and a recipe whose source never stated its portions (78 of ~10 200) offers no control at all rather than a bare multiplier. Note the deliberate difference from `PlannedIngredients`, which never scales below one whole batch: the planner chooses the portions for you, so it buys the pot whole, while here the cook typed the number and answering "6 porcji" with the amounts for eight would be refusing to answer.
 
 ## Weights and conversions (`app/Support/Measurement`)
 
@@ -400,6 +427,18 @@ Not about food at all, and that is the point: "podjedź po chleb", "oddaj buty d
 - Handing a task over is a chip on the row, not an edit screen: "zrób to ty" is half the conversations this exists for.
 - **The open count is a shared prop (`openTasks`), so the badge rides on every screen.** The point of writing something down is not having to remember it, and a count you only see once you are already on the tasks screen is a reminder you have to go looking for. It is a closure, so a partial visit that did not ask for it — infinite scroll — does not pay for the query. **Flat, not nested under `tasks`**: the tasks screen has a page prop by that name and a page prop wins, which made the badge vanish on the one screen where the number is most obviously right.
 - Adding this made the nav five sections. `resources/js/lib/navigation.ts` had "four is the ceiling" written in it; the fifth was added and then *measured* — at 390px each cell is 78px and the widest label renders at 50px. **Podróż later made it six, measured the same way: 65px cells, widest label 49.6px, nothing overflowing.** That is the last one that fits — a seventh leaves 55.7px against a 49.6px label — so the next section is a "więcej" sheet, not another cell. Measure, do not argue.
+
+### "Co ugotuję z tego, co się psuje" (`App\Pantry\ExpiringSoon`)
+
+`pantry_items.expires_at` was recorded from the start and only ever counted — "3 rzeczy tracą ważność" is a fact with no action attached. This turns it into the **Do zużycia** chip on the list, and puts the product's name on the card ("zużyj: Ser żółty") so the filter can be checked rather than trusted.
+
+- **Three days, the same window the kitchen already warns about.** `ExpiringSoon::DAYS` is the one place it is stated; a different number here would contradict the sentence on the other screen.
+- **An entry with no date is not expiring.** Most of the kitchen has none — `pantry:starter` deliberately writes none — and reading "unknown" as "urgent" would make this the loudest thing in the app.
+- **It is capped at two missing products** (`RecipeListing::WITHIN_REACH`, shared with the "Brakuje 1–2" chip). Without that cap a carton of milk matches two thousand recipes, nearly all needing a shop first — which answers "co zawiera mleko", a question nobody asked.
+- An **optional** line is not a reason to cook a dish, matching what the shortfall aggregate already ignores.
+- The chip hides itself at zero, like a category matching nothing.
+
+**Found while building it: `(opcjonalnie)` in brackets was never detected.** `IngredientLineParser` ran `detectOptional()` on the line *after* `extractParentheticals()` had moved the bracket into the note, so the commonest spelling of an optional ingredient imported as a required one — while "opcjonalnie 2 jajka" worked, which is why it went unnoticed. It now reads the raw line. Fixing it is a re-import, not a re-crawl.
 
 ## Podróż — the flight-deals window (`app/Travel`)
 
@@ -569,6 +608,15 @@ It holds **a price per kilo/litre/piece** *and* **a typical price per pack**, be
 Layer 4 is what makes the other three trustworthy. Treating an unknown line as free would be wrong in the direction that costs money *and* invisible — the total would simply be too small. So `unpriced` travels with the total, the screen prints "nie znam ceny N produktów — rachunek będzie wyższy", and the whole block hides when nothing can be priced, because "0 zł" over a full list is not a smaller number but a wrong one. `costBasis` reaches each row so a leaflet price shows plain and a typical one shows with a `~`.
 
 Only what is still to buy is priced: a ticked line is money already spent, and including it would make the trolley look more expensive the further round the shop you got.
+
+### The history screen (`/ceny`, `App\Pricing\PriceHistory`)
+
+`price_observations` is append-only so this question can be asked, and until now only the median was ever read back. `/ceny` lists the products something has priced (155 today, of ~1 640); `/ceny/{slug}` is one product's readings.
+
+- **Regular prices only, and that is a property of the table rather than a filter on the screen.** See above: the leaflet source emits the "before" figure and skips an offer printing none. A history of shelf prices would report that butter costs 4,99 zł — a chart of how good the promotions were, presented as what the household pays. `PriceHistoryTest` pins it at the writing end.
+- **One day is one row, not one point on a line.** Thirteen chains read in one afternoon is one day of evidence; the next crawl is a week later. A line drawn through that would invent a trend and look most confident where it knows least. So each day shows its median, the spread between the cheapest and dearest reading, and how many shops were talking.
+- **The change figure compares unit prices in one dimension, or says nothing.** The first version compared the days' pack prices and produced "Ser żółty −76%" on real data — 27,12 zł for a *kilo* from GUS against 6,39 zł for a *pack* of unstated size. That is exactly what `UnitPrice` exists to prevent, and a percentage is the most confident-looking way to get it wrong. Today it can answer for **1 product of 155** (Kiełbasa, +43,5%/kg between two GUS years) and stays silent for the rest, which is the honest state of the data.
+- `App\Support\Money\Median` was extracted so the history and `PriceBook` cannot drift into two definitions of "typical".
 
 ### Running it
 

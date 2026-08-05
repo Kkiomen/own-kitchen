@@ -91,18 +91,29 @@ function submit(): void {
             </button>
         </form>
 
-        <p class="mt-8 text-center text-sm text-ink-muted">
-            Masz kod QR od drugiej osoby? Zeskanuj go aparatem — otworzy tę
-            aplikację i zaloguje Cię automatycznie.
-        </p>
+        <!--
+          A button rather than the small print it used to be. Signing up is a
+          real way into this screen now that the app is shared beyond the
+          household, and the two things you can do here should look like two
+          things you can do. Outlined, not filled: the account you already have
+          is still the likelier of the two.
+        -->
+        <div v-if="canRegister" class="mt-6 border-t border-rule pt-6">
+            <p class="mb-3 text-center text-sm text-ink-muted">
+                Pierwszy raz tutaj?
+            </p>
 
-        <p v-if="canRegister" class="mt-4 text-center text-sm">
             <Link
                 :href="register.url()"
-                class="text-accent-strong underline underline-offset-4"
+                class="flex h-12 w-full items-center justify-center rounded-full border border-accent-strong font-medium text-accent-strong"
             >
                 Załóż konto
             </Link>
+        </div>
+
+        <p class="mt-8 text-center text-sm text-ink-muted">
+            Masz kod QR od drugiej osoby? Zeskanuj go aparatem — otworzy tę
+            aplikację i zaloguje Cię automatycznie.
         </p>
     </AuthShell>
 </template>

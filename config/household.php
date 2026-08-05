@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 return [
     /*
-     * Whether anyone may still create an account.
+     * Whether anyone may create an account.
      *
-     * Left unset (the default) it means "only until the first account exists".
-     * This is a household app: one person signs up, everyone else joins that
-     * account by scanning a code. An open sign-up form on a public URL would be
-     * an invitation with no upside.
+     * Open unless told otherwise. It used to close itself after the first
+     * account — one household, one account — and then friends were invited, so
+     * the form has to be there for people who do not live here. Everything
+     * personal is scoped per account already; the catalogue is what they share.
      *
-     * Set ALLOW_REGISTRATION=true to reopen it, or =false to close it for good.
+     * Set ALLOW_REGISTRATION=false to close it again.
      */
     'registration_open' => env('ALLOW_REGISTRATION'),
 ];

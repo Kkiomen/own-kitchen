@@ -18,7 +18,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/rejestracja', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('/rejestracja', [RegisteredUserController::class, 'store']);
+    // Throttled like the login form now that anybody may reach it: an open
+    // sign-up is a write endpoint a stranger can call.
+    Route::post('/rejestracja', [RegisteredUserController::class, 'store'])->middleware('throttle:6,1');
 
     Route::get('/logowanie', [SessionController::class, 'create'])->name('login');
     // Throttled by address so the form cannot be used to guess a password.
@@ -100,14 +102,14 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/zakupy/{shoppingListItem}', [ShoppingListController::class, 'destroy'])->name('shopping.destroy');
 
     /*
-     * What things normally cost, read back out of `price_observations`. Regular
-    /*
      * A window onto the flight-deals app. One route and no writes: every change
      * of filter is a fresh GET with a new query string, which is also what keeps
      * a filtered board linkable to the other phone.
      */
     Route::get('/podroz', [TravelController::class, 'index'])->name('travel.index');
 
+    /*
+     * What things normally cost, read back out of `price_observations`. Regular
      * prices only — see App\Pricing\PriceHistory.
      */
     Route::get('/ceny', [PriceHistoryController::class, 'index'])->name('prices.index');

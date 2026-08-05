@@ -1,0 +1,72 @@
+#
+# Two containers off one image: the app, and the clock that keeps the prices
+# fresh. Nothing to configure — `docker compose up -d` and the kitchen is at
+# http://localhost:8001 with the real catalogue already in it.
+#
+
+x-kitchen: &kitchen
+  build:
+    context: .
+  image: kitchen:latest
+  restart: unless-stopped
+  environment:
+    # What the app believes it is reachable at. Change this to the machine's
+    # address on the network — `http://192.168.1.20:8001` — before scanning a
+    # QR code with the other phone, or the link in it will point that phone at
+    # its own localhost.
+    APP_URL: ${KITCHEN_URL:-http://localhost:8001}
+    DB_DATABASE: /data/database.sqlite
+  volumes:
+    # The household's data: the database and the environment file with the
+    # APP_KEY in it. This is the volume worth backing up.
+    - kitchen-data:/data
+    # Logs, sessions, compiled views — and the crawler's page cache, which is
+    # why the scheduler shares it rather than keeping its own.
+    - kitchen-storage:/app/storage
+    # Read-only, and read exactly once: the first start copies the existing
+    # database out of the project into the volume above. Afterwards the
+    # container never looks at it again, so Herd and Docker cannot fight over
+    # the same file.
+    - ./database:/seed:ro
+
+services:
+  app:
+    <<: *kitchen
+    environment:
+      APP_URL: ${KITCHEN_URL:-http://localhost:8001}
+      DB_DATABASE: /data/database.sqlite
+      # FrankenPHP reads this to decide what to listen on. A bare port means
+      # plain HTTP: a hostname here would make Caddy go and fetch a certificate
+      # for a machine that is not on the internet.
+      SERVER_NAME: :8001
+    ports:
+      - '8001:8001'
+    healthcheck:
+      # The sign-in page, because it is the only screen that answers without a
+      # session — everything else would report a redirect as a failure.
+      test: ['CMD', 'curl', '-fsS', '-o', '/dev/null', 'http://127.0.0.1:8001/logowanie']
+      interval: 30s
+      timeout: 5s
+      start_period: 90s
+      retries: 3
+
+  scheduler:
+    <<: *kitchen
+    environment:
+      APP_URL: ${KITCHEN_URL:-http://localhost:8001}
+      DB_DATABASE: /data/database.sqlite
+      # Skips the database preparation the app has already done. Two containers
+      # racing to migrate one SQLite file on a cold start is exactly the kind of
+      # thing that works nineteen times out of twenty.
+      KITCHEN_ROLE: scheduler
+    # `schedule:work` is the scheduler as a foreground process: it runs
+    # `schedule:run` every minute for as long as the container lives. No cron,
+    # no supervisor, nothing to install.
+    command: ['php', 'artisan', 'schedule:work']
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  kitchen-data:
+  kitchen-storage:
