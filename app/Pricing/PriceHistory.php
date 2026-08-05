@@ -171,7 +171,7 @@ final class PriceHistory
      * it cannot support.
      *
      * @param  list<array{date: string, unitPrice: int|null, unitPricePer: string|null}>  $days
-     *                                                                                    as returned by `of()`, newest first
+     *                                                                                           as returned by `of()`, newest first
      * @return array{from: string, to: string, per: string, difference: int, percent: float}|null
      */
     public function change(array $days): ?array
