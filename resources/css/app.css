@@ -38,6 +38,35 @@
     --color-accent-strong: #2f7a2b;
     --color-accent-soft: #e6f5e4;
 
+    /*
+     * The one section that is not the kitchen gets the one other hue.
+     *
+     * "White page, cool neutrals, a single green accent" is still the rule, and
+     * this is its single exception rather than the start of a second palette:
+     * Podróż reads a *different app's* data — flights and package holidays, not
+     * food — and the colour is what says so before the heading does. It is
+     * scoped to that section, so nothing outside `/podroz` and its nav cell may
+     * use these; a blue button on the shopping list would make both hues
+     * meaningless.
+     *
+     * Built to the same contrast rules the accent was, and for the same reason
+     * — this is read on a phone outdoors, not on a desk monitor:
+     *
+     * Measured in the browser against these tokens, not estimated:
+     *
+     * - `voyage` (#55a8e8) carries **ink** labels, never white: ink on it is
+     *   6.85:1, against the accent's 7.02:1 — so a filled blue chip and a filled
+     *   green one weigh the same on the page. White on it is 2.58:1 and
+     *   unreadable.
+     * - `voyage-strong` (#1f6fb2) is the only one allowed to be **text** on
+     *   white: 5.28:1, beside `accent-strong`'s 5.33:1. The light blue as text
+     *   would be 2.4:1, the exact mistake `accent-strong` exists to prevent.
+     * - `voyage-soft` is for tints and underlines only.
+     */
+    --color-voyage: #55a8e8;
+    --color-voyage-strong: #1f6fb2;
+    --color-voyage-soft: #e2f0fb;
+
     /* Semantics stay muted so they read as notes in the margin. */
     --color-flag: #8a6d1f;
     --color-flag-soft: #f6eed6;

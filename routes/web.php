@@ -13,6 +13,7 @@ use App\Http\Controllers\ShoppingListsController;
 use App\Http\Controllers\ShoppingPlanController;
 use App\Http\Controllers\ShopSelectionController;
 use App\Http\Controllers\TaskController;
+use App\Http\Controllers\TravelController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
@@ -100,6 +101,13 @@ Route::middleware('auth')->group(function (): void {
 
     /*
      * What things normally cost, read back out of `price_observations`. Regular
+    /*
+     * A window onto the flight-deals app. One route and no writes: every change
+     * of filter is a fresh GET with a new query string, which is also what keeps
+     * a filtered board linkable to the other phone.
+     */
+    Route::get('/podroz', [TravelController::class, 'index'])->name('travel.index');
+
      * prices only — see App\Pricing\PriceHistory.
      */
     Route::get('/ceny', [PriceHistoryController::class, 'index'])->name('prices.index');

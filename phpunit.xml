@@ -31,6 +31,9 @@
             cached response and fails with a number appearing nowhere in it.
         -->
         <env name="PRICING_CACHE_STORE" value="array"/>
+        <env name="TRAVEL_CACHE_STORE" value="array"/>
+        <!-- Never the real deals app: a test must not depend on it being up. -->
+        <env name="TRAVEL_API_URL" value="http://deals.test"/>
         <env name="DB_CONNECTION" value="sqlite"/>
         <env name="DB_DATABASE" value=":memory:"/>
         <env name="DB_URL" value=""/>

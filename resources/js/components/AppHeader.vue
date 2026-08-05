@@ -14,7 +14,7 @@ import { create as linkDevice } from '@/routes/device-link';
 const props = withDefaults(
     defineProps<{
         title: string;
-        /** Which of the four sections this screen belongs to. */
+        /** Which of the six sections this screen belongs to. */
         current: NavSection;
         /** Shown small beside the title; a total, never a decoration. */
         count?: number;
@@ -71,7 +71,7 @@ function signOut(): void {
                 </div>
 
                 <div class="flex shrink-0 items-center gap-1">
-                    <!-- On a phone the same four sit in the bottom bar instead. -->
+                    <!-- On a phone the same six sit in the bottom bar instead. -->
                     <AppNav
                         :current="props.current"
                         variant="inline"

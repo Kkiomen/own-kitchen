@@ -57,6 +57,10 @@ export const ICON_PATHS = {
     /** A ticked list: what we asked each other to do. */
     checklist:
         'M4 6.5l1.6 1.6L8.8 5M4 17.5l1.6 1.6L8.8 16M12 7h8M12 12h8M12 17h8',
+    /** An aeroplane seen from above: the trip, not the kitchen. */
+    plane: 'M10.5 3.5a1.5 1.5 0 0 1 3 0V9l7 4v2l-7-2v4l2.5 2v1.5L12 19l-4-.5V17l2.5-2v-4l-7 2v-2l7-4z',
+    /** A pin on a map: where it goes. */
+    pin: 'M12 21s6.5-6 6.5-10.5a6.5 6.5 0 1 0-13 0C5.5 15 12 21 12 21zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
     /** An empty plate: nothing matched. */
     empty: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8 15c1-1.2 2.3-1.8 4-1.8s3 .6 4 1.8M9 9.5h.01M15 9.5h.01',
 } as const;
