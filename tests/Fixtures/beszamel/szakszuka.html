@@ -1,0 +1,2827 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <!-- Favicon -->
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicon_96x96.ico" />
+<link rel="icon" type="image/x-icon" sizes="192x192" href="/favicon_192x192.ico" />
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="apple-touch-icon" sizes="192x192" href="/web-app-manifest-192x192.png" />
+<link rel="apple-touch-icon" sizes="512x512" href="/web-app-manifest-512x512.png" />
+
+        
+    <link rel="stylesheet" type="text/css" href="/media/desktop/zpr_layouts_web/css/wide_plugins.css?__8712914d">
+
+
+        
+
+
+  <link rel="stylesheet" type="text/css" href="/topboard.css">
+  <script src="/media/desktop/zpr_layouts_web/js/topboard.js?__8712914d" async></script>
+
+
+
+        
+        
+
+        <!-- hook_header_css -->
+        
+            
+<!-- RENDER_LINK -->
+
+
+    <link rel="preconnect"  href="https://smart.idmnet.pl/" >
+
+    <link rel="preconnect"  href="https://cdn.galleries.smcloud.net/" >
+
+    <link rel="preconnect"  href="https://cdn.files.smcloud.net/" >
+
+    <link rel="preconnect"  href="https://fonts.googleapis.com/" >
+
+    <link rel="preconnect"  href="https://cdn2.pollster.pl/" >
+
+    <link rel="preconnect"  href="https://ced.sascdn.com/" >
+
+    <link rel="preconnect"  href="//r.sascdn.com/" >
+
+    <link rel="preconnect"  href="//ced-ns.sascdn.com/" >
+
+    <link rel="preconnect"  href="//pagead2.googlesyndication.com/" >
+
+    <link rel="preconnect"  href="//idm.hit.gemius.pl/" >
+
+
+
+<!-- RENDER_PLUGIN_LINK_NEW -->
+
+
+    <link rel="stylesheet" type="text/css" href="
+/media/desktop/zpr_recipes_web/css/template_recipe_article.css?__8712914d" >
+
+
+
+<!-- RENDER_CSS -->
+
+
+    <link rel="stylesheet" type="text/css" href="/media/beszamel.se/desktop/css/styleguide_beszamel2025.css?__8712914d" >
+
+
+
+<!-- RENDER_CSS -->
+
+
+    <link rel="stylesheet" type="text/css" href="/media/desktop/zpr_layouts_web/css/paid_google_search.css?__8712914d" >
+
+
+
+        
+        <!-- /hook_header_css -->
+
+        <!--[if IE]>
+        <link rel="stylesheet" type="text/css" href="/media/css/ie.css?__8712914d">
+        <![endif]-->
+
+        <!-- ticket112510 do przeniesienia w ramach porzadkowania analityk -->
+        <script>
+    class ViewSourceManager {
+        constructor() {
+            this.referrerUrl = document.referrer;
+            this.currentDomain = window.location.hostname
+            this.pageUrl = window.location.href
+            this.sourceCookieName = "pageViewSource"
+        }
+
+        setCookie() {
+            const sourceCookieValue = this.getSourceCookie()
+            const mainDomain = this.getMainDomainName()
+
+            if (this.sourceCookieExist(sourceCookieValue)) {
+                this.updateCookie(sourceCookieValue, mainDomain)
+            } else {
+                const source = this.getSource()
+                this.createCookie(source, mainDomain)
+            }
+        }
+
+        getMainDomainName() {
+            return this.currentDomain.substring(this.currentDomain.lastIndexOf(".", this.currentDomain.lastIndexOf(".") - 1) + 1);
+        }
+
+        getSourceCookie() {
+            let sourceCookie = {};
+            document.cookie.split(';').forEach(function(el) {
+                let [key, value] = el.split('=');
+                sourceCookie[key.trim()] = value;
+            })
+            return sourceCookie[this.sourceCookieName];
+        }
+
+        sourceCookieExist(sourceCookieValue) {
+            return (typeof sourceCookieValue !== "undefined")
+        }
+
+        updateCookie(sourceCookieValue, mainDomain) {
+            const reInt = /\d+/;
+            let currentCount = null;
+            let lastCount = sourceCookieValue.match(reInt);
+            currentCount = parseInt(lastCount[0]) > 9 ? 10 : parseInt(lastCount[0]) + 1;
+            console.log("lastCount: "+lastCount+"; currentCount: "+currentCount)
+            let updatedSourceValue = sourceCookieValue.replace(lastCount, currentCount)
+            document.cookie = `${this.sourceCookieName}=${updatedSourceValue};domain=${mainDomain};path=/`;
+        }
+
+        // order must be maintained
+        getSource() {
+            if (this.pageUrl.includes("utm_medium=push")) {
+                return "push"
+            }
+            if (this.pageUrl.includes("utm_source=facebook") || this.pageUrl.includes("utm_medium=paidsocial")) {
+                return "paid_facebook"
+            }
+            if (this.isDirect()) {
+                return "direct"
+            }
+            if (this.referrerUrl.includes("quicksearchbox") || this.referrerUrl.includes("googleapis")) {
+                return "google_discover"
+            }
+            if (this.referrerUrl.includes("www.google.")) {
+                return "google_search"
+            }
+            if (this.referrerUrl.includes(".facebook.com")) {
+                return "facebook"
+            }
+            return "other"
+        }
+
+        isDirect() {
+            return (this.pageUrl === `https://www.${this.currentDomain}/` && (this.referrerUrl.includes("//www.google")) || this.referrerUrl === "")
+        }
+
+        createCookie(source, mainDomain) {
+            document.cookie = `${this.sourceCookieName}=${source}_1;domain=${mainDomain};path=/`;
+        }
+    }
+
+    const viewSourceManagerInstance = new ViewSourceManager()
+    viewSourceManagerInstance.setCookie()
+</script>
+
+        <script>
+var dataLayer = typeof dataLayer === "undefined" ? [] : dataLayer;
+dataLayer.forEach((element, index) => {
+    if ("objectId" in element || "objectType" in element) {
+      delete dataLayer[index];
+    }
+  });
+</script>
+        <!-- hook_header_meta -->
+        
+            <!-- META_TITLE -->
+<title>Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa - Beszamel.pl</title>
+<!-- META -->
+<meta name="description" content="Shakshouka (czytaj: szakszuka) to danie znane w kuchniach: tunezyjskiej, izraelskiej, egipskiej i marokańskiej, a samo słowo oznacza bałagan. W sumie chodzi o j...">
+
+<!-- OPENGRAPH -->
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta property="og:title" content="Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa" />
+
+<meta property="og:type" content="Recipe" />
+
+<meta property="og:image" content="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-15-j.jpg" />
+<meta name="twitter:image" content="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-15-j.jpg" />
+
+<meta property="og:description" content="Shakshouka (czytaj: szakszuka) to danie znane w kuchniach: tunezyjskiej, izraelskiej, egipskiej i marokańskiej, a samo słowo oznacza bałagan. W sumie chodzi o j..." />
+
+<meta name="robots" content="max-image-preview:large">
+<script>
+    
+    var dataLayer = typeof dataLayer === "undefined" ? [] : dataLayer;
+    dataLayer.push(
+        {"objectId": "re-2ZUk-r3g8-wDuh", "objectType": "article", "title": "Szakszuka podbi\u0142a p\u00f3\u0142 \u015bwiata. Ta bliskowschodnia jajecznica uzale\u017cnia od pierwszego k\u0119sa", "author": "Anna \u015amia\u0142ek", "authorId": "at-EReY-3nY8-gCy9", "pubdate": "2026-07-10T05:05+02:00", "createdDate": "2018-08-20T14:02+02:00", "editDate": "2026-07-11T05:00+02:00", "blockVideoOn": true, "blockGalleryOn": false, "blockQuizOn": false, "zprShopping": false, "publish": true, "adult": false, "container": "pa-JrZP-xLm5-DruJ", "feedCount": 5, "sponsorType": "Brak", "openingComponent": "zdj\u0119cia"}
+    )
+    
+</script>
+
+<script type="text/javascript" src="https://cdn.questvert.pl/publishers/zpr/qpscript.js" ></script><!-- Marfeel Meta Tags -->
+
+  
+    <meta property="mrf:tags" encrypted="true" content="EAlzx1WLHHAi3yk+tR1s+zrD9OYNPSMMuWL80PO935OZwX5VnZCu9jrODlzUVKtaONftCPFupsjXC53gp6fQjvdD6/9Z8w/DhcwX/jFLQBotzFwUZn+mAfdMPXwJUXJPpn5+G33OE6v483MjuCzNDgEZWnKM7cGFvCDr8NjmhAAAc7DpoptY9zwE86656A2SdE3eWcqVq4uv6putEPgFWiaXFxp+qpB+u57csp9bSsrIUXXcCKEGPwbmhooorBnd0KkoQeWWfarqo+ii1x7AZzR74MxSJ4om7RjAVvtuew9Ei8s/K4jtfA+OWtWbDlZc6k54wiXqFCJ4XmpaxO/mx/UFfrSRiJo4lZ3qXWIXJcLuZkC/g6CrkaWu/AW28LQXDEV+9k8ENxMtleYOfrnn2NdENVwDOtnUwQ4+8+ZCQPxOA2Vd5sdkvpqO2j6TCsXKtUkF19yrgNMrZcO/pyhlA1qT9DoEwOmJwU+G7PY1bNlWhIcBUAVkw9ZmvibMzJqoP6Y1SA28i0Jn/Hop1pNJppNPmnseCqSAFjU63ALiNHefiKg18bin8ISj13B9Po6EiDIJZJDrgU6qVvJrtoHkdRR5c1UIK36em557zgChWVUSA+Ea5HWfqlZEvT3ow+kfvB/lypRJzLRLggdakaoqF1ce2/DMXiZX/+8pHLXi8wI=" />
+  
+<script>
+    
+</script>
+<script>
+var dataLayer = typeof dataLayer === "undefined" ? [] : dataLayer;
+
+dataLayer.forEach((element, index) => {
+    if ("adblockStatus" in element || "section" in element) {
+      delete dataLayer[index];
+    }
+  });
+
+dataLayer.push({
+    adblockStatus: typeof idmNetAdblockStatus === "undefined" ? "off" : "on",
+    url: window.location.href,
+})
+
+dataLayer.push(
+    {"domain": "se.pl", "adsOffStatus": false, "isPaid": false, "section": "beszamel_sniadania,beszamel_przepisy,beszamel", "pageType": "recipe"}
+)
+
+const sourceValForPrism = typeof viewSourceManagerInstance !== "undefined" ? viewSourceManagerInstance.getSourceCookie() : null;
+if (sourceValForPrism) {
+  dataLayer.push({sourcePrism:sourceValForPrism});
+}
+
+</script>
+        
+        <!-- /hook_header_meta -->
+
+        
+
+        
+<script>
+  window._taboola_notifications = window._taboola_notifications || [];
+  window._taboola_notifications.push({ swPath: '/tb_sw.js' });
+</script>
+<script async src="https://cdn.taboola.com/webpush/publishers/1968564/taboola-push-sdk.js"></script>
+
+
+        
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-53W55K9');</script>
+<!-- End Google Tag Manager -->
+<script>
+function ads_slot_responded(){
+	dataLayer.push({event: "slot_response_received_event"})
+}
+
+function ads_slot_requested(){
+	dataLayer.push({event: "slot_requested_event"})
+}
+
+function addEventListenerOnce(event, fn) {
+var func = function () {
+	googletag.pubads().removeEventListener(event, func);
+	fn();
+};
+googletag.pubads().addEventListener(event, func);
+}
+	window.googletag = window.googletag || {cmd: []};
+	googletag.cmd.push(function() {
+    dataLayer.push({event: "gam_library_loaded"})
+	addEventListenerOnce("slotRequested", ads_slot_requested)
+	addEventListenerOnce("slotResponseReceived", ads_slot_responded)
+	})
+</script>
+
+
+
+        
+        
+
+        <!-- hook_header -->
+        
+            <!-- CMP -->
+
+<script>
+/*******TCF 2.0******************/
+window.sas_idmnet = window.sas_idmnet || {};
+window.sas_idmnet.cmd = window.sas_idmnet.cmd || [];
+
+// Wywołanie okna z konsoli  window.__tcfapi("displayCmpModal", 2, () => {});   do wykorzystania  np. pod przyciski  na stronie  w polityce cookie.
+
+if (!sas_idmnet.tcf2){
+  sas_idmnet.tcf2 = 1;
+
+  window.cmpConfig = {
+    worker: {
+      cmpID: 225,
+      iabVendorUrl: "https://smart.idmnet.pl/consent/",
+      googleVendorUrl: "https://smart.idmnet.pl/consent/google-vendors.json",
+      locale: "pl",
+    },
+    ui: {
+      logoUrl: "https://beszamel.se.pl/media/beszamel.se/desktop/images/beszamel-logo.svg",
+      consentText: "https://smart.idmnet.pl/consent/consent-grupazpr.json",
+      theme: {
+        textColor: "#000",
+        secondaryTextColor: "#999",
+        primaryColor: "#41afbb",
+      },
+    },
+  };
+  /*********************/
+  "use strict";!function(){var e=function(){var e,t="__tcfapiLocator",a=[],r=window;for(;r;){try{if(r.frames[t]){e=r;break}}catch(e){}if(r===window.top)break;r=r.parent}e||(!function e(){var a=r.document,n=!!r.frames[t];if(!n)if(a.body){var s=a.createElement("iframe");s.style.cssText="display:none",s.name=t,s.id="iframe",a.body.appendChild(s)}else setTimeout(e,5);return!n}(),r.__tcfapi=function(){for(var e,t=arguments.length,r=new Array(t),n=0;n<t;n++)r[n]=arguments[n];if(!r.length)return a;if("setGdprApplies"===r[0])r.length>3&&2===parseInt(r[1],10)&&"boolean"==typeof r[3]&&(e=r[3],"function"==typeof r[2]&&r[2]("set",!0));else if("ping"===r[0]){var s={gdprApplies:e,cmpLoaded:!1,cmpStatus:"stub"};"function"==typeof r[2]&&r[2](s)}else a.push(r)},r.addEventListener("message",function(e){var t="string"==typeof e.data,a={};try{a=t?JSON.parse(e.data):e.data}catch(e){}var r=a.__tcfapiCall;r&&window.__tcfapi(r.command,r.version,function(a,n){var s={__tcfapiReturn:{returnValue:a,success:n,callId:r.callId}};t&&(s=JSON.stringify(s)),e&&e.source&&e.source.postMessage&&e.source.postMessage(s,"*")},r.parameter)},!1))};"undefined"!=typeof module?module.exports=e:e()}();
+  /*********************/
+}
+</script>
+
+<script type = "text/javascript" src="https://smart.idmnet.pl/consent/cmp-widget-latest.js" charset="UTF-8" async fetchpriority="high"> </script>
+
+<!-- ADS_HEAD -->
+
+    <!-- InVideoGam -->
+
+
+    <!-- FloorAd -->
+
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+<!-- SmartAdServer -->
+ <!-- Wyłączenie ładowania zewnętrznych rzeczy -->
+<script>
+  var sas_idmnet = sas_idmnet || {}; sas_idmnet.cmd = sas_idmnet.cmd || [];
+  var sas = sas || {}; sas.cmd = sas.cmd || [];
+  var NzpPyBmOTGuZ = NzpPyBmOTGuZ || false;
+</script>
+
+
+<script id="gptScript" async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+
+
+
+
+
+  <script type="text/javascript" src="//smart.idmnet.pl/116964/smartConfig_1362263.js" async fetchpriority="high"></script>
+
+
+
+<script type="text/javascript" src="//cdn2.pollster.pl/nw.js" async></script>
+
+  <script type="text/javascript" src="//smart.idmnet.pl/prebidBoilerplate.js" async fetchpriority="high"></script>
+
+<!-- /SmartAdServer -->
+  
+  <script type="text/javascript">
+    var wbtg_value = 'cat=przepisy;subc=sniadania;art=re-2ZUk-r3g8-wDuh;notsafety=[Sexual,Derogatory,Profanity,AlcoholDrugsTabacco,Religion,TragedyTransportationAccidents,Shocking,SensitiveSocialIssues,DziecięcaParentingowaNiepełnoletni,Gambling,DownloadsAndSharing,Weapons,Violence,Suggestive,publicis_kp,omd_mcdonalds_wojna]';
+    const sourceValForGAM = typeof viewSourceManagerInstance !== "undefined" ? viewSourceManagerInstance.getSourceCookie() : null;
+    wbtg_value = sourceValForGAM ? `${wbtg_value};source=${sourceValForGAM}` : wbtg_value;
+  </script>
+  
+
+
+
+    <!-- ToWideo -->
+
+<!-- end ToWideo -->
+
+
+    <!-- InAudioStreamGam -->
+
+<link rel="stylesheet" type="text/css" href="/media/desktop/zpr_ads_web/css/videojs.ima.turbo.css?__8712914d">
+
+
+<!-- META -->
+<meta name="google-site-verification" content="KIykXBjpqJqs3XVbMPE9SRmC6POWRkwMHjqM4JzwMM8">
+
+        
+        <!-- /hook_header -->
+        <!-- hook_header_extended -->
+        
+            <script {&#x27;container_id&#x27;: &#x27;taboola-below-article-thumbnails&#x27;, &#x27;container_type&#x27;: &#x27;article&#x27;, &#x27;placement_name&#x27;: &#x27;Below Article Thumbnails&#x27;, &#x27;publisher_id&#x27;: &#x27;timezpr-network&#x27;} type="text/javascript">
+    window._taboola = window._taboola || [];
+    _taboola.push({article:'auto'});
+    !function (e, f, u, i) {
+      if (!document.getElementById(i)){
+        e.async = 1;
+        e.src = u;
+        e.id = i;
+        f.parentNode.insertBefore(e, f);
+      }
+    }(document.createElement('script'),
+    document.getElementsByTagName('script')[0],
+    '//cdn.taboola.com/libtrc/timezpr-network/loader.js',
+    'tb_loader_script');
+    if(window.performance && typeof window.performance.mark == 'function')
+      {window.performance.mark('tbl_ic');}
+</script>
+
+<link rel="stylesheet" type="text/css" href="/media/desktop/site_header/css/desktop_site_header.css?__8712914d" >
+
+        
+        <!-- /hook_header_extended -->
+
+        <link rel="canonical" href="https://beszamel.se.pl/przepisy/sniadania/szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-re-2ZUk-r3g8-wDuh.html">
+
+        <!-- marfeel-static -->
+<script type="text/javascript">
+!function(){"use strict";function e(e){var t=!(arguments.length>1&&void 0!==arguments[1])||arguments[1],c=document.createElement("script");c.src=e,t?c.type="module":(c.async=!0,c.type="text/javascript",c.setAttribute("nomodule",""));var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(c,n)}!function(t,c){!function(t,c,n){var a,o,r;n.accountId=c,null!==(a=t.marfeel)&&void 0!==a||(t.marfeel={}),null!==(o=(r=t.marfeel).cmd)&&void 0!==o||(r.cmd=[]),t.marfeel.config=n;var i="https://sdk.mrf.io/statics";e("".concat(i,"/marfeel-sdk.js?id=").concat(c),!0),e("".concat(i,"/marfeel-sdk.es5.js?id=").concat(c),!1)}(t,c,arguments.length>2&&void 0!==arguments[2]?arguments[2]:{})}(window,2716,{} /* Config */)}();
+const isMarfeelInitialized = true;
+</script>
+
+
+        <!-- no-8741 -->
+        
+
+
+
+    </head>
+
+    <body class="recipe-layout wide ">
+        
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53W55K9"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+        <div class="dummy_header" style="display: none;"></div>
+
+        
+            <div id='hook_body_start'>
+
+<!-- RECIPE_RICH_SNIPPET -->
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org/",
+    "@type": "Recipe",
+    "name": "Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa",
+    "description": "Shakshouka (czytaj: szakszuka) to danie znane w kuchniach: tunezyjskiej, izraelskiej, egipskiej i marokańskiej, a samo słowo oznacza bałagan. W sumie chodzi o jajka w lekko pikantnym pomidorowym sosie z przyprawami i dodatkami. Idealne, sycące weekendowe śniadanie, w wersji z kiełbasą i papryką sprawdzi się też jako danie na lunch lub ciepłą kolację.",
+    
+    "datePublished": "2026-07-10T05:05:15+02:00",
+    
+    
+    "author": [
+      {"@type": "Person", "name": "Anna Śmiałek"}
+    ],
+    
+
+    
+
+    
+    "image": {
+        "@type": "ImageObject",
+        "url": "//cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-15-j.jpg",
+        "width": 1920,
+        "height": 1080
+    },
+    
+    "totalTime": "PT00H15M00S",
+    "recipeYield": "4",
+    "recipeIngredient": [
+        "4 jajka  ","3 pomidory  ","1/2 łyżki masła lub oliwy  ","ząbek czosnku  ","sól, świeżo zmielony pieprz  ","szczypta oregano  ","chili  ","kmin rzymski"
+    ],
+    "recipeInstructions": [
+        {"@type": "HowToStep", "text": "Pomidory sparzyć, obrać ze skórki, pokroić na ćwiartki, wykroić pestki, miąższ pokroić w kosteczkę."},{"@type": "HowToStep", "text": "Na niedużą patelnię włożyć masło lub wlać oliwę oraz starty czosnek, chwilę podsmażyć."},{"@type": "HowToStep", "text": "Dodać pomidory, doprawić solą, pieprzem i przyprawami. Wymieszać i intensywnie smażyć na większym ogniu przez 4 minuty, nie mieszać, żeby odparowały."},{"@type": "HowToStep", "text": "Do podsmażonych pomidorów wbić jajka, doprawić solą. Przykryć i gotować przez 3 minuty lub do czasu, aż białka będą ścięte."},{"@type": "HowToStep", "text": "Podawać ze świeżą bazylią i bagietką."},{"@type": "HowToStep", "text": ""}
+    ],
+    "video": {
+        "@type": "VideoObject",
+        "name": "Jajka – zdrowie w skorupce",
+        "description": "Jajka – zdrowie w skorupce",
+        "thumbnailUrl": ["https://static.stream.smcdn.pl/tovfr/6/321/9EACB121333E446BA17A6F69214A17BC/1.jpg"],
+        "contentUrl": "https://cache.stream.smcdn.pl/tovid/_definst_/5/321/C4710438199F44649E31413CE8C179B4/d4b85ff0-ad06-4eeb-a582-73538d4a2c90.mp4/playlist.m3u8",
+        "duration": "PT00H03M39S",
+        "uploadDate": "2020-06-30T21:58:32+00:00"
+    }
+    
+    }
+</script>
+</div>
+        
+
+        <!-- stylebook topboard -->
+        <section>
+            <div class="zpr_box_topboard beszamel-se-pl_topboard" id="hook_box_topboard">
+                <!-- hook_box_topboard -->
+                
+                    <!-- ADS top_0 -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="top_0" class="zpr_top_0">
+    
+        <script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("top_0"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+<!-- ADS m_top_0 -->
+
+
+                
+                <!-- /hook_box_topboard -->
+            </div>
+        </section>
+        <!--- / stylebook topboard -->
+
+        <!-- gl_plugin header -->
+        <header class="gl_plugin header">
+            <!-- hook_top -->
+            
+                <div id='hook_top'><!-- Site Header -->
+<div class="site-header">
+  <div class="site-header__container">
+    <div class="site-header__left">
+      <div class="site-header__logo">
+        <a class="site-header__logo-link" href="https://beszamel.se.pl/" aria-label="Przejście do strony głównej">
+          <img class="site-header__logo-image" src="/media/desktop/site_header/images/logos/logo-beszamel.svg" alt="" width="165" height="36">
+        </a>
+      </div>
+      <nav class="site-header__nav">
+        <ul class="site-header__nav-list">
+          
+          <li class="site-header__nav-item site-header__nav-item--active">
+            <a href="https://beszamel.se.pl/przepisy/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/cooking-book.svg" alt="Przepisy" width="24" height="24">
+              <span class="site-header__nav-label">Przepisy</span>
+            </a>
+          </li>
+          
+          <li class="site-header__nav-item">
+            <a href="https://beszamel.se.pl/porady/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/cooking-hat.svg" alt="Porady" width="24" height="24">
+              <span class="site-header__nav-label">Porady</span>
+            </a>
+          </li>
+          
+          <li class="site-header__nav-item">
+            <a href="https://beszamel.se.pl/diety/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/bowl.svg" alt="Diety" width="24" height="24">
+              <span class="site-header__nav-label">Diety</span>
+            </a>
+          </li>
+          
+          <li class="site-header__nav-item">
+            <a href="https://beszamel.se.pl/produkty/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/fridge.svg" alt="Produkty" width="24" height="24">
+              <span class="site-header__nav-label">Produkty</span>
+            </a>
+          </li>
+          
+        </ul>
+      </nav>
+    </div>
+    <div class="site-header__right">
+      
+      <button class="site-header__menu-button" aria-expanded="false" aria-label="Menu">
+        <span class="site-header__menu-button-content">
+          <span class="site-header__menu-icon">
+          <svg class="site-header__menu-icon__svg" width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 3.75C0 3.32812 0.328125 3 0.75 3H20.25C20.6719 3 21 3.32812 21 3.75C21 4.17188 20.6719 4.5 20.25 4.5H0.75C0.328125 4.5 0 4.17188 0 3.75ZM0 12C0 11.5781 0.328125 11.25 0.75 11.25H20.25C20.6719 11.25 21 11.5781 21 12C21 12.4219 20.6719 12.75 20.25 12.75H0.75C0.328125 12.75 0 12.4219 0 12ZM21 20.25C21 20.6719 20.6719 21 20.25 21H0.75C0.328125 21 0 20.6719 0 20.25C0 19.8281 0.328125 19.5 0.75 19.5H20.25C20.6719 19.5 21 19.8281 21 20.25Z" fill="#000000" />
+          </svg>
+          <svg class="site-header__menu-icon__svg site-header__menu-icon__svg--hover" width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 4.5C0 3.65625 0.65625 3 1.5 3H19.5C20.3438 3 21 3.65625 21 4.5C21 5.34375 20.3438 6 19.5 6H1.5C0.65625 6 0 5.34375 0 4.5ZM0 12C0 11.1562 0.65625 10.5 1.5 10.5H19.5C20.3438 10.5 21 11.1562 21 12C21 12.8438 20.3438 13.5 19.5 13.5H1.5C0.65625 13.5 0 12.8438 0 12ZM21 19.5C21 20.3438 20.3438 21 19.5 21H1.5C0.65625 21 0 20.3438 0 19.5C0 18.6562 0.65625 18 1.5 18H19.5C20.3438 18 21 18.6562 21 19.5Z" fill="#000000"/>
+          </svg>
+        </span>
+        <span class="site-header__menu-label">Menu</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Site Menu -->
+<div class="site-menu">
+  <div class="site-menu__header">
+    <div class="site-menu__logo-wrapper">
+      <img class="site-menu__logo-image" src="/media/desktop/site_header/images/signets/signet-beszamel.svg?nocache" alt="signet-beszamel" width="36" height="36">
+      <span class="site-menu__title">Menu</span>
+    </div>
+    <button class="site-menu__close" aria-label="Close menu">
+      <svg class="site-menu__close-icon" width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.8594 4.26562L10.1719 12L17.8594 19.7344C18.1875 20.0156 18.1875 20.4844 17.8594 20.7656C17.5781 21.0938 17.1094 21.0938 16.8281 20.7656L9.09375 13.0781L1.35938 20.7656C1.07812 21.0938 0.609375 21.0938 0.328125 20.7656C0 20.4844 0 20.0156 0.328125 19.7344L8.01562 12L0.328125 4.26562C0 3.98438 0 3.51562 0.328125 3.23438C0.609375 2.95312 1.07812 2.95312 1.35938 3.23438L9.09375 10.9219L16.8281 3.23438C17.1094 2.95312 17.5781 2.95312 17.8594 3.23438C18.1875 3.51562 18.1875 3.98438 17.8594 4.26562Z" fill="black" />
+      </svg>
+    </button>
+  </div>
+  <div class="site-menu__body">
+    
+    
+    	<div class="site-menu__search site-search">
+        <form class="site-search__form" action="/wyniki-wyszukiwania/" method="get" role="search">
+          <input
+            class="site-search__input"
+            type="text"
+            name="q"
+            placeholder="Wyszukaj"
+            aria-label="Wyszukaj"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          >
+          <button class="site-search__button" type="submit">
+            <img class="site-search__icon" src="/media/icons/gsc-search-icon.svg" alt="Wyszukaj frazę">
+          </button>
+        </form>
+      </div>
+    
+    <ul class="site-menu__list">
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/przepisy/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Przepisy</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Przepisy" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/sniadania/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Śniadania</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/nalesniki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Naleśniki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/przystawki-i-przekaski/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Przystawki i przekąski</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/zupy-na-cieplo/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Zupy na ciepło</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/zupy-na-zimno/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Zupy na zimno</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/dania-glowne-rybne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Dania główne rybne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/dania-glowne-miesne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Dania główne mięsne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/dania-glowne-bezmiesne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Dania główne bezmięsne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/pierogi/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Pierogi</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/makarony-i-kluski/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Makarony i kluski</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/pizza-i-ciasta-wytrawne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Pizza i ciasta wytrawne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/przetwory/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Przetwory</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/napoje/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Napoje</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/warzywa-na-cieplo/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa na ciepło</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-miesne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki mięsne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-z-warzyw/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki z warzyw</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-rybne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki rybne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-sycace/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki sycące</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-inne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki inne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciasta-okazjonalne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciasta okazjonalne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciastka-i-ciasteczka/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciastka i ciasteczka</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciasta-na-pocieszenie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciasta na pocieszenie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/serniki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Serniki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/desery/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Desery</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciasta-bazowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciasta bazowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/inne-ciasta/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Inne ciasta</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/porady/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Porady</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Porady" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/newsy-kulinarne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Newsy kulinarne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/jak-zrobic/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Jak zrobić</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/zakupy-i-przechowywanie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Zakupy i przechowywanie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/ciekawostki-kulinarne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciekawostki kulinarne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="/przepisy-gessler/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Przepisy Magdy Gessler</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/diety/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Diety</span>
+          </div>
+          
+        </a>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/produkty/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Produkty</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Produkty" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/grzyby/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Grzyby</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/owoce-morza/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Owoce morza</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/ryby-morskie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ryby morskie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/ryby-slodkowodne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ryby słodkowodne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/wedliny/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Wędliny</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/drob/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Drób</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/mieso/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Mięso</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/nabial/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Nabiał</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/owoce-jagodowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Owoce jagodowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/owoce-egzotyczne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Owoce egzotyczne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/jablka-i-gruszki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Jabłka i gruszki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/pestkowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Pestkowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/inne-owoce/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Inne owoce</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/popularne-warzywa/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Popularne warzywa</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/warzywa-korzeniowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa korzeniowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/warzywa-straczkowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa strączkowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/warzywa-kapustne-i-lisciaste/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa kapustne i liściaste</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="https://beszamel.se.pl/okazjonalne/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Na specjalne okazje</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Na specjalne okazje" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-andrzejki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Andrzejki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-boze-narodzenie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Boże Narodzenie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-chrzest-i-komunie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Chrzest i komunia</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-halloween/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Halloween</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-sylwester-i-karnawal/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sylwester i karnawał</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-tlusty-czwartek/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Tłusty czwartek</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-walentynki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Walentynki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-wielkanoc/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Wielkanoc</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-dania-wigilijne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Wigilia</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="https://beszamel.se.pl/srodziemnomorskie-smaki/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Śródziemnomorskie smaki</span>
+          </div>
+          
+        </a>
+        
+      </li>
+      
+    </ul>
+  </div>
+</div>
+</div>
+            
+            <!-- /hook_top -->
+        </header>
+
+        <section class="main__section">
+            <!-- zpr_screening -->
+            <div class="zpr_screening">
+                <section>
+                    <!-- zpr_combo -->
+                    <div class="zpr_combo">
+                        
+                        <!-- zpr_top1 -->
+                        <div class="zpr_box_top1" id="hook_box_top1">
+                            <!-- hook_box_top1 -->
+                            
+                               <!-- ADS top_1 -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="top_1" class="zpr_top_1">
+    
+        <script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("top_1"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+
+                            
+                            <!-- /hook_box_top1 -->
+                        </div>
+                        <!-- /zpr_top1 -->
+                        
+
+                        <!-- zpr_sky -->
+                        <div class="zpr_skyscrapper">
+                            <div class="zpr_box_sky" id="hook_box_sky">
+                                <!-- hook_box_sky -->
+                                
+                                    
+                                
+                                <!-- /hook_box_sky -->
+                            </div>
+                         </div>
+                        <!-- /zpr_sky -->
+                    </div>
+                    <!-- /zpr_combo -->
+                </section>
+
+                <section>
+                    <!-- gl_wrapper -->
+                    <div class="gl_wrapper">
+
+                        
+
+                        <!-- hook_pre_content -->
+                        
+                            
+                        
+                        <!-- /hook_pre_content -->
+
+                        
+                        <!-- row -->
+                        <div class="row">
+                            <!-- col-8 -->
+                            <div class="col col-8">
+                                <div class="main-content">
+                                    <!-- hook_content -->
+                                    
+                                        <div id='hook_content'><!-- BREADCRUMB_V2 -->
+<section>
+    <nav class="row">
+        <ol class="breadcrumb_v2">
+            <li class="breadcrumb_v2-item"><a href="/">Beszamel</a></li>
+            
+                
+                    <li class="breadcrumb_v2-item"><a href="/przepisy/">Przepisy</a></li>
+                
+            
+                
+                    <li class="breadcrumb_v2-item"><a href="/przepisy/sniadania/">Śniadania</a></li>
+                
+            
+                
+                    <li class="breadcrumb_v2-item">Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa</li>
+                
+            
+        </ol>
+    </nav>
+</section>
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+        
+            {"@type": "ListItem",
+                "position": 1,
+                "name": "Beszamel",
+                "item": "https://beszamel.se.pl/"
+            },
+        
+        
+            {"@type": "ListItem",
+             "position": 2,
+             "name": "Przepisy",
+             "item": "https://beszamel.se.pl/przepisy/"
+            },
+        
+            {"@type": "ListItem",
+             "position": 3,
+             "name": "Śniadania",
+             "item": "https://beszamel.se.pl/przepisy/sniadania/"
+            },
+        
+            {"@type": "ListItem",
+             "position": 4,
+             "name": "Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa",
+             "item": "https://beszamel.se.pl/przepisy/sniadania/szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-re-2ZUk-r3g8-wDuh.html"
+            }
+        
+        ]
+    }
+</script>
+
+<!-- RECIPE -->
+
+<article recipe_uid="re-2ZUk-r3g8-wDuh" class="recipe">
+  <div class="recipe__title">
+     <h1>Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa</h1>
+  </div>
+  <div class="neck display-flex">
+    <div class="autor flex display-flex items-spaced-between">
+        <!--authors-top-->
+        
+            
+
+
+
+<div class="article-authors">
+	
+	    
+			
+				<div class="article-author">
+					
+						<a href="https://beszamel.se.pl/autor/anna-smialek-at-EReY-3nY8-gCy9/">
+							<div class="article-author__thumb">
+								<img src="https://cdn.authors.smcloud.net/t/authors/F37A1711_at-EReY-3nY8-gCy9_148x196.jpg" alt="Anna Śmiałek" />
+							</div>
+						</a>
+					
+					
+					<span class="article-author__name h3">
+						<a href="https://beszamel.se.pl/autor/anna-smialek-at-EReY-3nY8-gCy9/">Anna Śmiałek</a>
+					</span>
+				</div>
+			
+	    
+	
+	
+	
+</div>
+        
+        <!--/authors-top-->
+
+        <span id="timezone" title="Europe/Warsaw">
+            <span class="h3 pub_time_date" >2026-07-10</span>
+            <span class="h3 pub_time_hours_minutes">5:05</span>
+        </span>
+
+        
+    </div>
+
+    
+<!-- SHARE_BUTTONS -->
+
+<div class="share-buttons-wrapper">
+    <a
+    id="google-preferences"
+    target="_blank"
+    href="https://google.com/preferences/source?q=https://beszamel.se.pl"
+    class="google-preference-btn"
+    >
+        <span class="google-preference-btn__icon"></span>
+        <span class="google-preference-btn__text">Dodaj do Google</span>
+    </a>
+    <div class="share-buttons">
+        <a rel="nofollow" class="fb-button" href="https://www.facebook.com/sharer/sharer.php?u=https:%23source%3Dfb" target="_blank"></a>
+        <a rel="nofollow" class="tt-button" href="https://www.twitter.com/share?url=https:%23source%3Dtt" target="_blank"></a>
+        <a rel="nofollow" class="mail-button" href="/cdn-cgi/l/email-protection#4d722f222934706d2539393d3e77687f7e3e22383f2e28687e09202c2421" target="_blank"></a>
+    </div>
+</div>
+
+  </div>
+
+  <div class="recipe__lead">
+    <p><p class="BasicParagraph">Shakshouka (czytaj: szakszuka) to danie znane w kuchniach: tunezyjskiej, izraelskiej, egipskiej i marokańskiej, a samo słowo oznacza bałagan. W sumie chodzi o jajka w lekko pikantnym pomidorowym sosie z przyprawami i dodatkami. Idealne, sycące weekendowe śniadanie, w wersji z kiełbasą i <a href="https://beszamel.se.pl/papryka/papryka-odmiany-papryki-do-czego-sie-nadaja-poszczegolne-gatunki,1432/" target="_blank">papryką</a> sprawdzi się też jako danie na lunch lub ciepłą kolację.</p></p>
+  </div>
+
+  <div id="lead_object">
+    <div class="recipe__photo">
+      <div class="neck"></div>
+      
+
+      
+          
+              <!--gl_plugin webp_photo -->
+              
+<!-- $Source$ -->
+<!-- zdjęcie webp w artykule -->
+<div class="single-photo hero with-frames ">
+    
+      <figure>
+          
+              <div>
+                  <picture>
+                   
+                      
+                        <source srcset="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-12-j.webp 1280w" type="image/webp" media="(min-width: 1280px)" sizes="1280px"/>
+                      
+                        <source srcset="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-9-j.webp 994w" type="image/webp" media="(max-width: 1279px)" sizes="1279px"/>
+                      
+                        <source srcset="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-5-j.webp 576w" type="image/webp" media="(max-width: 576px)" sizes="576px"/>
+                      
+                        <source srcset="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-3-j.webp 300w" type="image/webp" media="(max-width: 300px)" sizes="300px"/>
+                      
+                      
+                    <img src="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-9-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-9-j.jpg" alt="Szakszuka podbiła pół świata. Ta bliskowschodnia jajecznica uzależnia od pierwszego kęsa" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-TXej-1YBX-KsSW_szakszuka-podbila-pol-swiata-ta-bliskowschodnia-jajecznica-uzaleznia-od-pierwszego-kesa-9-j.jpg" width="994" height="828"/>
+                  </picture>
+              </div>
+          
+            <figcaption class="h5">
+                <span class="author">Autor: Gkrphoto/ Shutterstock</span>
+                <span class="title">Szakszuka ma nie tylko  niezapomniany smak, ale zachęca do jedzenia samym wyglądem</span>
+                
+            </figcaption>
+      </figure>
+    
+</div>
+<!-- zdjęcie webp w artykule -->
+<!-- /$Source$ -->
+              <!--/gl_plugin webp_photo -->
+          
+      
+    </div>
+  </div>
+  <div class="recipe__details">
+    <div class="recipe__ease">
+      <div class="ease-item">
+          <div class="ease-box preparation_complexity_0"></div>
+          <span>łatwy</span>
+      </div>
+      <div class="ease-item">
+        <div class="ease-box"></div>
+          <span>15 min</span>
+      </div>
+      <div class="ease-item">
+        <div class="ease-box"></div>
+          <span>4</span>
+      </div>
+    </div>
+    
+    <div class="recipe__diet">
+      
+        <span><p>Dieta wegetariańska</p></span>
+      
+    </div>
+    
+  </div>
+
+  
+    <p>
+      <p>Niektóre śniadania mają niezwykłą zdolność poprawiania humoru jeszcze zanim zdążymy usiąść przy stole. Szakszuka też ma tę moc. Kilka prostych składników, które zwykle są pod ręką, zamienia się w danie pełne koloru, aromatu i smaku. Pomidory powoli gęstnieją na patelni, cebula staje się słodka, przyprawy dodają charakteru, a jajka ścinają się tylko na tyle, żeby żółtko pozostało aksamitne i idealnie połączyło się z sosem.</p>
+<p>Choć szakszuka kojarzy się przede wszystkim z kuchnią Bliskiego Wschodu i Izraela, jej korzenie sięgają Afryki Północnej. Z czasem przepis zaczął wędrować między krajami i kulturami, a każda z nich dodawała coś od siebie. Dziś obok klasycznej wersji z pomidorami można spotkać szakszukę z papryką, szpinakiem, fetą, pieczarkami czy bakłażanem, ale zasada pozostaje ta sama – prosty sos i jajka przygotowane bezpośrednio na nim.</p>
+<p>Sekret naprawdę dobrej szakszuki tkwi w cierpliwości. Sos nie powinien być wodnisty ani przygotowany w pośpiechu. Kilkanaście minut spokojnego gotowania sprawia, że pomidory nabierają głębi, przyprawy mają czas uwolnić aromat, a całość smakuje znacznie lepiej niż wskazywałaby na to krótka lista składników. Na koniec pozostaje już tylko kawałek dobrego chleba, bo trudno wyobrazić sobie lepszy sposób na wykorzystanie każdego kawałka tego gęstego, pachnącego sosu.</p>
+    </p>
+  
+
+  <!--reklama-->
+  <div class="zpr_box_inside_top_video">
+    <!-- ADS inside_top_video -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="inside_top_video" class="zpr_inside_top_video">
+    
+        <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("inside_top_video"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+
+  </div>
+  <!--/reklama-->
+
+  <div class="recipe__ingredients">
+    <div class="ingredients__title">
+      <h2>SKŁADNIKI</h2>
+    </div>
+    <div class="ingredients__items">
+      <span><ul><li>4 <a href="https://beszamel.se.pl/jaja/jajka-co-warto-o-nich-wiedziec,3873/">jajka</a>  </li>
+<li>3 <a href="https://beszamel.se.pl/pomidory/dlaczego-pomidory-sa-zdrowe-likopen-w-pomidorach,2916/">pomidory</a>  </li>
+<li>1/2 łyżki masła lub oliwy  </li>
+<li>ząbek czosnku  </li>
+<li>sól, świeżo zmielony pieprz  </li>
+<li>szczypta <a href="https://beszamel.se.pl/porady/oregano-czyli-lebiodka-pospolita-jakie-ma-wlasciwosci-korzystne-dla-zdrowia,11662/">oregano</a>  </li>
+<li>chili  </li>
+<li><a href="https://beszamel.se.pl/przyprawy-i-ziola/kumin-kmin-rzymski-co-za-przyprawa-do-czego-sie-ja-dodaje,4545/">kmin rzymski</a></li></ul></span>
+    </div>
+  </div>
+  <div class="recipe__preparation">
+    <div class="preparation__headline">
+      <h2>PRZYGOTOWANIE KROK PO KROKU</h2>
+    </div>
+    <div class="preparation__list">
+      <span><ul><li>Pomidory sparzyć, obrać ze skórki, pokroić na ćwiartki, wykroić pestki, miąższ pokroić w kosteczkę.</li>
+<li>Na niedużą patelnię włożyć masło lub wlać oliwę oraz starty czosnek, chwilę podsmażyć.</li>
+<li>Dodać pomidory, doprawić solą, pieprzem i przyprawami. Wymieszać i intensywnie smażyć na większym ogniu przez 4 minuty, nie mieszać, żeby odparowały.</li>
+<li>Do podsmażonych pomidorów wbić jajka, doprawić solą. Przykryć i gotować przez 3 minuty lub do czasu, aż białka będą ścięte.</li>
+<li>Podawać ze świeżą bazylią i bagietką.</li>
+<li></li></ul></span>
+    </div>
+  </div>
+  
+  
+  <div class="recipe__video">
+    
+
+<!-- VIDEO_YPLAYER -->
+
+<div class="gl_plugin player video_player">
+  
+    <div class="player__title">Jajka – zdrowie w skorupce</div>
+  
+
+  
+
+  <!-- ADS invideogam yplayer -->
+
+
+  
+  <script>
+    window.IMA_VIDEO_PREROLL = true; 
+  </script>
+  
+
+
+
+  <script>
+    window["vv-fZyh-nZAS-sdvA"] = {
+      length: 219,
+      splash: "https://static.stream.smcdn.pl/tovfr/6/321/9EACB121333E446BA17A6F69214A17BC/1.jpg",
+      sticky: true,
+      title: "Jajka – zdrowie w skorupce",
+      turn_off_ads: false,
+      is_vertical: false,
+      uid: "vv-fZyh-nZAS-sdvA",
+      url: "https://cache.stream.smcdn.pl/tovid/_definst_/5/321/C4710438199F44649E31413CE8C179B4/d4b85ff0\u002Dad06\u002D4eeb\u002Da582\u002D73538d4a2c90.mp4/playlist.m3u8",
+      loadSubsequentVideo: false,
+      block_autoplay: false,
+    }
+  </script>
+  <div class="r-video-player" data-video-id="vv-fZyh-nZAS-sdvA"></div>
+</div>
+
+
+
+
+
+  </div>
+  
+  
+  
+  
+    
+      
+<div class="extended-recipe-author">
+  
+    <div class="extended-recipe-author__thumb">
+      <img src="https://cdn.authors.smcloud.net/t/authors/F37A1711_at-EReY-3nY8-gCy9_148x196.jpg" />
+    </div>
+  
+  <div class="extended-recipe-author__body">
+    
+      <div class="extended-recipe-author__name">
+        Anna Śmiałek
+      </div>
+    
+    
+    
+      <div class="extended-recipe-author__description">
+        <p>Pomysłodawczyni i redaktorka prowadząca serwis beszamel.pl. Swoją pasję i hobby, jakim są kulinaria, połączyła z pracą. Zadowolona w towarzystwie ludzi, którzy cenią sobie dobre jedzenie i ciekawą rozmowę. Wciąż głodna nowych wyzwań, …
+      </div>
+    
+    
+      <a href="https://beszamel.se.pl/autor/anna-smialek-at-EReY-3nY8-gCy9/" class="extended-recipe-author__link">więcej...</a>
+    
+  </div>
+</div>
+    
+  
+  <!--Comments-buttons-->
+  <div class="comments__hookBottom"></div>
+  <!--/Comments-buttons-->
+</article>
+</div>
+                                    
+                                    <!-- /hook_content -->
+                                </div>
+                            </div>
+                            <!-- /col-8 -->
+
+                            <!-- col-4 -->
+                            <div class="col col-4">
+                                <div class="aside">
+                                    <!-- hook_content_right -->
+                                    
+                                        
+                                    
+                                    <!-- /hook_content_right -->
+
+                                    <!--reklama-->
+                                    <div class="side_box_container">
+                                        <div class="zpr_box_half_page">
+                                            <div class="half_page_sticky"></div>
+                                            <div class="zpr_hp" id="hook_box_half_page">
+                                                <!-- hook_box_half_page -->
+                                                
+                                                    <!-- ADS side_1 -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="side_1" class="zpr_side_1">
+    
+        <script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("side_1"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+
+                                                
+                                                <!-- /hook_box_half_page -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="zpr_box_side_bottom">
+                                        <div class="rectangle_sticky"></div>
+                                        <div class="zpr_rect" id="hook_box_side_bottom">
+                                            <!-- hook_box_side_bottom -->
+                                            
+                                                
+                                            
+                                            <!-- /hook_box_side_bottom -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /col-4 -->
+                        </div>
+                        <!-- /row -->
+                        
+
+                    </div>
+                    <!-- /gl_wrapper -->
+                </section>
+
+                <section>
+                    <div class="gl_wrapper">
+                        <div class="row">
+                            <div class="col col-12">
+                                <div class="bottom_hook" id="hook_content_bottom">
+                                    <!-- hook_content_bottom -->
+                                    <div id="taboola-below-article-thumbnails"></div>
+<script type="text/javascript">
+  window._taboola = window._taboola || [];
+  _taboola.push({
+    mode: 'thumbnails-a',
+    container: 'taboola-below-article-thumbnails',
+    placement: 'Below Article Thumbnails',
+    target_type: 'mix'
+  });
+  let widgetTaboola = document.querySelector("#taboola-below-article-thumbnails")
+  let taboolaObserver = new MutationObserver(function(entires, observer) {
+    entires.forEach(function(entry) {
+      observer.disconnect()
+      if (typeof(setVisibilityEvent) !== "undefined"){
+          setVisibilityEvent(entry.target,"taboola")
+      }
+      else{
+          console.log("nie znaleziono funkcji")
+      }
+    });
+  });
+  taboolaObserver.observe(widgetTaboola, {childList: true});
+</script>
+<div id="taboola-below-article-thumbnails"></div>
+<script type="text/javascript">
+  window._taboola = window._taboola || [];
+  _taboola.push({
+    mode: 'thumbnails-a',
+    container: 'taboola-below-article-thumbnails',
+    placement: 'Below Article Thumbnails',
+    target_type: 'mix'
+  });
+  let widgetTaboola = document.querySelector("#taboola-below-article-thumbnails")
+  let taboolaObserver = new MutationObserver(function(entires, observer) {
+    entires.forEach(function(entry) {
+      observer.disconnect()
+      if (typeof(setVisibilityEvent) !== "undefined"){
+          setVisibilityEvent(entry.target,"taboola")
+      }
+      else{
+          console.log("nie znaleziono funkcji")
+      }
+    });
+  });
+  taboolaObserver.observe(widgetTaboola, {childList: true});
+</script>
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Porady - Newsy kulinarne -->
+<div class="gl_plugin listing listing-wi-HFNd-e7pw-w9EB" data-upscore-zone="[beszamel.se.pl - kolekcja] Porady - Newsy kulinarne" data-recommendation-id="wi-HFNd-e7pw-w9EB">
+    
+        
+            
+            <div id="wi-HFNd-e7pw-w9EB" class="main-title-listing">
+                
+                    
+    
+        <span>
+            To cię zainteresuje
+        </span>
+    
+
+                
+            </div>
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v30 display-flex">
+        
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-gotowac-fasolke-szparagowa-zeby-byla-jedrna-i-nie-stracila-koloru-aa-YEj7-UhxM-mwVt.html" title=" Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YEj7-UhxM-mwVt" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-rv6j-CihV-P3oc_jak-gotowac-fasolke-szparagowa-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-rv6j-CihV-P3oc_jak-gotowac-fasolke-szparagowa-300x250.jpg" alt=" Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-rv6j-CihV-P3oc_jak-gotowac-fasolke-szparagowa-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-gotowac-fasolke-szparagowa-zeby-byla-jedrna-i-nie-stracila-koloru-aa-YEj7-UhxM-mwVt.html" title=" Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YEj7-UhxM-mwVt" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                     Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-aa-3ZM1-Qdyy-VZHy.html" title="Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-3ZM1-Qdyy-VZHy" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-MdKn-fxvR-zZw3_plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-MdKn-fxvR-zZw3_plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-300x250.jpg" alt="Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-MdKn-fxvR-zZw3_plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-aa-3ZM1-Qdyy-VZHy.html" title="Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-3ZM1-Qdyy-VZHy" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/ciasta-na-herbatnikach-13-ciast-bez-pieczenia-robie-je-w-15-minut-a-goscie-prosza-o-przepis-aa-iShq-wkWx-n2VA.html" title="Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-iShq-wkWx-n2VA" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-NPgm-BqnW-XeSq_ciasto-bez-pieczenia-13-super-przepisow-na-ciasta-na-herbatnikach-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-NPgm-BqnW-XeSq_ciasto-bez-pieczenia-13-super-przepisow-na-ciasta-na-herbatnikach-300x250.jpg" alt="Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-NPgm-BqnW-XeSq_ciasto-bez-pieczenia-13-super-przepisow-na-ciasta-na-herbatnikach-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/ciasta-na-herbatnikach-13-ciast-bez-pieczenia-robie-je-w-15-minut-a-goscie-prosza-o-przepis-aa-iShq-wkWx-n2VA.html" title="Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-iShq-wkWx-n2VA" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-czyscic-kurki-bez-dlugiego-moczenia-ten-blad-odbiera-im-smak-aa-uRHh-Y6Mi-RHtj.html" title="Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-uRHh-Y6Mi-RHtj" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-eyBV-jgzW-1K9v_kurki-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-eyBV-jgzW-1K9v_kurki-3-j.jpg" alt="Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-eyBV-jgzW-1K9v_kurki-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-czyscic-kurki-bez-dlugiego-moczenia-ten-blad-odbiera-im-smak-aa-uRHh-Y6Mi-RHtj.html" title="Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-uRHh-Y6Mi-RHtj" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/zrob-te-lody-i-juz-nie-kupisz-innych-20-przepisow-ktore-musisz-poznac-aa-vDbP-5GN8-HKx8.html" title="Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-vDbP-5GN8-HKx8" data-box-art-num="5"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-beZ9-hbvs-6g7N_domowe-lody-jak-zrobic-pyszne-desery-lodowe-w-domu-top-20-przepisow-664x442.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-beZ9-hbvs-6g7N_domowe-lody-jak-zrobic-pyszne-desery-lodowe-w-domu-top-20-przepisow-664x442.jpg" alt="Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-beZ9-hbvs-6g7N_domowe-lody-jak-zrobic-pyszne-desery-lodowe-w-domu-top-20-przepisow-664x442.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/zrob-te-lody-i-juz-nie-kupisz-innych-20-przepisow-ktore-musisz-poznac-aa-vDbP-5GN8-HKx8.html" title="Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-vDbP-5GN8-HKx8" data-box-art-num="5"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/chlodzace-dania-i-napoje-co-jesc-i-pic-w-upaly-aa-C6dA-Up8G-WKNW.html" title="Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-C6dA-Up8G-WKNW" data-box-art-num="6"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-8fNR-QvHz-ovwS_chlodzace-dania-i-napoje-na-upaly-co-jesc-i-pic-by-poczuc-ulge-w-najwiekszy-skwar-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-8fNR-QvHz-ovwS_chlodzace-dania-i-napoje-na-upaly-co-jesc-i-pic-by-poczuc-ulge-w-najwiekszy-skwar-300x250.jpg" alt="Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-8fNR-QvHz-ovwS_chlodzace-dania-i-napoje-na-upaly-co-jesc-i-pic-by-poczuc-ulge-w-najwiekszy-skwar-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/chlodzace-dania-i-napoje-co-jesc-i-pic-w-upaly-aa-C6dA-Up8G-WKNW.html" title="Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-C6dA-Up8G-WKNW" data-box-art-num="6"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/zakupy-i-przechowywanie/handlarze-oszukuja-na-truskawkach-po-tym-poznasz-czy-te-truskawki-sa-naprawde-polskie-aa-rNDy-N4hQ-Doph.html" title="Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-rNDy-N4hQ-Doph" data-box-art-num="7"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-kkYM-T53U-Wj8f_polskie-truskawki-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-kkYM-T53U-Wj8f_polskie-truskawki-3-j.jpg" alt="Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-kkYM-T53U-Wj8f_polskie-truskawki-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/zakupy-i-przechowywanie/handlarze-oszukuja-na-truskawkach-po-tym-poznasz-czy-te-truskawki-sa-naprawde-polskie-aa-rNDy-N4hQ-Doph.html" title="Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-rNDy-N4hQ-Doph" data-box-art-num="7"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/ten-grzyb-rosnie-na-drzewach-i-smakuje-jak-kurczak-czym-jest-zolciak-siarkowy-aa-YJ7G-Ric8-vWFT.html" title="Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YJ7G-Ric8-vWFT" data-box-art-num="8"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-RF2B-c6Mr-EABt_zolciak-siarkowy-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-RF2B-c6Mr-EABt_zolciak-siarkowy-300x250.jpg" alt="Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-RF2B-c6Mr-EABt_zolciak-siarkowy-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/ten-grzyb-rosnie-na-drzewach-i-smakuje-jak-kurczak-czym-jest-zolciak-siarkowy-aa-YJ7G-Ric8-vWFT.html" title="Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YJ7G-Ric8-vWFT" data-box-art-num="8"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Redakcja poleca -->
+<div class="gl_plugin listing listing-wi-QVjS-vWaf-RrLf" data-upscore-zone="[beszamel.se.pl - kolekcja] Redakcja poleca" data-recommendation-id="wi-QVjS-vWaf-RrLf">
+    
+        
+            
+            <div id="wi-QVjS-vWaf-RrLf" class="main-title-listing">
+                
+                    
+    
+        <span>
+            Sprawdź to!
+        </span>
+    
+
+                
+            </div>
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v30 display-flex">
+        
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/pierogi/pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-re-kX1m-KQYg-QgPF.html" title="Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-kX1m-KQYg-QgPF" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-8iHX-x9Ss-d2Db_pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-8iHX-x9Ss-d2Db_pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-3-j.jpg" alt="Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-8iHX-x9Ss-d2Db_pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/pierogi/pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-re-kX1m-KQYg-QgPF.html" title="Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-kX1m-KQYg-QgPF" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/ciasta-bazowe/wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-re-pbVo-N3RW-NJGZ.html" title="Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-pbVo-N3RW-NJGZ" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-Kkpw-KCGf-142o_wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-Kkpw-KCGf-142o_wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-3-j.jpg" alt="Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-Kkpw-KCGf-142o_wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/ciasta-bazowe/wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-re-pbVo-N3RW-NJGZ.html" title="Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-pbVo-N3RW-NJGZ" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/ciasta-okazjonalne/ciasto-hrabina-wyglada-jak-z-cukierni-masa-brzoskwiniowa-biszkopty-i-migdaly-tworza-elegancki-deser-re-1FBd-bqra-VRY9.html" title="Ciasto Hrabina wygląda jak z cukierni. Masa brzoskwiniowa, biszkopty i migdały tworzą elegancki deser" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-1FBd-bqra-VRY9" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-oPCq-9qNM-wLZL_ciasto-hrabina-wyglada-jak-z-cukierni-masa-brzoskwiniowa-biszkopty-i-migdaly-tworza-elegancki-deser-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-oPCq-9qNM-wLZL_ciasto-hrabina-wyglada-jak-z-cukierni-masa-brzoskwiniowa-biszkopty-i-migdaly-tworza-elegancki-deser-3-j.jpg" alt="Ciasto Hrabina wygląda jak z cukierni. Masa brzoskwiniowa, biszkopty i migdały tworzą elegancki deser" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-oPCq-9qNM-wLZL_ciasto-hrabina-wyglada-jak-z-cukierni-masa-brzoskwiniowa-biszkopty-i-migdaly-tworza-elegancki-deser-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/ciasta-okazjonalne/ciasto-hrabina-wyglada-jak-z-cukierni-masa-brzoskwiniowa-biszkopty-i-migdaly-tworza-elegancki-deser-re-1FBd-bqra-VRY9.html" title="Ciasto Hrabina wygląda jak z cukierni. Masa brzoskwiniowa, biszkopty i migdały tworzą elegancki deser" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-1FBd-bqra-VRY9" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Ciasto Hrabina wygląda jak z cukierni. Masa brzoskwiniowa, biszkopty i migdały tworzą elegancki deser
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/dania-glowne-bezmiesne/pomidorowy-cobbler-z-serowymi-buleczkami-pod-chrupiacym-wierzchem-kryje-sie-esencjonalny-letni-sos-re-pKX7-DD9H-Mtbw.html" title="Pomidorowy cobbler z serowymi bułeczkami. Pod chrupiącym wierzchem kryje się esencjonalny letni sos" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-pKX7-DD9H-Mtbw" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-MRwF-o6aS-L9JJ_pomidorowy-cobbler-z-serowymi-buleczkami-pod-chrupiacym-wierzchem-kryje-sie-esencjonalny-letni-sos-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-MRwF-o6aS-L9JJ_pomidorowy-cobbler-z-serowymi-buleczkami-pod-chrupiacym-wierzchem-kryje-sie-esencjonalny-letni-sos-3-j.jpg" alt="Pomidorowy cobbler z serowymi bułeczkami. Pod chrupiącym wierzchem kryje się esencjonalny letni sos" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-MRwF-o6aS-L9JJ_pomidorowy-cobbler-z-serowymi-buleczkami-pod-chrupiacym-wierzchem-kryje-sie-esencjonalny-letni-sos-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/dania-glowne-bezmiesne/pomidorowy-cobbler-z-serowymi-buleczkami-pod-chrupiacym-wierzchem-kryje-sie-esencjonalny-letni-sos-re-pKX7-DD9H-Mtbw.html" title="Pomidorowy cobbler z serowymi bułeczkami. Pod chrupiącym wierzchem kryje się esencjonalny letni sos" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-pKX7-DD9H-Mtbw" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Pomidorowy cobbler z serowymi bułeczkami. Pod chrupiącym wierzchem kryje się esencjonalny letni sos
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Dziś polecamy -->
+<div class="gl_plugin listing listing-wi-a4Mh-jjXj-WAMJ" data-upscore-zone="[beszamel.se.pl - kolekcja] Dziś polecamy" data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+    
+        
+            
+            <div id="wi-a4Mh-jjXj-WAMJ" class="main-title-listing">
+                
+                    
+    
+        <span>
+            Dziś polecamy
+        </span>
+    
+
+                
+            </div>
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v30 display-flex">
+        
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/zupy-na-cieplo/na-podkarpaciu-mowia-na-nia-dziad-z-baba-ta-zupa-jest-pyszna-tania-i-bardzo-latwa-re-cnrd-YN1f-BLrC.html" title="Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-cnrd-YN1f-BLrC" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-uGXf-xybF-HGXr_zupa-dziad-z-baba-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-uGXf-xybF-HGXr_zupa-dziad-z-baba-3-j.jpg" alt="Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-uGXf-xybF-HGXr_zupa-dziad-z-baba-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/zupy-na-cieplo/na-podkarpaciu-mowia-na-nia-dziad-z-baba-ta-zupa-jest-pyszna-tania-i-bardzo-latwa-re-cnrd-YN1f-BLrC.html" title="Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-cnrd-YN1f-BLrC" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/sniadania/jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-re-uqL2-dceW-2rv7.html" title="Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-uqL2-dceW-2rv7" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-fqXu-2h2y-LQGx_jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-fqXu-2h2y-LQGx_jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-3-j.jpg" alt="Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-fqXu-2h2y-LQGx_jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/sniadania/jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-re-uqL2-dceW-2rv7.html" title="Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-uqL2-dceW-2rv7" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/ciasta-okazjonalne/te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-re-TtJ2-tjU4-gKw7.html" title="Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-TtJ2-tjU4-gKw7" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-JFyN-J3z2-ciew_te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-JFyN-J3z2-ciew_te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-3-j.jpg" alt="Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-JFyN-J3z2-ciew_te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/ciasta-okazjonalne/te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-re-TtJ2-tjU4-gKw7.html" title="Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-TtJ2-tjU4-gKw7" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przetwory/ta-salatka-z-ogorkow-znika-ze-spizarni-jako-pierwsza-przepis-od-babci-anieli-jest-bezkonkurencyjny-re-PDcN-6zKr-Ld9i.html" title="Ta sałatka z ogórków znika ze spiżarni jako pierwsza. Przepis od babci Anieli jest bezkonkurencyjny" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-PDcN-6zKr-Ld9i" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-ytJp-sPo3-GZV4_ta-salatka-z-ogorkow-znika-ze-spizarni-jako-pierwsza-przepis-od-babci-anieli-jest-bezkonkurencyjny-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-ytJp-sPo3-GZV4_ta-salatka-z-ogorkow-znika-ze-spizarni-jako-pierwsza-przepis-od-babci-anieli-jest-bezkonkurencyjny-3-j.jpg" alt="Ta sałatka z ogórków znika ze spiżarni jako pierwsza. Przepis od babci Anieli jest bezkonkurencyjny" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-ytJp-sPo3-GZV4_ta-salatka-z-ogorkow-znika-ze-spizarni-jako-pierwsza-przepis-od-babci-anieli-jest-bezkonkurencyjny-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przetwory/ta-salatka-z-ogorkow-znika-ze-spizarni-jako-pierwsza-przepis-od-babci-anieli-jest-bezkonkurencyjny-re-PDcN-6zKr-Ld9i.html" title="Ta sałatka z ogórków znika ze spiżarni jako pierwsza. Przepis od babci Anieli jest bezkonkurencyjny" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-PDcN-6zKr-Ld9i" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Ta sałatka z ogórków znika ze spiżarni jako pierwsza. Przepis od babci Anieli jest bezkonkurencyjny
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+
+                                    <!-- /hook_content_bottom -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <div class="gl_plugin footer">
+                    
+                        <!-- hook_footer -->
+                        <div id='hook_footer'>
+
+
+<!-- footer -->
+<footer>
+    <!-- gl_wrapper -->
+    <div class="gl_wrapper">
+        <div class="row">
+
+            
+            <div class="col col-3 logo">
+                <a href="https://www.grupazpr.pl" target="_blank">
+                    <img loading="lazy" src="/media/desktop/zpr_footer/images/logo-grupazpr.svg"
+                            alt="group logo"
+                         width="200"
+                         height="92">
+                </a>
+            </div>
+            
+            
+            <div class="col col-4 legal-info">
+                <p class="h5">Żaden utwór zamieszczony w serwisie nie może być powielany i rozpowszechniany lub dalej rozpowszechniany w jakikolwiek sposób (w tym także elektroniczny lub mechaniczny) na jakimkolwiek polu eksploatacji w jakiejkolwiek formie, włącznie z umieszczaniem w Internecie bez pisemnej zgody właściciela praw. Jakiekolwiek użycie lub wykorzystanie utworów w całości lub w części z naruszeniem prawa, tzn. bez właściwej zgody, jest zabronione pod groźbą kary i może być ścigane prawnie.
+                </p>
+            </div>
+
+            <!-- box about -->
+            <div class="col col-3 about">
+                <div class="h3">O nas <i class="fa fa-caret-down arrow-up-down" aria-hidden="true"></i></div>
+                <ul>
+                    
+                        <li><a href="https://www.grupazpr.pl">O wydawnictwie</a></li>
+                    
+                        <li><a href="/info/redakcja-aa-MGBV-qZkY-e5LG.html">Redakcja serwisu</a></li>
+                    
+                        <li><a href="https://www.grupazpr.pl/marka/1073">Reklama</a></li>
+                    
+                </ul>
+            </div>
+            <!-- /box about -->
+
+            <!-- box legal -->
+            <div class="col col-3 legal">
+                <div class="h3">Informacje prawne <i class="fa fa-caret-down arrow-up-down" aria-hidden="true"></i></div>
+                <ul>
+                    
+                        <li>
+                            <a href="https://rodo.grupazpr.pl/#time-regulamin-serwisow" rel="nofollow">Regulamin </a>
+                        </li>
+                    
+                        <li>
+                            <a href="https://www.grupazpr.pl/licencje_time.pdf" rel="nofollow">Licencje </a>
+                        </li>
+                    
+                        <li>
+                            <a href="https://rodo.grupazpr.pl/#time-polityka-prywatnosci-cookies" rel="nofollow">Polityka prywatności i cookies </a>
+                        </li>
+                    
+                        <li>
+                            <a href="https://rodo.grupazpr.pl/#time-dane-osobowe" rel="nofollow">Dane osobowe </a>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="serwis-list">
+    
+    <div onclick="toggleShowList()" class="show-list">Nasze serwisy <i class="fa fa-caret-down arrow-up-down" aria-hidden="true"></i></div>
+    <div class="list">
+        <ul>
+            <li><span class="h5">Budowa i Wnętrza:</span></li>
+            <li><a target="_blank" href="https://muratordom.pl/">Murator.pl</a></li>
+            <li><a target="_blank" href="https://projekty.muratordom.pl/">Projekty.murator.pl</a></li>
+            <li><a target="_blank" href="https://www.urzadzamy.pl/">Urzadzamy.pl</a></li>
+            <li><a target="_blank" href="https://architektura.muratorplus.pl/">Architektura.murator.pl</a></li>
+            <li><a target="_blank" href="https://www.muratorplus.pl/">Muratorplus.pl</a></li>
+            <li><a target="_blank" href="https://haleprzemyslowe.muratorplus.pl/">Haleprzemyslowe.muratorplus.pl</a></li>
+            <li><a target="_blank" href="https://obiektykomercyjne.muratorplus.pl/">Obiektykomercyjne.muratorplus.pl</a></li>
+            <li><a target="_blank" href="https://obiektymieszkalne.muratorplus.pl/">Obiektymieszkalne.muratorplus.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Zdrowie i parenting:</span></li>
+            <li><a target="_blank" href="https://www.poradnikzdrowie.pl/">Poradnikzdrowie.pl</a></li>
+            <li><a target="_blank" href="https://www.mjakmama24.pl/">Mjakmama.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Hobby:</span></li>
+            <li><a target="_blank" href="https://podroze.se.pl/">Podroze.pl</a> </li>
+            <li><a target="_blank" href="https://beszamel.se.pl/">Beszamel.pl</a></li>
+            <li><a target="_blank" href="https://www.poradyplus.pl/">Poradyplus.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">News:</span></li>
+            <li><a target="_blank" href="https://www.se.pl/">Se.pl</a></li>
+            <li><a target="_blank" href="https://superbiz.se.pl/">Superbiz.se.pl</a></li>
+            <li><a target="_blank" href="https://superseriale.se.pl/">Superseriale.se.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Radio:</span></li>
+            <li><a target="_blank" href="https://www.eska.pl/">Eska.pl</a></li>
+            <li><a target="_blank" href="https://dwa.eska.pl/">dwa.eska.pl</a></li>
+            <li><a target="_blank" href="https://www.eskarock.pl/">Eskarock.pl</a></li>
+            <li><a target="_blank" href="https://www.voxfm.pl/">Voxfm.pl</a></li>
+            <li><a target="_blank" href="https://www.radioplus.pl/">RadioPLUS.pl</a></li>
+            <li><a target="_blank" href="https://www.vibefm.pl/">Vibefm.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Centrum Usług Wspólnych:</span></li>
+            <li><a target="_blank" href="https://azb-cuw.pl/">azb-cuw.pl</a></li>
+        </ul>
+    </div>
+    
+    <div class="copyright variant2">
+        <div class="copyright__text">&copy; 2026 Grupa ZPR Media</div>
+    </div>
+</div>
+
+        </div>
+    </div>
+
+</footer>
+<!-- /footer -->
+
+</div>
+                        <!-- /hook_footer -->
+                    
+                    
+                        <!-- hook_footer_extended -->
+                        
+                        <!-- /hook_footer_extended -->
+                    
+                </div>
+
+                <div class="gl_plugin cookies">
+                    
+                        <!-- hook_footer_cookies -->
+                        
+                        <!-- /hook_footer_cookies -->
+                    
+                </div>
+
+            </div>
+            <!-- /zpr_screening -->
+        </section>
+
+        
+            <!-- hook_layer -->
+            
+            <!-- /hook_layer -->
+        
+
+        
+        
+
+        <script async src="/media/desktop/zpr_layouts_web/js/common.min.js?__8712914d"></script>
+
+
+        
+        
+            <!-- hook_end_body -->
+            <div id='hook_end_body'><!-- ADS_END -->
+
+    <!-- InVideoGam -->
+
+
+    <!-- FloorAd -->
+<script type="text/javascript">
+    try {sas_idmnet.cmd.push(function(){ try {sas_idmnet.layerRelease()}catch (e){}});} catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+</script>
+
+
+    <!-- SmartAdServer -->
+
+
+
+<script>
+  function sendPushPlacements() {
+    let placementsList = ["s1","s2","s3","t0","t1"];
+    let allPlacements;
+
+    if (typeof fixedPlacements === "undefined") {
+      allPlacements = placementsList;
+    } else {
+      allPlacements = placementsList.concat(fixedPlacements || []);
+    }
+
+    dataLayer[0]["placements"] = allPlacements.toString()
+    
+    }
+  sendPushPlacements();
+</script>
+
+
+    <!-- ToWideo -->
+
+
+
+
+    <!-- InAudioStreamGam -->
+
+
+</div>
+            <!-- /hook_end_body -->
+        
+        
+            <!-- hook_end_body_extended -->
+            <div id='hook_end_body_extended'>
+<script type="text/javascript" src="/media/desktop/js/article_ads_inserter.min.js?__8712914d" async></script>
+<script type="text/javascript" src="/media/desktop/js/blocks-lazy-load.js?__8712914d" async></script>
+<script type="text/javascript" src="https://cdn.static.smcloud.net/front/videoPlayer.js" ></script><script {&#x27;container_id&#x27;: &#x27;taboola-below-article-thumbnails&#x27;, &#x27;container_type&#x27;: &#x27;article&#x27;, &#x27;placement_name&#x27;: &#x27;Below Article Thumbnails&#x27;, &#x27;publisher_id&#x27;: &#x27;timezpr-network&#x27;} type="text/javascript">
+    window._taboola = window._taboola || [];
+    _taboola.push({flush: true});
+</script>
+
+<script type="text/javascript" src="/media/desktop/site_header/js/desktop_site_header.min.js?__8712914d" ></script></div>
+            <!-- /hook_end_body_extended -->
+        
+    
+    <a href="/cdn-cgi/l/email-protection#cda8abb9aca1a4ace3aea5a2aea5a1ac8dbeb8bda8bfa0a8a9a4ace3bda1" class="link__hide" style="display: none;">email</a>
+    <!-- SENTRY-->
+    
+    <!-- /SENTRY-->
+
+    <!-- LAYOUT -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>

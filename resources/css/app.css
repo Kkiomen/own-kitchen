@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/*
+ * White page, neutral greys, one green accent. Light only — the palette is the
+ * product's character, and carrying a second one would dilute it.
+ *
+ * The neutrals are deliberately cool. An earlier warm ramp (brown-black ink,
+ * beige hairlines) was left over from a cream background; on white those same
+ * tones read as dirt rather than as warmth.
+ */
+@theme {
+    /* Surfaces. The page is white; separation comes from hairlines, not tints. */
+    --color-paper: #ffffff;
+    --color-paper-raised: #ffffff;
+    --color-paper-sunk: #f1f3f4;
+
+    /* Text. Ink 17:1, muted 6.1:1, faint 4.5:1 — all clear AA on white. */
+    --color-ink: #17191a;
+    --color-ink-muted: #5b6469;
+    --color-ink-faint: #6f787d;
+
+    /* Hairlines do the work that borders and shadows do elsewhere. */
+    --color-rule: #e7eaec;
+    --color-rule-strong: #ccd2d5;
+
+    /*
+     * The brand colour, and it is a light one. White on it is only 2.5:1, so
+     * filled buttons carry **ink**, not white — that pairing is 6.8:1 and lets the
+     * real brand colour be the button rather than a darkened stand-in.
+     *
+     * As text on paper it is 2.4:1 and unusable, so accent-coloured words use
+     * `accent-strong` instead: 5.1:1 on paper, 5.3:1 under white.
+     */
+    --color-accent: #55b850;
+    --color-accent-strong: #2f7a2b;
+    --color-accent-soft: #e6f5e4;
+
+    /* Semantics stay muted so they read as notes in the margin. */
+    --color-flag: #8a6d1f;
+    --color-flag-soft: #f6eed6;
+    --color-leaf: #3f6212;
+    --color-leaf-soft: #e8efdc;
+}
+
+@theme inline {
+    /*
+     * One family, Poppins. Hierarchy comes from size and weight rather than a
+     * second typeface — on a phone screen a mixed pairing only adds noise.
+     */
+    --font-sans:
+        Poppins, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --font-display: Poppins, ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+    html {
+        background-color: var(--color-paper);
+        color: var(--color-ink);
+    }
+
+    /* One focus treatment everywhere, in the accent so it reads as ours. */
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+
+    ::selection {
+        background-color: var(--color-accent-soft);
+    }
+}
+
+/*
+ * Installed on a phone the layout runs under the notch and the home indicator,
+ * so the padding has to be given back explicitly.
+ */
+@utility pt-safe {
+    padding-top: env(safe-area-inset-top);
+}
+
+@utility pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility top-safe {
+    top: env(safe-area-inset-top);
+}
+
+/*
+ * The filter row scrolls sideways; a desktop scrollbar under it looks like a
+ * stray rule. Touch devices show an overlay one anyway.
+ */
+@utility no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@utility label-caps {
+    /*
+     * The small-caps label above sections and on meta rows. Frequent enough to
+     * earn a name; spelling it out each time invites drift.
+     */
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+/*
+ * Confirmation for a write that leaves no trace on screen.
+ *
+ * Adding a recipe's shopping to the list happens on another page entirely, so
+ * without this the button just goes quiet and the tap reads as ignored. The ring
+ * expands outward once, which is the shape of "it went somewhere else".
+ */
+@keyframes confirmed-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0
+            color-mix(in oklab, var(--color-accent-strong) 40%, transparent);
+    }
+
+    35% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 14px transparent;
+    }
+}
+
+@utility animate-confirmed {
+    animation: confirmed-pulse 700ms ease-out;
+}
+
+/* For the label and count that replace it: they arrive rather than blink in. */
+@keyframes rise-in {
+    from {
+        opacity: 0;
+        transform: translateY(0.35rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@utility animate-rise-in {
+    animation: rise-in 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

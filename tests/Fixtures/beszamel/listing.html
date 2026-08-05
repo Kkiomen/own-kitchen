@@ -1,0 +1,3318 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <!-- Favicon -->
+<link rel="shortcut icon" href="/favicon.ico"/>
+<link rel="icon" type="image/x-icon" sizes="96x96" href="/favicon_96x96.ico" />
+<link rel="icon" type="image/x-icon" sizes="192x192" href="/favicon_192x192.ico" />
+
+<!-- Apple Touch Icon -->
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="apple-touch-icon" sizes="192x192" href="/web-app-manifest-192x192.png" />
+<link rel="apple-touch-icon" sizes="512x512" href="/web-app-manifest-512x512.png" />
+
+        
+    <link rel="stylesheet" type="text/css" href="/media/desktop/zpr_layouts_web/css/wide_plugins.css?__8712914d">
+
+
+        
+
+
+  <link rel="stylesheet" type="text/css" href="/topboard.css">
+  <script src="/media/desktop/zpr_layouts_web/js/topboard.js?__8712914d" async></script>
+
+
+
+        
+        
+
+        <!-- hook_header_css -->
+        
+            
+<!-- RENDER_LINK -->
+
+
+    <link rel="preconnect"  href="https://smart.idmnet.pl/" >
+
+    <link rel="preconnect"  href="https://cdn.galleries.smcloud.net/" >
+
+    <link rel="preconnect"  href="https://cdn.files.smcloud.net/" >
+
+    <link rel="preconnect"  href="https://fonts.googleapis.com/" >
+
+    <link rel="preconnect"  href="https://cdn2.pollster.pl/" >
+
+    <link rel="preconnect"  href="https://ced.sascdn.com/" >
+
+    <link rel="preconnect"  href="//r.sascdn.com/" >
+
+    <link rel="preconnect"  href="//ced-ns.sascdn.com/" >
+
+    <link rel="preconnect"  href="//pagead2.googlesyndication.com/" >
+
+    <link rel="preconnect"  href="//idm.hit.gemius.pl/" >
+
+
+
+<!-- RENDER_CSS -->
+
+
+    <link rel="stylesheet" type="text/css" href="/media/beszamel.se/desktop/css/styleguide_beszamel2025.css?__8712914d" >
+
+
+
+<!-- RENDER_CSS -->
+
+
+    <link rel="stylesheet" type="text/css" href="/media/desktop/zpr_layouts_web/css/paid_google_search.css?__8712914d" >
+
+
+
+        
+        <!-- /hook_header_css -->
+
+        <!--[if IE]>
+        <link rel="stylesheet" type="text/css" href="/media/css/ie.css?__8712914d">
+        <![endif]-->
+
+        <!-- ticket112510 do przeniesienia w ramach porzadkowania analityk -->
+        <script>
+    class ViewSourceManager {
+        constructor() {
+            this.referrerUrl = document.referrer;
+            this.currentDomain = window.location.hostname
+            this.pageUrl = window.location.href
+            this.sourceCookieName = "pageViewSource"
+        }
+
+        setCookie() {
+            const sourceCookieValue = this.getSourceCookie()
+            const mainDomain = this.getMainDomainName()
+
+            if (this.sourceCookieExist(sourceCookieValue)) {
+                this.updateCookie(sourceCookieValue, mainDomain)
+            } else {
+                const source = this.getSource()
+                this.createCookie(source, mainDomain)
+            }
+        }
+
+        getMainDomainName() {
+            return this.currentDomain.substring(this.currentDomain.lastIndexOf(".", this.currentDomain.lastIndexOf(".") - 1) + 1);
+        }
+
+        getSourceCookie() {
+            let sourceCookie = {};
+            document.cookie.split(';').forEach(function(el) {
+                let [key, value] = el.split('=');
+                sourceCookie[key.trim()] = value;
+            })
+            return sourceCookie[this.sourceCookieName];
+        }
+
+        sourceCookieExist(sourceCookieValue) {
+            return (typeof sourceCookieValue !== "undefined")
+        }
+
+        updateCookie(sourceCookieValue, mainDomain) {
+            const reInt = /\d+/;
+            let currentCount = null;
+            let lastCount = sourceCookieValue.match(reInt);
+            currentCount = parseInt(lastCount[0]) > 9 ? 10 : parseInt(lastCount[0]) + 1;
+            console.log("lastCount: "+lastCount+"; currentCount: "+currentCount)
+            let updatedSourceValue = sourceCookieValue.replace(lastCount, currentCount)
+            document.cookie = `${this.sourceCookieName}=${updatedSourceValue};domain=${mainDomain};path=/`;
+        }
+
+        // order must be maintained
+        getSource() {
+            if (this.pageUrl.includes("utm_medium=push")) {
+                return "push"
+            }
+            if (this.pageUrl.includes("utm_source=facebook") || this.pageUrl.includes("utm_medium=paidsocial")) {
+                return "paid_facebook"
+            }
+            if (this.isDirect()) {
+                return "direct"
+            }
+            if (this.referrerUrl.includes("quicksearchbox") || this.referrerUrl.includes("googleapis")) {
+                return "google_discover"
+            }
+            if (this.referrerUrl.includes("www.google.")) {
+                return "google_search"
+            }
+            if (this.referrerUrl.includes(".facebook.com")) {
+                return "facebook"
+            }
+            return "other"
+        }
+
+        isDirect() {
+            return (this.pageUrl === `https://www.${this.currentDomain}/` && (this.referrerUrl.includes("//www.google")) || this.referrerUrl === "")
+        }
+
+        createCookie(source, mainDomain) {
+            document.cookie = `${this.sourceCookieName}=${source}_1;domain=${mainDomain};path=/`;
+        }
+    }
+
+    const viewSourceManagerInstance = new ViewSourceManager()
+    viewSourceManagerInstance.setCookie()
+</script>
+
+        <script>
+var dataLayer = typeof dataLayer === "undefined" ? [] : dataLayer;
+dataLayer.forEach((element, index) => {
+    if ("objectId" in element || "objectType" in element) {
+      delete dataLayer[index];
+    }
+  });
+</script>
+        <!-- hook_header_meta -->
+        
+            <!-- META_TITLE -->
+<title>Przepisy na przystawki i przekąski - Beszamel.pl</title>
+<!-- META -->
+<meta name="description" content="Przystawki i przekąski - bez nich nie ma prawdziwego przyjęcia, ani nieformalnej domówki. Oglądany w towarzystwie mecz czy film bez przekąsek traci na uroku. Wieczorna lektura książki - także. Pyszne i zdrowe domowe przekąski i zakąski to najlepsza alternatywa dla gotowych czipsów, paluszków i innych bawimordek.">
+<script>
+    
+</script>
+<script>
+var dataLayer = typeof dataLayer === "undefined" ? [] : dataLayer;
+
+dataLayer.forEach((element, index) => {
+    if ("adblockStatus" in element || "section" in element) {
+      delete dataLayer[index];
+    }
+  });
+
+dataLayer.push({
+    adblockStatus: typeof idmNetAdblockStatus === "undefined" ? "off" : "on",
+    url: window.location.href,
+})
+
+dataLayer.push(
+    {"domain": "se.pl", "adsOffStatus": false, "isPaid": false, "section": "beszamel_przystawki-i-przekaski,beszamel_przepisy,beszamel", "pageType": "category"}
+)
+
+const sourceValForPrism = typeof viewSourceManagerInstance !== "undefined" ? viewSourceManagerInstance.getSourceCookie() : null;
+if (sourceValForPrism) {
+  dataLayer.push({sourcePrism:sourceValForPrism});
+}
+
+</script>
+        
+        <!-- /hook_header_meta -->
+
+        
+
+        
+<script>
+  window._taboola_notifications = window._taboola_notifications || [];
+  window._taboola_notifications.push({ swPath: '/tb_sw.js' });
+</script>
+<script async src="https://cdn.taboola.com/webpush/publishers/1968564/taboola-push-sdk.js"></script>
+
+
+        
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-53W55K9');</script>
+<!-- End Google Tag Manager -->
+<script>
+function ads_slot_responded(){
+	dataLayer.push({event: "slot_response_received_event"})
+}
+
+function ads_slot_requested(){
+	dataLayer.push({event: "slot_requested_event"})
+}
+
+function addEventListenerOnce(event, fn) {
+var func = function () {
+	googletag.pubads().removeEventListener(event, func);
+	fn();
+};
+googletag.pubads().addEventListener(event, func);
+}
+	window.googletag = window.googletag || {cmd: []};
+	googletag.cmd.push(function() {
+    dataLayer.push({event: "gam_library_loaded"})
+	addEventListenerOnce("slotRequested", ads_slot_requested)
+	addEventListenerOnce("slotResponseReceived", ads_slot_responded)
+	})
+</script>
+
+
+
+        
+        
+
+        <!-- hook_header -->
+        
+            <!-- CMP -->
+
+<script>
+/*******TCF 2.0******************/
+window.sas_idmnet = window.sas_idmnet || {};
+window.sas_idmnet.cmd = window.sas_idmnet.cmd || [];
+
+// Wywołanie okna z konsoli  window.__tcfapi("displayCmpModal", 2, () => {});   do wykorzystania  np. pod przyciski  na stronie  w polityce cookie.
+
+if (!sas_idmnet.tcf2){
+  sas_idmnet.tcf2 = 1;
+
+  window.cmpConfig = {
+    worker: {
+      cmpID: 225,
+      iabVendorUrl: "https://smart.idmnet.pl/consent/",
+      googleVendorUrl: "https://smart.idmnet.pl/consent/google-vendors.json",
+      locale: "pl",
+    },
+    ui: {
+      logoUrl: "https://beszamel.se.pl/media/beszamel.se/desktop/images/beszamel-logo.svg",
+      consentText: "https://smart.idmnet.pl/consent/consent-grupazpr.json",
+      theme: {
+        textColor: "#000",
+        secondaryTextColor: "#999",
+        primaryColor: "#41afbb",
+      },
+    },
+  };
+  /*********************/
+  "use strict";!function(){var e=function(){var e,t="__tcfapiLocator",a=[],r=window;for(;r;){try{if(r.frames[t]){e=r;break}}catch(e){}if(r===window.top)break;r=r.parent}e||(!function e(){var a=r.document,n=!!r.frames[t];if(!n)if(a.body){var s=a.createElement("iframe");s.style.cssText="display:none",s.name=t,s.id="iframe",a.body.appendChild(s)}else setTimeout(e,5);return!n}(),r.__tcfapi=function(){for(var e,t=arguments.length,r=new Array(t),n=0;n<t;n++)r[n]=arguments[n];if(!r.length)return a;if("setGdprApplies"===r[0])r.length>3&&2===parseInt(r[1],10)&&"boolean"==typeof r[3]&&(e=r[3],"function"==typeof r[2]&&r[2]("set",!0));else if("ping"===r[0]){var s={gdprApplies:e,cmpLoaded:!1,cmpStatus:"stub"};"function"==typeof r[2]&&r[2](s)}else a.push(r)},r.addEventListener("message",function(e){var t="string"==typeof e.data,a={};try{a=t?JSON.parse(e.data):e.data}catch(e){}var r=a.__tcfapiCall;r&&window.__tcfapi(r.command,r.version,function(a,n){var s={__tcfapiReturn:{returnValue:a,success:n,callId:r.callId}};t&&(s=JSON.stringify(s)),e&&e.source&&e.source.postMessage&&e.source.postMessage(s,"*")},r.parameter)},!1))};"undefined"!=typeof module?module.exports=e:e()}();
+  /*********************/
+}
+</script>
+
+<script type = "text/javascript" src="https://smart.idmnet.pl/consent/cmp-widget-latest.js" charset="UTF-8" async fetchpriority="high"> </script>
+
+<!-- ADS_HEAD -->
+
+    <!-- InVideoGam -->
+
+
+    <!-- FloorAd -->
+
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+<!-- SmartAdServer -->
+ <!-- Wyłączenie ładowania zewnętrznych rzeczy -->
+<script>
+  var sas_idmnet = sas_idmnet || {}; sas_idmnet.cmd = sas_idmnet.cmd || [];
+  var sas = sas || {}; sas.cmd = sas.cmd || [];
+  var NzpPyBmOTGuZ = NzpPyBmOTGuZ || false;
+</script>
+
+
+<script id="gptScript" async src="https://securepubads.g.doubleclick.net/tag/js/gpt.js"></script>
+
+
+
+
+
+  <script type="text/javascript" src="//smart.idmnet.pl/116964/smartConfig_1362263.js" async fetchpriority="high"></script>
+
+
+
+<script type="text/javascript" src="//cdn2.pollster.pl/nw.js" async></script>
+
+  <script type="text/javascript" src="//smart.idmnet.pl/prebidBoilerplate.js" async fetchpriority="high"></script>
+
+<!-- /SmartAdServer -->
+  
+  <script type="text/javascript">
+    var wbtg_value = 'cat=przepisy;subc=przystawki-i-przekaski;notsafety=[Sexual,Derogatory,Profanity,AlcoholDrugsTabacco,Religion,TragedyTransportationAccidents,Shocking,SensitiveSocialIssues,DziecięcaParentingowaNiepełnoletni,Gambling,DownloadsAndSharing,Weapons,Violence,Suggestive,publicis_kp,omd_mcdonalds_wojna]';
+    const sourceValForGAM = typeof viewSourceManagerInstance !== "undefined" ? viewSourceManagerInstance.getSourceCookie() : null;
+    wbtg_value = sourceValForGAM ? `${wbtg_value};source=${sourceValForGAM}` : wbtg_value;
+  </script>
+  
+
+
+
+    <!-- ToWideo -->
+
+<!-- end ToWideo -->
+
+
+    <!-- InAudioStreamGam -->
+
+<link rel="stylesheet" type="text/css" href="/media/desktop/zpr_ads_web/css/videojs.ima.turbo.css?__8712914d">
+
+
+<!-- META -->
+<meta name="google-site-verification" content="KIykXBjpqJqs3XVbMPE9SRmC6POWRkwMHjqM4JzwMM8">
+
+        
+        <!-- /hook_header -->
+        <!-- hook_header_extended -->
+        
+            <script {&#x27;container_id&#x27;: &#x27;taboola-below-category-thumbnails&#x27;, &#x27;container_type&#x27;: &#x27;category&#x27;, &#x27;placement_name&#x27;: &#x27;Below Category Thumbnails&#x27;, &#x27;publisher_id&#x27;: &#x27;timezpr-network&#x27;} type="text/javascript">
+    window._taboola = window._taboola || [];
+    _taboola.push({article:'auto'});
+    !function (e, f, u, i) {
+      if (!document.getElementById(i)){
+        e.async = 1;
+        e.src = u;
+        e.id = i;
+        f.parentNode.insertBefore(e, f);
+      }
+    }(document.createElement('script'),
+    document.getElementsByTagName('script')[0],
+    '//cdn.taboola.com/libtrc/timezpr-network/loader.js',
+    'tb_loader_script');
+    if(window.performance && typeof window.performance.mark == 'function')
+      {window.performance.mark('tbl_ic');}
+</script>
+
+<link rel="stylesheet" type="text/css" href="/media/desktop/site_header/css/desktop_site_header.css?__8712914d" >
+
+        
+        <!-- /hook_header_extended -->
+
+        <link rel="canonical" href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/">
+
+        <!-- marfeel-static -->
+<script type="text/javascript">
+!function(){"use strict";function e(e){var t=!(arguments.length>1&&void 0!==arguments[1])||arguments[1],c=document.createElement("script");c.src=e,t?c.type="module":(c.async=!0,c.type="text/javascript",c.setAttribute("nomodule",""));var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(c,n)}!function(t,c){!function(t,c,n){var a,o,r;n.accountId=c,null!==(a=t.marfeel)&&void 0!==a||(t.marfeel={}),null!==(o=(r=t.marfeel).cmd)&&void 0!==o||(r.cmd=[]),t.marfeel.config=n;var i="https://sdk.mrf.io/statics";e("".concat(i,"/marfeel-sdk.js?id=").concat(c),!0),e("".concat(i,"/marfeel-sdk.es5.js?id=").concat(c),!1)}(t,c,arguments.length>2&&void 0!==arguments[2]?arguments[2]:{})}(window,2716,{} /* Config */)}();
+const isMarfeelInitialized = true;
+</script>
+
+
+        <!-- no-8531 -->
+        
+
+
+
+    </head>
+
+    <body class="category-layout wide ">
+        
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-53W55K9"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+
+
+        <div class="dummy_header" style="display: none;"></div>
+
+        
+            
+        
+
+        <!-- stylebook topboard -->
+        <section>
+            <div class="zpr_box_topboard beszamel-se-pl_topboard" id="hook_box_topboard">
+                <!-- hook_box_topboard -->
+                
+                    <!-- ADS top_0 -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="top_0" class="zpr_top_0">
+    
+        <script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("top_0"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+<!-- ADS m_top_0 -->
+
+
+                
+                <!-- /hook_box_topboard -->
+            </div>
+        </section>
+        <!--- / stylebook topboard -->
+
+        <!-- gl_plugin header -->
+        <header class="gl_plugin header">
+            <!-- hook_top -->
+            
+                <div id='hook_top'><!-- Site Header -->
+<div class="site-header">
+  <div class="site-header__container">
+    <div class="site-header__left">
+      <div class="site-header__logo">
+        <a class="site-header__logo-link" href="https://beszamel.se.pl/" aria-label="Przejście do strony głównej">
+          <img class="site-header__logo-image" src="/media/desktop/site_header/images/logos/logo-beszamel.svg" alt="" width="165" height="36">
+        </a>
+      </div>
+      <nav class="site-header__nav">
+        <ul class="site-header__nav-list">
+          
+          <li class="site-header__nav-item site-header__nav-item--active">
+            <a href="https://beszamel.se.pl/przepisy/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/cooking-book.svg" alt="Przepisy" width="24" height="24">
+              <span class="site-header__nav-label">Przepisy</span>
+            </a>
+          </li>
+          
+          <li class="site-header__nav-item">
+            <a href="https://beszamel.se.pl/porady/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/cooking-hat.svg" alt="Porady" width="24" height="24">
+              <span class="site-header__nav-label">Porady</span>
+            </a>
+          </li>
+          
+          <li class="site-header__nav-item">
+            <a href="https://beszamel.se.pl/diety/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/bowl.svg" alt="Diety" width="24" height="24">
+              <span class="site-header__nav-label">Diety</span>
+            </a>
+          </li>
+          
+          <li class="site-header__nav-item">
+            <a href="https://beszamel.se.pl/produkty/" class="site-header__nav-link">
+              <img class="site-header__nav-icon" src="/media/desktop/site_header/images/fridge.svg" alt="Produkty" width="24" height="24">
+              <span class="site-header__nav-label">Produkty</span>
+            </a>
+          </li>
+          
+        </ul>
+      </nav>
+    </div>
+    <div class="site-header__right">
+      
+      <button class="site-header__menu-button" aria-expanded="false" aria-label="Menu">
+        <span class="site-header__menu-button-content">
+          <span class="site-header__menu-icon">
+          <svg class="site-header__menu-icon__svg" width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 3.75C0 3.32812 0.328125 3 0.75 3H20.25C20.6719 3 21 3.32812 21 3.75C21 4.17188 20.6719 4.5 20.25 4.5H0.75C0.328125 4.5 0 4.17188 0 3.75ZM0 12C0 11.5781 0.328125 11.25 0.75 11.25H20.25C20.6719 11.25 21 11.5781 21 12C21 12.4219 20.6719 12.75 20.25 12.75H0.75C0.328125 12.75 0 12.4219 0 12ZM21 20.25C21 20.6719 20.6719 21 20.25 21H0.75C0.328125 21 0 20.6719 0 20.25C0 19.8281 0.328125 19.5 0.75 19.5H20.25C20.6719 19.5 21 19.8281 21 20.25Z" fill="#000000" />
+          </svg>
+          <svg class="site-header__menu-icon__svg site-header__menu-icon__svg--hover" width="21" height="24" viewBox="0 0 21 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 4.5C0 3.65625 0.65625 3 1.5 3H19.5C20.3438 3 21 3.65625 21 4.5C21 5.34375 20.3438 6 19.5 6H1.5C0.65625 6 0 5.34375 0 4.5ZM0 12C0 11.1562 0.65625 10.5 1.5 10.5H19.5C20.3438 10.5 21 11.1562 21 12C21 12.8438 20.3438 13.5 19.5 13.5H1.5C0.65625 13.5 0 12.8438 0 12ZM21 19.5C21 20.3438 20.3438 21 19.5 21H1.5C0.65625 21 0 20.3438 0 19.5C0 18.6562 0.65625 18 1.5 18H19.5C20.3438 18 21 18.6562 21 19.5Z" fill="#000000"/>
+          </svg>
+        </span>
+        <span class="site-header__menu-label">Menu</span>
+        </span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Site Menu -->
+<div class="site-menu">
+  <div class="site-menu__header">
+    <div class="site-menu__logo-wrapper">
+      <img class="site-menu__logo-image" src="/media/desktop/site_header/images/signets/signet-beszamel.svg?nocache" alt="signet-beszamel" width="36" height="36">
+      <span class="site-menu__title">Menu</span>
+    </div>
+    <button class="site-menu__close" aria-label="Close menu">
+      <svg class="site-menu__close-icon" width="19" height="24" viewBox="0 0 19 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.8594 4.26562L10.1719 12L17.8594 19.7344C18.1875 20.0156 18.1875 20.4844 17.8594 20.7656C17.5781 21.0938 17.1094 21.0938 16.8281 20.7656L9.09375 13.0781L1.35938 20.7656C1.07812 21.0938 0.609375 21.0938 0.328125 20.7656C0 20.4844 0 20.0156 0.328125 19.7344L8.01562 12L0.328125 4.26562C0 3.98438 0 3.51562 0.328125 3.23438C0.609375 2.95312 1.07812 2.95312 1.35938 3.23438L9.09375 10.9219L16.8281 3.23438C17.1094 2.95312 17.5781 2.95312 17.8594 3.23438C18.1875 3.51562 18.1875 3.98438 17.8594 4.26562Z" fill="black" />
+      </svg>
+    </button>
+  </div>
+  <div class="site-menu__body">
+    
+    
+    	<div class="site-menu__search site-search">
+        <form class="site-search__form" action="/wyniki-wyszukiwania/" method="get" role="search">
+          <input
+            class="site-search__input"
+            type="text"
+            name="q"
+            placeholder="Wyszukaj"
+            aria-label="Wyszukaj"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          >
+          <button class="site-search__button" type="submit">
+            <img class="site-search__icon" src="/media/icons/gsc-search-icon.svg" alt="Wyszukaj frazę">
+          </button>
+        </form>
+      </div>
+    
+    <ul class="site-menu__list">
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/przepisy/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Przepisy</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Przepisy" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/sniadania/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Śniadania</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/nalesniki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Naleśniki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/przystawki-i-przekaski/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Przystawki i przekąski</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/zupy-na-cieplo/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Zupy na ciepło</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/zupy-na-zimno/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Zupy na zimno</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/dania-glowne-rybne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Dania główne rybne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/dania-glowne-miesne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Dania główne mięsne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/dania-glowne-bezmiesne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Dania główne bezmięsne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/pierogi/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Pierogi</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/makarony-i-kluski/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Makarony i kluski</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/pizza-i-ciasta-wytrawne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Pizza i ciasta wytrawne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/przetwory/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Przetwory</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/napoje/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Napoje</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/warzywa-na-cieplo/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa na ciepło</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-miesne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki mięsne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-z-warzyw/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki z warzyw</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-rybne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki rybne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-sycace/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki sycące</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/salatki-inne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sałatki inne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciasta-okazjonalne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciasta okazjonalne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciastka-i-ciasteczka/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciastka i ciasteczka</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciasta-na-pocieszenie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciasta na pocieszenie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/serniki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Serniki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/desery/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Desery</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/ciasta-bazowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciasta bazowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/przepisy/inne-ciasta/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Inne ciasta</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/porady/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Porady</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Porady" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/newsy-kulinarne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Newsy kulinarne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/jak-zrobic/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Jak zrobić</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/zakupy-i-przechowywanie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Zakupy i przechowywanie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/porady/ciekawostki-kulinarne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ciekawostki kulinarne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="/przepisy-gessler/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Przepisy Magdy Gessler</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/diety/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Diety</span>
+          </div>
+          
+        </a>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="//beszamel.se.pl/produkty/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Produkty</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Produkty" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/grzyby/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Grzyby</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/owoce-morza/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Owoce morza</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/ryby-morskie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ryby morskie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/ryby-slodkowodne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Ryby słodkowodne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/wedliny/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Wędliny</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/drob/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Drób</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/mieso/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Mięso</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/nabial/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Nabiał</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/owoce-jagodowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Owoce jagodowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/owoce-egzotyczne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Owoce egzotyczne</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/jablka-i-gruszki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Jabłka i gruszki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/pestkowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Pestkowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/inne-owoce/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Inne owoce</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/popularne-warzywa/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Popularne warzywa</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/warzywa-korzeniowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa korzeniowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/warzywa-straczkowe/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa strączkowe</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="//beszamel.se.pl/produkty/warzywa-kapustne-i-lisciaste/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Warzywa kapustne i liściaste</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="https://beszamel.se.pl/okazjonalne/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Na specjalne okazje</span>
+          </div>
+          
+        </a>
+        
+        <button type="button" aria-label="Rozwiń kategorię Na specjalne okazje" class="site-menu__icon-right" aria-expanded="false">
+          <svg class="site-menu__icon-right--chevron" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12.4297 18.0547C12.1953 18.3281 11.8047 18.3281 11.5703 18.0547L3.44531 9.92969C3.17188 9.69531 3.17188 9.30469 3.44531 9.07031C3.67969 8.83594 4.07031 8.83594 4.30469 9.07031L12 16.7266L19.6953 9.07031C19.9297 8.83594 20.3203 8.83594 20.5547 9.07031C20.8281 9.30469 20.8281 9.69531 20.5547 9.92969L12.4297 18.0547Z" fill="black" fill-opacity="0.6"></path>
+          </svg>
+        </button>
+        <ul class="site-menu__sublist site-menu__sublist--hidden">
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-andrzejki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Andrzejki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-boze-narodzenie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Boże Narodzenie</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-chrzest-i-komunie/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Chrzest i komunia</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-halloween/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Halloween</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-sylwester-i-karnawal/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Sylwester i karnawał</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-tlusty-czwartek/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Tłusty czwartek</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-walentynki/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Walentynki</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-wielkanoc/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Wielkanoc</span>
+              </div>
+              
+            </a>
+          </li>
+          
+          <li class="site-menu__subitem">
+            <a href="https://beszamel.se.pl/przepisy-na-dania-wigilijne/" class="site-menu__sublink" >
+              <div class="site-menu__link-left">
+                
+                <span class="site-menu__subtext">Wigilia</span>
+              </div>
+              
+            </a>
+          </li>
+          
+        </ul>
+        
+      </li>
+      
+      <li class="site-menu__item">
+        <a href="https://beszamel.se.pl/srodziemnomorskie-smaki/" class="site-menu__link" >
+          <div class="site-menu__link-left">
+            
+            <span class="site-menu__text">Śródziemnomorskie smaki</span>
+          </div>
+          
+        </a>
+        
+      </li>
+      
+    </ul>
+  </div>
+</div>
+</div>
+            
+            <!-- /hook_top -->
+        </header>
+
+        <section class="main__section">
+            <!-- zpr_screening -->
+            <div class="zpr_screening">
+                <section>
+                    <!-- zpr_combo -->
+                    <div class="zpr_combo">
+                        
+                        <!-- zpr_top1 -->
+                        <div class="zpr_box_top1" id="hook_box_top1">
+                            <!-- hook_box_top1 -->
+                            
+                               <!-- ADS top_1 -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="top_1" class="zpr_top_1">
+    
+        <script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("top_1"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+
+                            
+                            <!-- /hook_box_top1 -->
+                        </div>
+                        <!-- /zpr_top1 -->
+                        
+
+                        <!-- zpr_sky -->
+                        <div class="zpr_skyscrapper">
+                            <div class="zpr_box_sky" id="hook_box_sky">
+                                <!-- hook_box_sky -->
+                                
+                                    
+                                
+                                <!-- /hook_box_sky -->
+                            </div>
+                         </div>
+                        <!-- /zpr_sky -->
+                    </div>
+                    <!-- /zpr_combo -->
+                </section>
+
+                <section>
+                    <!-- gl_wrapper -->
+                    <div class="gl_wrapper">
+
+                        
+
+                        <!-- hook_pre_content -->
+                        
+                            
+                        
+                        <!-- /hook_pre_content -->
+
+                        
+                        <!-- row -->
+                        <div class="row">
+                            <!-- col-8 -->
+                            <div class="col col-8">
+                                <div class="main-content">
+                                    <!-- hook_content -->
+                                    
+                                        <div id='hook_content'><!-- BREADCRUMB_V2 -->
+<section>
+    <nav class="row">
+        <ol class="breadcrumb_v2">
+            <li class="breadcrumb_v2-item"><a href="/">Beszamel</a></li>
+            
+                
+                    <li class="breadcrumb_v2-item"><a href="/przepisy/">Przepisy</a></li>
+                
+            
+                
+                    <li class="breadcrumb_v2-item">Przystawki i przekąski</li>
+                
+            
+        </ol>
+    </nav>
+</section>
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+        
+            {"@type": "ListItem",
+                "position": 1,
+                "name": "Beszamel",
+                "item": "https://beszamel.se.pl/"
+            },
+        
+        
+            {"@type": "ListItem",
+             "position": 2,
+             "name": "Przepisy",
+             "item": "https://beszamel.se.pl/przepisy/"
+            },
+        
+            {"@type": "ListItem",
+             "position": 3,
+             "name": "Przystawki i przekąski",
+             "item": "https://beszamel.se.pl/przepisy/przystawki-i-przekaski/"
+            }
+        
+        ]
+    }
+</script>
+<!-- SEO_TEXT_SHORT -->
+<!-- wi-wi-uQ3d-urq2-172s -->
+<!-- st-BYH9-YPJy-EYgK -->
+
+<div class="blockinfo gl_plugin" id="blockinfo_short_seo_text">
+    <div class="blockinfo__text blockinfo__short" data-block-uid="wi-uQ3d-urq2-172s">
+        <p><h1>Przystawki i przekąski</h1></p>
+    </div>
+    
+</div>
+
+<!-- SEO_TEXT_SHORT -->
+<!-- wi-wi-Vw1R-dkfa-5zQv -->
+<!-- st-3jLP-585Y-Aii2 -->
+
+<div class="blockinfo gl_plugin" id="blockinfo_short_seo_text">
+    <div class="blockinfo__text blockinfo__short" data-block-uid="wi-Vw1R-dkfa-5zQv">
+        <p>Przystawki i przekąski - bez nich nie ma prawdziwego przyjęcia, ani nieformalnej domówki. Oglądany w towarzystwie mecz czy film bez przekąsek traci na uroku. Wieczorna lektura książki - także. Pyszne i zdrowe domowe przekąski i zakąski to najlepsza alternatywa dla gotowych czipsów, paluszków i innych bawimordek.</p>
+    </div>
+    
+    <div class="blockinfo__button">
+        <a href="javascript:;" data-toggle-uid="wi-Vw1R-dkfa-5zQv" onclick="toggleBlockinfo(this)">Czytaj więcej</a>
+    </div>
+    
+</div>
+
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Przepisy - Przystawki i przekąski -->
+<div class="gl_plugin listing v32-news  listing-wi-x7Je-SCXL-tPME" data-upscore-zone="[beszamel.se.pl - kolekcja] Przepisy - Przystawki i przekąski" data-recommendation-id="wi-x7Je-SCXL-tPME">
+    
+        
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v32 display-flex with-pagination">
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/pizza-i-ciasta-wytrawne/babeczki-makaronowe-z-serem-plesniowym-i-gruszka-re-hmyc-uVU7-JnWq.html" title=" Babeczki makaronowe z serem pleśniowym  i gruszką – elegancka przekąska pełna smaku" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-hmyc-uVU7-JnWq" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-HV5d-E3p6-Tjs7_babeczki-makaronowe-z-serem-plesniowym-i-gruszka-994x828.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-HV5d-E3p6-Tjs7_babeczki-makaronowe-z-serem-plesniowym-i-gruszka-994x828.jpg" alt=" Babeczki makaronowe z serem pleśniowym  i gruszką – elegancka przekąska pełna smaku" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-HV5d-E3p6-Tjs7_babeczki-makaronowe-z-serem-plesniowym-i-gruszka-994x828.jpg" width="994" height="828" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/pizza-i-ciasta-wytrawne/babeczki-makaronowe-z-serem-plesniowym-i-gruszka-re-hmyc-uVU7-JnWq.html" title=" Babeczki makaronowe z serem pleśniowym  i gruszką – elegancka przekąska pełna smaku" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-hmyc-uVU7-JnWq" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                     Babeczki makaronowe z serem pleśniowym  i gruszką – elegancka przekąska pełna smaku
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/salatka-jarzynowa-w-galarecie-ten-przepis-z-prl-u-wraca-do-lask-i-robi-furore-na-kazdej-imprezie-re-sNFa-xAr7-ubDB.html" title="Sałatka jarzynowa w galarecie? Ten przepis z PRL-u wraca do łask i robi furorę na każdej imprezie!" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-sNFa-xAr7-ubDB" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-qw83-1r6F-onGV_salatka-jarzynowa-w-galarecie-ten-przepis-z-prl-u-wraca-do-lask-i-robi-furore-na-kazdej-imprezie-9-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-qw83-1r6F-onGV_salatka-jarzynowa-w-galarecie-ten-przepis-z-prl-u-wraca-do-lask-i-robi-furore-na-kazdej-imprezie-9-j.jpg" alt="Sałatka jarzynowa w galarecie? Ten przepis z PRL-u wraca do łask i robi furorę na każdej imprezie!" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-qw83-1r6F-onGV_salatka-jarzynowa-w-galarecie-ten-przepis-z-prl-u-wraca-do-lask-i-robi-furore-na-kazdej-imprezie-9-j.jpg" width="994" height="828" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/salatka-jarzynowa-w-galarecie-ten-przepis-z-prl-u-wraca-do-lask-i-robi-furore-na-kazdej-imprezie-re-sNFa-xAr7-ubDB.html" title="Sałatka jarzynowa w galarecie? Ten przepis z PRL-u wraca do łask i robi furorę na każdej imprezie!" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-sNFa-xAr7-ubDB" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Sałatka jarzynowa w galarecie? Ten przepis z PRL-u wraca do łask i robi furorę na każdej imprezie!
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/fantastyczne-sledzie-w-sosie-pomidorowym-ze-slodka-nuta-rodzynek-re-GGKW-2A4v-NiZV.html" title="Fantastyczne śledzie w sosie pomidorowym ze słodką nutą rodzynek" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-GGKW-2A4v-NiZV" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-2FGB-a4XB-cRsP_sledzie-w-sosie-pomidorowym-z-rodzynkami-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-2FGB-a4XB-cRsP_sledzie-w-sosie-pomidorowym-z-rodzynkami-300x250.jpg" alt="Fantastyczne śledzie w sosie pomidorowym ze słodką nutą rodzynek" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-2FGB-a4XB-cRsP_sledzie-w-sosie-pomidorowym-z-rodzynkami-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/fantastyczne-sledzie-w-sosie-pomidorowym-ze-slodka-nuta-rodzynek-re-GGKW-2A4v-NiZV.html" title="Fantastyczne śledzie w sosie pomidorowym ze słodką nutą rodzynek" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-GGKW-2A4v-NiZV" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Fantastyczne śledzie w sosie pomidorowym ze słodką nutą rodzynek
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/jajka-faszerowane-schabem-przepis-konrada-gacy-na-wielkanoc-i-nie-tylko-wideo-re-q9ZW-T5mF-6q4E.html" title="Jajka faszerowane schabem, przepis Konrada Gacy - na Wielkanoc i nie tylko [WIDEO]" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-q9ZW-T5mF-6q4E" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-jiaY-ijYc-XnUc_jajka-faszerowane-schabem-przepis-konrada-gacy-na-wielkanoc-i-nie-tylko-wideo-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-jiaY-ijYc-XnUc_jajka-faszerowane-schabem-przepis-konrada-gacy-na-wielkanoc-i-nie-tylko-wideo-300x250.jpg" alt="Jajka faszerowane schabem, przepis Konrada Gacy - na Wielkanoc i nie tylko [WIDEO]" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-jiaY-ijYc-XnUc_jajka-faszerowane-schabem-przepis-konrada-gacy-na-wielkanoc-i-nie-tylko-wideo-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/jajka-faszerowane-schabem-przepis-konrada-gacy-na-wielkanoc-i-nie-tylko-wideo-re-q9ZW-T5mF-6q4E.html" title="Jajka faszerowane schabem, przepis Konrada Gacy - na Wielkanoc i nie tylko [WIDEO]" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-q9ZW-T5mF-6q4E" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Jajka faszerowane schabem, przepis Konrada Gacy - na Wielkanoc i nie tylko [WIDEO]
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/roladki-z-baklazana-z-pasta-orzechowa-przepyszna-zdrowa-przystawka-re-P7ei-hpyb-ctBt.html" title="Roladki z bakłażana z pastą orzechową: przepyszna zdrowa przystawka " data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-P7ei-hpyb-ctBt" data-box-art-num="5"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-hg7B-DWpn-ynBc_roladki-z-baklazana-z-pasta-orzechowa-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-hg7B-DWpn-ynBc_roladki-z-baklazana-z-pasta-orzechowa-300x250.jpg" alt="Roladki z bakłażana z pastą orzechową: przepyszna zdrowa przystawka " data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-hg7B-DWpn-ynBc_roladki-z-baklazana-z-pasta-orzechowa-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/roladki-z-baklazana-z-pasta-orzechowa-przepyszna-zdrowa-przystawka-re-P7ei-hpyb-ctBt.html" title="Roladki z bakłażana z pastą orzechową: przepyszna zdrowa przystawka " data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-P7ei-hpyb-ctBt" data-box-art-num="5"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Roladki z bakłażana z pastą orzechową: przepyszna zdrowa przystawka 
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/przebojowe-roladki-z-blanszowanej-cukinii-i-wedzonego-lososia-re-oo98-xy3X-jH6G.html" title="Przebojowe roladki z blanszowanej cukinii i wędzonego łososia" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-oo98-xy3X-jH6G" data-box-art-num="6"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-rccn-ya2v-izAA_roladki-z-blanszowanej-cukinii-i-wedzonego-lososia-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-rccn-ya2v-izAA_roladki-z-blanszowanej-cukinii-i-wedzonego-lososia-300x250.jpg" alt="Przebojowe roladki z blanszowanej cukinii i wędzonego łososia" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-rccn-ya2v-izAA_roladki-z-blanszowanej-cukinii-i-wedzonego-lososia-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/przebojowe-roladki-z-blanszowanej-cukinii-i-wedzonego-lososia-re-oo98-xy3X-jH6G.html" title="Przebojowe roladki z blanszowanej cukinii i wędzonego łososia" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-oo98-xy3X-jH6G" data-box-art-num="6"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Przebojowe roladki z blanszowanej cukinii i wędzonego łososia
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/dania-glowne-bezmiesne/portobello-nadziewane-kukurydza-i-papryka-wideo-re-tXih-rvca-KbW1.html" title="Portobello nadziewane kukurydzą i papryką [WIDEO]" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-tXih-rvca-KbW1" data-box-art-num="7"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-sDEF-FDou-M87j_pieczarki-portobello-z-kukurydza-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-sDEF-FDou-M87j_pieczarki-portobello-z-kukurydza-300x250.jpg" alt="Portobello nadziewane kukurydzą i papryką [WIDEO]" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-sDEF-FDou-M87j_pieczarki-portobello-z-kukurydza-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/dania-glowne-bezmiesne/portobello-nadziewane-kukurydza-i-papryka-wideo-re-tXih-rvca-KbW1.html" title="Portobello nadziewane kukurydzą i papryką [WIDEO]" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-tXih-rvca-KbW1" data-box-art-num="7"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Portobello nadziewane kukurydzą i papryką [WIDEO]
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/arbuzowe-koreczki-z-feta-i-bazylia-re-3muD-futv-dpVE.html" title="Arbuzowe koreczki z fetą i bazylią" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-3muD-futv-dpVE" data-box-art-num="8"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-EzHq-k5oa-Fqmq_arbuzowe-koreczki-z-feta-i-bazylia-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-EzHq-k5oa-Fqmq_arbuzowe-koreczki-z-feta-i-bazylia-300x250.jpg" alt="Arbuzowe koreczki z fetą i bazylią" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-EzHq-k5oa-Fqmq_arbuzowe-koreczki-z-feta-i-bazylia-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/arbuzowe-koreczki-z-feta-i-bazylia-re-3muD-futv-dpVE.html" title="Arbuzowe koreczki z fetą i bazylią" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-3muD-futv-dpVE" data-box-art-num="8"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Arbuzowe koreczki z fetą i bazylią
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/ciastka-i-ciasteczka/wytrawne-muffinki-ze-szpinakiem-i-serem-feta-latwy-przepis-re-AE7B-2wtn-MZNa.html" title="Wytrawne muffinki ze szpinakiem i serem feta: łatwy przepis" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-AE7B-2wtn-MZNa" data-box-art-num="9"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-S1DP-4uPe-PbFt_muffinki-ze-szpinakiem-i-serem-feta-jak-zrobic-jpg-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-S1DP-4uPe-PbFt_muffinki-ze-szpinakiem-i-serem-feta-jak-zrobic-jpg-300x250.jpg" alt="Wytrawne muffinki ze szpinakiem i serem feta: łatwy przepis" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-S1DP-4uPe-PbFt_muffinki-ze-szpinakiem-i-serem-feta-jak-zrobic-jpg-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/ciastka-i-ciasteczka/wytrawne-muffinki-ze-szpinakiem-i-serem-feta-latwy-przepis-re-AE7B-2wtn-MZNa.html" title="Wytrawne muffinki ze szpinakiem i serem feta: łatwy przepis" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-AE7B-2wtn-MZNa" data-box-art-num="9"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Wytrawne muffinki ze szpinakiem i serem feta: łatwy przepis
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/pierogi/pierogi-po-szwedzku-paluszki-drozdzowe-wypelnione-farszem-pieczarkowym-re-Qi12-QJuP-ii1s.html" title="Pierogi po szwedzku - paluszki drożdzowe wypełnione farszem pieczarkowym" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-Qi12-QJuP-ii1s" data-box-art-num="10"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-JeFw-Fw9U-rENy_szwedzkie-pierogi-664x442-nocrop.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-JeFw-Fw9U-rENy_szwedzkie-pierogi-664x442-nocrop.jpg" alt="Pierogi po szwedzku - paluszki drożdzowe wypełnione farszem pieczarkowym" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-JeFw-Fw9U-rENy_szwedzkie-pierogi-664x442-nocrop.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/pierogi/pierogi-po-szwedzku-paluszki-drozdzowe-wypelnione-farszem-pieczarkowym-re-Qi12-QJuP-ii1s.html" title="Pierogi po szwedzku - paluszki drożdzowe wypełnione farszem pieczarkowym" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-Qi12-QJuP-ii1s" data-box-art-num="10"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Pierogi po szwedzku - paluszki drożdzowe wypełnione farszem pieczarkowym
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/cukinia-w-panierce-serowej-chrupie-jak-najlepsza-przekaska-zrob-ja-w-piekarniku-albo-na-patelni-re-uwZd-nh8m-5UBY.html" title="Cukinia w panierce serowej chrupie jak najlepsza przekąska. Zrób ją w piekarniku albo na patelni" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-uwZd-nh8m-5UBY" data-box-art-num="11"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-Je1L-rZMA-xX3s_cukinia-w-panierce-serowej-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-Je1L-rZMA-xX3s_cukinia-w-panierce-serowej-300x250.jpg" alt="Cukinia w panierce serowej chrupie jak najlepsza przekąska. Zrób ją w piekarniku albo na patelni" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-Je1L-rZMA-xX3s_cukinia-w-panierce-serowej-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/cukinia-w-panierce-serowej-chrupie-jak-najlepsza-przekaska-zrob-ja-w-piekarniku-albo-na-patelni-re-uwZd-nh8m-5UBY.html" title="Cukinia w panierce serowej chrupie jak najlepsza przekąska. Zrób ją w piekarniku albo na patelni" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-uwZd-nh8m-5UBY" data-box-art-num="11"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Cukinia w panierce serowej chrupie jak najlepsza przekąska. Zrób ją w piekarniku albo na patelni
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/dania-glowne-bezmiesne/cukinia-w-panierce-z-piekarnika-chrupie-jak-smazona-bez-stania-przy-patelni-i-pryskajacego-tluszczu-re-FXLZ-yFvB-rocZ.html" title="Cukinia w panierce z piekarnika chrupie jak smażona. Bez stania przy patelni i pryskającego tłuszczu" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-FXLZ-yFvB-rocZ" data-box-art-num="12"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-NTu9-jkq3-fwCs_cukinia-w-panierce-z-piekarnika-chrupie-jak-smazona-bez-stania-przy-patelni-i-pryskajacego-tluszczu-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-NTu9-jkq3-fwCs_cukinia-w-panierce-z-piekarnika-chrupie-jak-smazona-bez-stania-przy-patelni-i-pryskajacego-tluszczu-3-j.jpg" alt="Cukinia w panierce z piekarnika chrupie jak smażona. Bez stania przy patelni i pryskającego tłuszczu" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-NTu9-jkq3-fwCs_cukinia-w-panierce-z-piekarnika-chrupie-jak-smazona-bez-stania-przy-patelni-i-pryskajacego-tluszczu-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/dania-glowne-bezmiesne/cukinia-w-panierce-z-piekarnika-chrupie-jak-smazona-bez-stania-przy-patelni-i-pryskajacego-tluszczu-re-FXLZ-yFvB-rocZ.html" title="Cukinia w panierce z piekarnika chrupie jak smażona. Bez stania przy patelni i pryskającego tłuszczu" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-FXLZ-yFvB-rocZ" data-box-art-num="12"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Cukinia w panierce z piekarnika chrupie jak smażona. Bez stania przy patelni i pryskającego tłuszczu
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/dania-glowne-rybne/ryba-po-japonsku-jest-jeszcze-lepsza-nastepnego-dnia-slodko-kwasny-sos-z-warzywami-robi-roznice-re-CExy-FyRm-sNhm.html" title="Ryba po japońsku jest jeszcze lepsza następnego dnia. Słodko-kwaśny sos z warzywami robi różnicę" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-CExy-FyRm-sNhm" data-box-art-num="13"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-jvuU-pz1y-DLiq_ryba-po-japonsku-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-jvuU-pz1y-DLiq_ryba-po-japonsku-300x250.jpg" alt="Ryba po japońsku jest jeszcze lepsza następnego dnia. Słodko-kwaśny sos z warzywami robi różnicę" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-jvuU-pz1y-DLiq_ryba-po-japonsku-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/dania-glowne-rybne/ryba-po-japonsku-jest-jeszcze-lepsza-nastepnego-dnia-slodko-kwasny-sos-z-warzywami-robi-roznice-re-CExy-FyRm-sNhm.html" title="Ryba po japońsku jest jeszcze lepsza następnego dnia. Słodko-kwaśny sos z warzywami robi różnicę" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-CExy-FyRm-sNhm" data-box-art-num="13"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Ryba po japońsku jest jeszcze lepsza następnego dnia. Słodko-kwaśny sos z warzywami robi różnicę
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/tirokafteri-to-grecka-pasta-ktora-znika-ze-stolu-w-kilka-minut-feta-i-pieczona-papryka-robia-cuda-re-hrQH-zZaV-sSEq.html" title="Tirokafteri to grecka pasta, która znika ze stołu w kilka minut. Feta i pieczona papryka robią cuda" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-hrQH-zZaV-sSEq" data-box-art-num="14"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-wCJn-EG8q-oFPe_pasta-tirokafteri-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-wCJn-EG8q-oFPe_pasta-tirokafteri-300x250.jpg" alt="Tirokafteri to grecka pasta, która znika ze stołu w kilka minut. Feta i pieczona papryka robią cuda" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-wCJn-EG8q-oFPe_pasta-tirokafteri-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/tirokafteri-to-grecka-pasta-ktora-znika-ze-stolu-w-kilka-minut-feta-i-pieczona-papryka-robia-cuda-re-hrQH-zZaV-sSEq.html" title="Tirokafteri to grecka pasta, która znika ze stołu w kilka minut. Feta i pieczona papryka robią cuda" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-hrQH-zZaV-sSEq" data-box-art-num="14"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Tirokafteri to grecka pasta, która znika ze stołu w kilka minut. Feta i pieczona papryka robią cuda
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przetwory/ogorki-po-kaszubsku-robie-w-slodko-octowej-zalewie-po-dwoch-miesiacach-smakuja-najlepiej-re-Phxy-eLGU-9ozP.html" title="Ogórki po kaszubsku robię w słodko-octowej zalewie. Po dwóch miesiącach smakują najlepiej" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-Phxy-eLGU-9ozP" data-box-art-num="15"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-b4uC-uC1E-tcgG_ogorki-po-kaszubsku-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-b4uC-uC1E-tcgG_ogorki-po-kaszubsku-300x250.jpg" alt="Ogórki po kaszubsku robię w słodko-octowej zalewie. Po dwóch miesiącach smakują najlepiej" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-b4uC-uC1E-tcgG_ogorki-po-kaszubsku-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przetwory/ogorki-po-kaszubsku-robie-w-slodko-octowej-zalewie-po-dwoch-miesiacach-smakuja-najlepiej-re-Phxy-eLGU-9ozP.html" title="Ogórki po kaszubsku robię w słodko-octowej zalewie. Po dwóch miesiącach smakują najlepiej" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-Phxy-eLGU-9ozP" data-box-art-num="15"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Ogórki po kaszubsku robię w słodko-octowej zalewie. Po dwóch miesiącach smakują najlepiej
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/ketchup-z-kiszonych-ogorkow-robi-sie-bez-gotowania-kwasny-sos-pasuje-do-grilla-lepiej-niz-cokolwiek-innego-re-SKRv-c6zx-Xak4.html" title="Ketchup z kiszonych ogórków robi się bez gotowania. Kwaśny sos pasuje do grilla lepiej niż cokolwiek innego" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-SKRv-c6zx-Xak4" data-box-art-num="16"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-2Zqo-sPBy-qphz_ketchup-z-kiszonych-ogorkow-robi-sie-bez-gotowania-kwasny-sos-pasuje-do-grilla-lepiej-niz-cokolwiek-innego-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-2Zqo-sPBy-qphz_ketchup-z-kiszonych-ogorkow-robi-sie-bez-gotowania-kwasny-sos-pasuje-do-grilla-lepiej-niz-cokolwiek-innego-3-j.jpg" alt="Ketchup z kiszonych ogórków robi się bez gotowania. Kwaśny sos pasuje do grilla lepiej niż cokolwiek innego" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-2Zqo-sPBy-qphz_ketchup-z-kiszonych-ogorkow-robi-sie-bez-gotowania-kwasny-sos-pasuje-do-grilla-lepiej-niz-cokolwiek-innego-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/ketchup-z-kiszonych-ogorkow-robi-sie-bez-gotowania-kwasny-sos-pasuje-do-grilla-lepiej-niz-cokolwiek-innego-re-SKRv-c6zx-Xak4.html" title="Ketchup z kiszonych ogórków robi się bez gotowania. Kwaśny sos pasuje do grilla lepiej niż cokolwiek innego" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-SKRv-c6zx-Xak4" data-box-art-num="16"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Ketchup z kiszonych ogórków robi się bez gotowania. Kwaśny sos pasuje do grilla lepiej niż cokolwiek innego
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/mocze-slonecznik-przez-noc-i-miksuje-z-kiszonym-ogorkiem-to-jedna-z-najlepszych-past-do-chleba-re-uT7y-F5Zb-5ACo.html" title="Moczę słonecznik przez noc i miksuję z kiszonym ogórkiem. To jedna z najlepszych past do chleba" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-uT7y-F5Zb-5ACo" data-box-art-num="17"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-YV9w-qiHv-PfLC_mocze-slonecznik-przez-noc-i-miksuje-z-kiszonym-ogorkiem-to-jedna-z-najlepszych-past-do-chleba-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-YV9w-qiHv-PfLC_mocze-slonecznik-przez-noc-i-miksuje-z-kiszonym-ogorkiem-to-jedna-z-najlepszych-past-do-chleba-3-j.jpg" alt="Moczę słonecznik przez noc i miksuję z kiszonym ogórkiem. To jedna z najlepszych past do chleba" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-YV9w-qiHv-PfLC_mocze-slonecznik-przez-noc-i-miksuje-z-kiszonym-ogorkiem-to-jedna-z-najlepszych-past-do-chleba-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/mocze-slonecznik-przez-noc-i-miksuje-z-kiszonym-ogorkiem-to-jedna-z-najlepszych-past-do-chleba-re-uT7y-F5Zb-5ACo.html" title="Moczę słonecznik przez noc i miksuję z kiszonym ogórkiem. To jedna z najlepszych past do chleba" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-uT7y-F5Zb-5ACo" data-box-art-num="17"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Moczę słonecznik przez noc i miksuję z kiszonym ogórkiem. To jedna z najlepszych past do chleba
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/pasta-rendang-ten-aromatyczny-dodatek-zmienia-zwyklego-kurczaka-i-warzywa-w-danie-pelne-indonezyjskiego-smaku-re-K35b-dwyB-ugnL.html" title="Pasta rendang. Ten aromatyczny dodatek zmienia zwykłego kurczaka i warzywa w danie pełne indonezyjskiego smaku" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-K35b-dwyB-ugnL" data-box-art-num="18"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-27r9-2geU-nDwd_pasta-rendang-ten-aromatyczny-dodatek-zmienia-zwyklego-kurczaka-i-warzywa-w-danie-pelne-indonezyjskiego-smaku-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-27r9-2geU-nDwd_pasta-rendang-ten-aromatyczny-dodatek-zmienia-zwyklego-kurczaka-i-warzywa-w-danie-pelne-indonezyjskiego-smaku-3-j.jpg" alt="Pasta rendang. Ten aromatyczny dodatek zmienia zwykłego kurczaka i warzywa w danie pełne indonezyjskiego smaku" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-27r9-2geU-nDwd_pasta-rendang-ten-aromatyczny-dodatek-zmienia-zwyklego-kurczaka-i-warzywa-w-danie-pelne-indonezyjskiego-smaku-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/pasta-rendang-ten-aromatyczny-dodatek-zmienia-zwyklego-kurczaka-i-warzywa-w-danie-pelne-indonezyjskiego-smaku-re-K35b-dwyB-ugnL.html" title="Pasta rendang. Ten aromatyczny dodatek zmienia zwykłego kurczaka i warzywa w danie pełne indonezyjskiego smaku" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-K35b-dwyB-ugnL" data-box-art-num="18"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Pasta rendang. Ten aromatyczny dodatek zmienia zwykłego kurczaka i warzywa w danie pełne indonezyjskiego smaku
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przetwory/zamiast-kolejnego-dzemu-zrob-wytrawny-chutney-z-porzeczek-jedna-porcja-wystarczy-do-wielu-dan-re-shMx-VWS1-6gdj.html" title="Zamiast kolejnego dżemu zrób wytrawny chutney z porzeczek. Jedna porcja wystarczy do wielu dań" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-shMx-VWS1-6gdj" data-box-art-num="19"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-DxLa-w97F-aPJm_zamiast-kolejnego-dzemu-zrob-wytrawny-chutney-z-porzeczek-jedna-porcja-wystarczy-do-wielu-dan-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-DxLa-w97F-aPJm_zamiast-kolejnego-dzemu-zrob-wytrawny-chutney-z-porzeczek-jedna-porcja-wystarczy-do-wielu-dan-3-j.jpg" alt="Zamiast kolejnego dżemu zrób wytrawny chutney z porzeczek. Jedna porcja wystarczy do wielu dań" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-DxLa-w97F-aPJm_zamiast-kolejnego-dzemu-zrob-wytrawny-chutney-z-porzeczek-jedna-porcja-wystarczy-do-wielu-dan-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przetwory/zamiast-kolejnego-dzemu-zrob-wytrawny-chutney-z-porzeczek-jedna-porcja-wystarczy-do-wielu-dan-re-shMx-VWS1-6gdj.html" title="Zamiast kolejnego dżemu zrób wytrawny chutney z porzeczek. Jedna porcja wystarczy do wielu dań" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-shMx-VWS1-6gdj" data-box-art-num="19"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Zamiast kolejnego dżemu zrób wytrawny chutney z porzeczek. Jedna porcja wystarczy do wielu dań
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/wyglada-jak-salami-ale-robi-sie-z-tunczyka-ta-przekaska-znika-ze-stolu-w-kilka-minut-re-7fno-ho2z-wYkR.html" title="Wygląda jak salami, ale robi się z tuńczyka. Ta przekąska znika ze stołu w kilka minut" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-7fno-ho2z-wYkR" data-box-art-num="20"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-Hhok-iLcy-2ec3_rolada-z-tunczyka-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-Hhok-iLcy-2ec3_rolada-z-tunczyka-3-j.jpg" alt="Wygląda jak salami, ale robi się z tuńczyka. Ta przekąska znika ze stołu w kilka minut" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-Hhok-iLcy-2ec3_rolada-z-tunczyka-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/wyglada-jak-salami-ale-robi-sie-z-tunczyka-ta-przekaska-znika-ze-stolu-w-kilka-minut-re-7fno-ho2z-wYkR.html" title="Wygląda jak salami, ale robi się z tuńczyka. Ta przekąska znika ze stołu w kilka minut" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-7fno-ho2z-wYkR" data-box-art-num="20"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Wygląda jak salami, ale robi się z tuńczyka. Ta przekąska znika ze stołu w kilka minut
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+        
+            
+
+<div class="element   type--recipe v32-news" >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/groszek-cukrowy-smazony-z-maslem-i-koperkiem-7-minut-i-masz-dodatek-jak-z-dobrej-restauracji-re-eb3z-5sB4-9kiZ.html" title="Groszek cukrowy smażony z masłem i koperkiem. 7 minut i masz dodatek jak z dobrej restauracji" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-eb3z-5sB4-9kiZ" data-box-art-num="21"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-MKk6-TsKQ-SCAk_groszek-cukrowy-z-maslem-i-koperkiem-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-MKk6-TsKQ-SCAk_groszek-cukrowy-z-maslem-i-koperkiem-3-j.jpg" alt="Groszek cukrowy smażony z masłem i koperkiem. 7 minut i masz dodatek jak z dobrej restauracji" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-MKk6-TsKQ-SCAk_groszek-cukrowy-z-maslem-i-koperkiem-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/przystawki-i-przekaski/groszek-cukrowy-smazony-z-maslem-i-koperkiem-7-minut-i-masz-dodatek-jak-z-dobrej-restauracji-re-eb3z-5sB4-9kiZ.html" title="Groszek cukrowy smażony z masłem i koperkiem. 7 minut i masz dodatek jak z dobrej restauracji" data-box-id="cc-i7gn-nqQ3-RRcR" data-box-art-id="re-eb3z-5sB4-9kiZ" data-box-art-num="21"  target="_self"   data-recommendation-id="wi-x7Je-SCXL-tPME">
+                    
+                    <h2>
+                    Groszek cukrowy smażony z masłem i koperkiem. 7 minut i masz dodatek jak z dobrej restauracji
+                    </h2>
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+        
+    
+
+        
+            
+
+<ul class="horizontal paginacja">
+    
+        <li class="disable">
+    <a href="/przepisy/przystawki-i-przekaski/" title="Poprzednia"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
+</li>
+
+    
+        <li class="active ">
+    <a href="/przepisy/przystawki-i-przekaski/">1</a>
+</li>
+
+    
+        <li>
+    <a href="/przepisy/przystawki-i-przekaski/?page=2" title="2">2</a>
+</li>
+
+    
+        <li class="separator">...</li>
+
+    
+        <li>
+    <a href="/przepisy/przystawki-i-przekaski/?page=82" title="82">82</a>
+</li>
+
+    
+        <li class="next">
+    <a href="/przepisy/przystawki-i-przekaski/?page=2" title="Następna"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+</li>
+
+    
+</ul>
+
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+</div>
+                                    
+                                    <!-- /hook_content -->
+                                </div>
+                            </div>
+                            <!-- /col-8 -->
+
+                            <!-- col-4 -->
+                            <div class="col col-4">
+                                <div class="aside">
+                                    <!-- hook_content_right -->
+                                    
+                                        
+                                    
+                                    <!-- /hook_content_right -->
+
+                                    <!--reklama-->
+                                    <div class="side_box_container">
+                                        <div class="zpr_box_half_page">
+                                            <div class="half_page_sticky"></div>
+                                            <div class="zpr_hp" id="hook_box_half_page">
+                                                <!-- hook_box_half_page -->
+                                                
+                                                    <!-- ADS side_1 -->
+
+    <!-- SmartAdServer -->
+
+
+
+
+
+
+
+
+
+
+
+<div id="side_1" class="zpr_side_1">
+    
+        <script type="text/javascript">
+        try {
+            sas_idmnet.cmd.push(function(){ sas_idmnet.release("side_1"); });
+        } catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+        </script>
+    
+</div>
+
+
+
+
+
+                                                
+                                                <!-- /hook_box_half_page -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="zpr_box_side_bottom">
+                                        <div class="rectangle_sticky"></div>
+                                        <div class="zpr_rect" id="hook_box_side_bottom">
+                                            <!-- hook_box_side_bottom -->
+                                            
+                                                
+                                            
+                                            <!-- /hook_box_side_bottom -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /col-4 -->
+                        </div>
+                        <!-- /row -->
+                        
+
+                    </div>
+                    <!-- /gl_wrapper -->
+                </section>
+
+                <section>
+                    <div class="gl_wrapper">
+                        <div class="row">
+                            <div class="col col-12">
+                                <div class="bottom_hook" id="hook_content_bottom">
+                                    <!-- hook_content_bottom -->
+                                    <div id="taboola-below-category-thumbnails"></div>
+<script type="text/javascript">
+  window._taboola = window._taboola || [];
+  _taboola.push({
+    mode: 'thumbnails-a',
+    container: 'taboola-below-category-thumbnails',
+    placement: 'Below Category Thumbnails',
+    target_type: 'mix'
+  });
+  let widgetTaboola = document.querySelector("#taboola-below-category-thumbnails")
+  let taboolaObserver = new MutationObserver(function(entires, observer) {
+    entires.forEach(function(entry) {
+      observer.disconnect()
+      if (typeof(setVisibilityEvent) !== "undefined"){
+          setVisibilityEvent(entry.target,"taboola")
+      }
+      else{
+          console.log("nie znaleziono funkcji")
+      }
+    });
+  });
+  taboolaObserver.observe(widgetTaboola, {childList: true});
+</script>
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Porady - Newsy kulinarne -->
+<div class="gl_plugin listing listing-wi-HFNd-e7pw-w9EB" data-upscore-zone="[beszamel.se.pl - kolekcja] Porady - Newsy kulinarne" data-recommendation-id="wi-HFNd-e7pw-w9EB">
+    
+        
+            
+            <div id="wi-HFNd-e7pw-w9EB" class="main-title-listing">
+                
+                    
+    
+        <span>
+            To cię zainteresuje
+        </span>
+    
+
+                
+            </div>
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v30 display-flex">
+        
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-gotowac-fasolke-szparagowa-zeby-byla-jedrna-i-nie-stracila-koloru-aa-YEj7-UhxM-mwVt.html" title=" Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YEj7-UhxM-mwVt" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-rv6j-CihV-P3oc_jak-gotowac-fasolke-szparagowa-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-rv6j-CihV-P3oc_jak-gotowac-fasolke-szparagowa-300x250.jpg" alt=" Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-rv6j-CihV-P3oc_jak-gotowac-fasolke-szparagowa-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-gotowac-fasolke-szparagowa-zeby-byla-jedrna-i-nie-stracila-koloru-aa-YEj7-UhxM-mwVt.html" title=" Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YEj7-UhxM-mwVt" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                     Jak gotować fasolkę szparagową, żeby była jędrna i nie straciła koloru?
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-aa-3ZM1-Qdyy-VZHy.html" title="Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-3ZM1-Qdyy-VZHy" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-MdKn-fxvR-zZw3_plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-MdKn-fxvR-zZw3_plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-300x250.jpg" alt="Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-MdKn-fxvR-zZw3_plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/plamy-z-owocow-czym-domyc-rece-po-czarnych-porzeczkach-jagodach-sliwkach-i-grzybach-aa-3ZM1-Qdyy-VZHy.html" title="Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-3ZM1-Qdyy-VZHy" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Domowe sposoby na plamy z jagód i innych owoców. Moje ręce i bluzka są czyste w mig!
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/ciasta-na-herbatnikach-13-ciast-bez-pieczenia-robie-je-w-15-minut-a-goscie-prosza-o-przepis-aa-iShq-wkWx-n2VA.html" title="Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-iShq-wkWx-n2VA" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-NPgm-BqnW-XeSq_ciasto-bez-pieczenia-13-super-przepisow-na-ciasta-na-herbatnikach-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-NPgm-BqnW-XeSq_ciasto-bez-pieczenia-13-super-przepisow-na-ciasta-na-herbatnikach-300x250.jpg" alt="Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-NPgm-BqnW-XeSq_ciasto-bez-pieczenia-13-super-przepisow-na-ciasta-na-herbatnikach-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/ciasta-na-herbatnikach-13-ciast-bez-pieczenia-robie-je-w-15-minut-a-goscie-prosza-o-przepis-aa-iShq-wkWx-n2VA.html" title="Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-iShq-wkWx-n2VA" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Goście oszaleli na punkcie tego tortu! Zrobiłam go bez pieczenia w 15 minut
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-czyscic-kurki-bez-dlugiego-moczenia-ten-blad-odbiera-im-smak-aa-uRHh-Y6Mi-RHtj.html" title="Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-uRHh-Y6Mi-RHtj" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-eyBV-jgzW-1K9v_kurki-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-eyBV-jgzW-1K9v_kurki-3-j.jpg" alt="Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-eyBV-jgzW-1K9v_kurki-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/jak-czyscic-kurki-bez-dlugiego-moczenia-ten-blad-odbiera-im-smak-aa-uRHh-Y6Mi-RHtj.html" title="Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-uRHh-Y6Mi-RHtj" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Jak czyścić kurki bez długiego moczenia? Ten błąd odbiera im smak
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/jak-zrobic/zrob-te-lody-i-juz-nie-kupisz-innych-20-przepisow-ktore-musisz-poznac-aa-vDbP-5GN8-HKx8.html" title="Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-vDbP-5GN8-HKx8" data-box-art-num="5"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-beZ9-hbvs-6g7N_domowe-lody-jak-zrobic-pyszne-desery-lodowe-w-domu-top-20-przepisow-664x442.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-beZ9-hbvs-6g7N_domowe-lody-jak-zrobic-pyszne-desery-lodowe-w-domu-top-20-przepisow-664x442.jpg" alt="Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-beZ9-hbvs-6g7N_domowe-lody-jak-zrobic-pyszne-desery-lodowe-w-domu-top-20-przepisow-664x442.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/jak-zrobic/zrob-te-lody-i-juz-nie-kupisz-innych-20-przepisow-ktore-musisz-poznac-aa-vDbP-5GN8-HKx8.html" title="Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-vDbP-5GN8-HKx8" data-box-art-num="5"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Zrób te lody i już nie kupisz innych! 20 przepisów, które musisz poznać
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/chlodzace-dania-i-napoje-co-jesc-i-pic-w-upaly-aa-C6dA-Up8G-WKNW.html" title="Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-C6dA-Up8G-WKNW" data-box-art-num="6"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-8fNR-QvHz-ovwS_chlodzace-dania-i-napoje-na-upaly-co-jesc-i-pic-by-poczuc-ulge-w-najwiekszy-skwar-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-8fNR-QvHz-ovwS_chlodzace-dania-i-napoje-na-upaly-co-jesc-i-pic-by-poczuc-ulge-w-najwiekszy-skwar-300x250.jpg" alt="Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-8fNR-QvHz-ovwS_chlodzace-dania-i-napoje-na-upaly-co-jesc-i-pic-by-poczuc-ulge-w-najwiekszy-skwar-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/chlodzace-dania-i-napoje-co-jesc-i-pic-w-upaly-aa-C6dA-Up8G-WKNW.html" title="Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-C6dA-Up8G-WKNW" data-box-art-num="6"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Te dania i napoje dają natychmiastową ulgę w upał - zobacz, co jeść i pić w upały
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/zakupy-i-przechowywanie/handlarze-oszukuja-na-truskawkach-po-tym-poznasz-czy-te-truskawki-sa-naprawde-polskie-aa-rNDy-N4hQ-Doph.html" title="Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-rNDy-N4hQ-Doph" data-box-art-num="7"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-kkYM-T53U-Wj8f_polskie-truskawki-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-kkYM-T53U-Wj8f_polskie-truskawki-3-j.jpg" alt="Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-kkYM-T53U-Wj8f_polskie-truskawki-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/zakupy-i-przechowywanie/handlarze-oszukuja-na-truskawkach-po-tym-poznasz-czy-te-truskawki-sa-naprawde-polskie-aa-rNDy-N4hQ-Doph.html" title="Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-rNDy-N4hQ-Doph" data-box-art-num="7"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Handlarze oszukują na truskawkach! Po tym poznasz, czy te truskawki są naprawdę polskie
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--article " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/ten-grzyb-rosnie-na-drzewach-i-smakuje-jak-kurczak-czym-jest-zolciak-siarkowy-aa-YJ7G-Ric8-vWFT.html" title="Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YJ7G-Ric8-vWFT" data-box-art-num="8"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/t/galleries/gf-RF2B-c6Mr-EABt_zolciak-siarkowy-300x250.jpg" srcset="https://cdn.galleries.smcloud.net/t/galleries/gf-RF2B-c6Mr-EABt_zolciak-siarkowy-300x250.jpg" alt="Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak" data-link="https://cdn.galleries.smcloud.net/t/galleries/gf-RF2B-c6Mr-EABt_zolciak-siarkowy-300x250.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/porady/ciekawostki-kulinarne/ten-grzyb-rosnie-na-drzewach-i-smakuje-jak-kurczak-czym-jest-zolciak-siarkowy-aa-YJ7G-Ric8-vWFT.html" title="Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak" data-box-id="cc-AYAC-8kU5-N6mG" data-box-art-id="aa-YJ7G-Ric8-vWFT" data-box-art-num="8"  target="_self"   data-recommendation-id="wi-HFNd-e7pw-w9EB">
+                    
+                    
+                    Ten grzyb to hit wegetarian! Rośnie na drzewach i smakuje jak najlepszy kurczak
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Redakcja poleca -->
+<div class="gl_plugin listing listing-wi-QVjS-vWaf-RrLf" data-upscore-zone="[beszamel.se.pl - kolekcja] Redakcja poleca" data-recommendation-id="wi-QVjS-vWaf-RrLf">
+    
+        
+            
+            <div id="wi-QVjS-vWaf-RrLf" class="main-title-listing">
+                
+                    
+    
+        <span>
+            Sprawdź to!
+        </span>
+    
+
+                
+            </div>
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v30 display-flex">
+        
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/inne-ciasta/ciasto-shrek-zielone-warstwy-delicje-i-budyniowy-krem-na-soku-re-DoAK-t2dk-2tEt.html" title="Ciasto Shrek. Zielone warstwy, Delicje i budyniowy krem na soku" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-DoAK-t2dk-2tEt" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-QQpE-pBvC-4tXM_ciasto-shrek-zielone-warstwy-delicje-i-budyniowy-krem-na-zielonym-soku-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-QQpE-pBvC-4tXM_ciasto-shrek-zielone-warstwy-delicje-i-budyniowy-krem-na-zielonym-soku-3-j.jpg" alt="Ciasto Shrek. Zielone warstwy, Delicje i budyniowy krem na soku" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-QQpE-pBvC-4tXM_ciasto-shrek-zielone-warstwy-delicje-i-budyniowy-krem-na-zielonym-soku-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/inne-ciasta/ciasto-shrek-zielone-warstwy-delicje-i-budyniowy-krem-na-soku-re-DoAK-t2dk-2tEt.html" title="Ciasto Shrek. Zielone warstwy, Delicje i budyniowy krem na soku" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-DoAK-t2dk-2tEt" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Ciasto Shrek. Zielone warstwy, Delicje i budyniowy krem na soku
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/ciasta-bazowe/wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-re-pbVo-N3RW-NJGZ.html" title="Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-pbVo-N3RW-NJGZ" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-Kkpw-KCGf-142o_wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-Kkpw-KCGf-142o_wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-3-j.jpg" alt="Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-Kkpw-KCGf-142o_wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/ciasta-bazowe/wystarczy-zmiksowac-6-skladnikow-i-wstawic-do-piekarnika-ten-sernik-z-brzoskwiniami-zawsze-sie-udaje-re-pbVo-N3RW-NJGZ.html" title="Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-pbVo-N3RW-NJGZ" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Wystarczy zmiksować  6 składników  i wstawić do piekarnika. Ten sernik z brzoskwiniami zawsze się udaje
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/pierogi/w-glownie-od-ponad-100-lat-robia-pierogi-inaczej-sekret-tkwi-w-ciescie-i-sezonowych-owocach-re-i6tC-5Uew-avUf.html" title="W Głownie od ponad 100 lat robią pierogi inaczej. Sekret tkwi w cieście i sezonowych owocach" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-i6tC-5Uew-avUf" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-vxh8-6qNJ-TDXX_w-glownie-od-ponad-100-lat-robia-pierogi-inaczej-sekret-tkwi-w-ciescie-i-sezonowych-owocach-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-vxh8-6qNJ-TDXX_w-glownie-od-ponad-100-lat-robia-pierogi-inaczej-sekret-tkwi-w-ciescie-i-sezonowych-owocach-3-j.jpg" alt="W Głownie od ponad 100 lat robią pierogi inaczej. Sekret tkwi w cieście i sezonowych owocach" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-vxh8-6qNJ-TDXX_w-glownie-od-ponad-100-lat-robia-pierogi-inaczej-sekret-tkwi-w-ciescie-i-sezonowych-owocach-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/pierogi/w-glownie-od-ponad-100-lat-robia-pierogi-inaczej-sekret-tkwi-w-ciescie-i-sezonowych-owocach-re-i6tC-5Uew-avUf.html" title="W Głownie od ponad 100 lat robią pierogi inaczej. Sekret tkwi w cieście i sezonowych owocach" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-i6tC-5Uew-avUf" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    W Głownie od ponad 100 lat robią pierogi inaczej. Sekret tkwi w cieście i sezonowych owocach
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/pierogi/pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-re-kX1m-KQYg-QgPF.html" title="Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-kX1m-KQYg-QgPF" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-8iHX-x9Ss-d2Db_pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-8iHX-x9Ss-d2Db_pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-3-j.jpg" alt="Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-8iHX-x9Ss-d2Db_pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/pierogi/pierogi-niemojskie-wygladaja-niezwykle-zielonkawe-ciasto-skrywa-farsz-ktorego-prawie-nikt-nie-zna-re-kX1m-KQYg-QgPF.html" title="Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna" data-box-id="cc-mfE7-e5Ln-VqBu" data-box-art-id="re-kX1m-KQYg-QgPF" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-QVjS-vWaf-RrLf">
+                    
+                    
+                    Pierogi niemojskie wyglądają niezwykle. Zielonkawe ciasto skrywa farsz, którego prawie nikt nie zna
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+
+<!-- LISTING -->
+
+<!--   [beszamel.se.pl - kolekcja] Dziś polecamy -->
+<div class="gl_plugin listing listing-wi-a4Mh-jjXj-WAMJ" data-upscore-zone="[beszamel.se.pl - kolekcja] Dziś polecamy" data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+    
+        
+            
+            <div id="wi-a4Mh-jjXj-WAMJ" class="main-title-listing">
+                
+                    
+    
+        <span>
+            Dziś polecamy
+        </span>
+    
+
+                
+            </div>
+            
+            
+        
+    
+    
+    
+    <div class="listing-container listing-container v30 display-flex">
+        
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/zupy-na-cieplo/na-podkarpaciu-mowia-na-nia-dziad-z-baba-ta-zupa-jest-pyszna-tania-i-bardzo-latwa-re-cnrd-YN1f-BLrC.html" title="Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-cnrd-YN1f-BLrC" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-uGXf-xybF-HGXr_zupa-dziad-z-baba-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-uGXf-xybF-HGXr_zupa-dziad-z-baba-3-j.jpg" alt="Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-uGXf-xybF-HGXr_zupa-dziad-z-baba-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/zupy-na-cieplo/na-podkarpaciu-mowia-na-nia-dziad-z-baba-ta-zupa-jest-pyszna-tania-i-bardzo-latwa-re-cnrd-YN1f-BLrC.html" title="Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-cnrd-YN1f-BLrC" data-box-art-num="1"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Na Podkarpaciu mówią na nią dziad z babą. Ta zupa jest pyszna, tania i bardzo łatwa
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/sniadania/jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-re-uqL2-dceW-2rv7.html" title="Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-uqL2-dceW-2rv7" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-fqXu-2h2y-LQGx_jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-fqXu-2h2y-LQGx_jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-3-j.jpg" alt="Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-fqXu-2h2y-LQGx_jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/sniadania/jedna-patelnia-zero-stresu-to-sniadanie-to-idealny-poczatek-dnia-re-uqL2-dceW-2rv7.html" title="Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-uqL2-dceW-2rv7" data-box-art-num="2"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Jedna patelnia, zero stresu. To śniadanie to idealny początek dnia
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/ciasta-okazjonalne/te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-re-TtJ2-tjU4-gKw7.html" title="Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-TtJ2-tjU4-gKw7" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-JFyN-J3z2-ciew_te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-JFyN-J3z2-ciew_te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-3-j.jpg" alt="Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-JFyN-J3z2-ciew_te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/ciasta-okazjonalne/te-mini-paczki-z-air-fryera-znikaja-w-5-minut-sekret-krem-czekoladowy-re-TtJ2-tjU4-gKw7.html" title="Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-TtJ2-tjU4-gKw7" data-box-art-num="3"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Te mini pączki z air fryera znikają w 5 minut. Sekret? Krem czekoladowy
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+        
+
+<div class="element   type--recipe " >
+    <div class="element__media ">
+        <a href="https://beszamel.se.pl/przepisy/sniadania/odwrocone-pancakes-z-ananasem-smakuja-jak-marzenie-a-robi-sie-je-w-kilkanascie-minut-re-keQK-5fw5-snmy.html" title="Odwrócone pancakes z ananasem smakują jak marzenie. A robi się je w kilkanaście minut" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-keQK-5fw5-snmy" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+            
+                
+        
+        <img loading="lazy" src="https://cdn.galleries.smcloud.net/thumbs/gf-VEbb-J6kn-86my_odwrocone-pancakes-z-ananasem-smakuja-jak-marzenie-a-robi-sie-je-w-kilkanascie-minut-3-j.jpg" srcset="https://cdn.galleries.smcloud.net/thumbs/gf-VEbb-J6kn-86my_odwrocone-pancakes-z-ananasem-smakuja-jak-marzenie-a-robi-sie-je-w-kilkanascie-minut-3-j.jpg" alt="Odwrócone pancakes z ananasem smakują jak marzenie. A robi się je w kilkanaście minut" data-link="https://cdn.galleries.smcloud.net/thumbs/gf-VEbb-J6kn-86my_odwrocone-pancakes-z-ananasem-smakuja-jak-marzenie-a-robi-sie-je-w-kilkanascie-minut-3-j.jpg" width="300" height="250" />
+
+            
+        </a>
+    </div>
+    
+        
+            
+<div class="element__content">
+    <div class="element__headline">
+        
+                <a href="https://beszamel.se.pl/przepisy/sniadania/odwrocone-pancakes-z-ananasem-smakuja-jak-marzenie-a-robi-sie-je-w-kilkanascie-minut-re-keQK-5fw5-snmy.html" title="Odwrócone pancakes z ananasem smakują jak marzenie. A robi się je w kilkanaście minut" data-box-id="cc-K52C-muv6-FpTD" data-box-art-id="re-keQK-5fw5-snmy" data-box-art-num="4"  target="_self"   data-recommendation-id="wi-a4Mh-jjXj-WAMJ">
+                    
+                    
+                    Odwrócone pancakes z ananasem smakują jak marzenie. A robi się je w kilkanaście minut
+                    
+                </a>
+        
+
+    </div>
+    
+</div>
+
+        
+    
+</div>
+
+
+    
+
+        
+    </div>
+    
+        
+    
+</div>
+
+
+
+
+                                    <!-- /hook_content_bottom -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+
+                <div class="gl_plugin footer">
+                    
+                        <!-- hook_footer -->
+                        <div id='hook_footer'>
+
+
+<!-- footer -->
+<footer>
+    <!-- gl_wrapper -->
+    <div class="gl_wrapper">
+        <div class="row">
+
+            
+            <div class="col col-3 logo">
+                <a href="https://www.grupazpr.pl" target="_blank">
+                    <img loading="lazy" src="/media/desktop/zpr_footer/images/logo-grupazpr.svg"
+                            alt="group logo"
+                         width="200"
+                         height="92">
+                </a>
+            </div>
+            
+            
+            <div class="col col-4 legal-info">
+                <p class="h5">Żaden utwór zamieszczony w serwisie nie może być powielany i rozpowszechniany lub dalej rozpowszechniany w jakikolwiek sposób (w tym także elektroniczny lub mechaniczny) na jakimkolwiek polu eksploatacji w jakiejkolwiek formie, włącznie z umieszczaniem w Internecie bez pisemnej zgody właściciela praw. Jakiekolwiek użycie lub wykorzystanie utworów w całości lub w części z naruszeniem prawa, tzn. bez właściwej zgody, jest zabronione pod groźbą kary i może być ścigane prawnie.
+                </p>
+            </div>
+
+            <!-- box about -->
+            <div class="col col-3 about">
+                <div class="h3">O nas <i class="fa fa-caret-down arrow-up-down" aria-hidden="true"></i></div>
+                <ul>
+                    
+                        <li><a href="https://www.grupazpr.pl">O wydawnictwie</a></li>
+                    
+                        <li><a href="/info/redakcja-aa-MGBV-qZkY-e5LG.html">Redakcja serwisu</a></li>
+                    
+                        <li><a href="https://www.grupazpr.pl/marka/1073">Reklama</a></li>
+                    
+                </ul>
+            </div>
+            <!-- /box about -->
+
+            <!-- box legal -->
+            <div class="col col-3 legal">
+                <div class="h3">Informacje prawne <i class="fa fa-caret-down arrow-up-down" aria-hidden="true"></i></div>
+                <ul>
+                    
+                        <li>
+                            <a href="https://rodo.grupazpr.pl/#time-regulamin-serwisow" rel="nofollow">Regulamin </a>
+                        </li>
+                    
+                        <li>
+                            <a href="https://www.grupazpr.pl/licencje_time.pdf" rel="nofollow">Licencje </a>
+                        </li>
+                    
+                        <li>
+                            <a href="https://rodo.grupazpr.pl/#time-polityka-prywatnosci-cookies" rel="nofollow">Polityka prywatności i cookies </a>
+                        </li>
+                    
+                        <li>
+                            <a href="https://rodo.grupazpr.pl/#time-dane-osobowe" rel="nofollow">Dane osobowe </a>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="serwis-list">
+    
+    <div onclick="toggleShowList()" class="show-list">Nasze serwisy <i class="fa fa-caret-down arrow-up-down" aria-hidden="true"></i></div>
+    <div class="list">
+        <ul>
+            <li><span class="h5">Budowa i Wnętrza:</span></li>
+            <li><a target="_blank" href="https://muratordom.pl/">Murator.pl</a></li>
+            <li><a target="_blank" href="https://projekty.muratordom.pl/">Projekty.murator.pl</a></li>
+            <li><a target="_blank" href="https://www.urzadzamy.pl/">Urzadzamy.pl</a></li>
+            <li><a target="_blank" href="https://architektura.muratorplus.pl/">Architektura.murator.pl</a></li>
+            <li><a target="_blank" href="https://www.muratorplus.pl/">Muratorplus.pl</a></li>
+            <li><a target="_blank" href="https://haleprzemyslowe.muratorplus.pl/">Haleprzemyslowe.muratorplus.pl</a></li>
+            <li><a target="_blank" href="https://obiektykomercyjne.muratorplus.pl/">Obiektykomercyjne.muratorplus.pl</a></li>
+            <li><a target="_blank" href="https://obiektymieszkalne.muratorplus.pl/">Obiektymieszkalne.muratorplus.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Zdrowie i parenting:</span></li>
+            <li><a target="_blank" href="https://www.poradnikzdrowie.pl/">Poradnikzdrowie.pl</a></li>
+            <li><a target="_blank" href="https://www.mjakmama24.pl/">Mjakmama.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Hobby:</span></li>
+            <li><a target="_blank" href="https://podroze.se.pl/">Podroze.pl</a> </li>
+            <li><a target="_blank" href="https://beszamel.se.pl/">Beszamel.pl</a></li>
+            <li><a target="_blank" href="https://www.poradyplus.pl/">Poradyplus.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">News:</span></li>
+            <li><a target="_blank" href="https://www.se.pl/">Se.pl</a></li>
+            <li><a target="_blank" href="https://superbiz.se.pl/">Superbiz.se.pl</a></li>
+            <li><a target="_blank" href="https://superseriale.se.pl/">Superseriale.se.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Radio:</span></li>
+            <li><a target="_blank" href="https://www.eska.pl/">Eska.pl</a></li>
+            <li><a target="_blank" href="https://dwa.eska.pl/">dwa.eska.pl</a></li>
+            <li><a target="_blank" href="https://www.eskarock.pl/">Eskarock.pl</a></li>
+            <li><a target="_blank" href="https://www.voxfm.pl/">Voxfm.pl</a></li>
+            <li><a target="_blank" href="https://www.radioplus.pl/">RadioPLUS.pl</a></li>
+            <li><a target="_blank" href="https://www.vibefm.pl/">Vibefm.pl</a></li>
+        </ul>
+        <ul>
+            <li><span class="h5">Centrum Usług Wspólnych:</span></li>
+            <li><a target="_blank" href="https://azb-cuw.pl/">azb-cuw.pl</a></li>
+        </ul>
+    </div>
+    
+    <div class="copyright variant2">
+        <div class="copyright__text">&copy; 2026 Grupa ZPR Media</div>
+    </div>
+</div>
+
+        </div>
+    </div>
+
+</footer>
+<!-- /footer -->
+
+</div>
+                        <!-- /hook_footer -->
+                    
+                    
+                        <!-- hook_footer_extended -->
+                        
+                        <!-- /hook_footer_extended -->
+                    
+                </div>
+
+                <div class="gl_plugin cookies">
+                    
+                        <!-- hook_footer_cookies -->
+                        
+                        <!-- /hook_footer_cookies -->
+                    
+                </div>
+
+            </div>
+            <!-- /zpr_screening -->
+        </section>
+
+        
+            <!-- hook_layer -->
+            
+            <!-- /hook_layer -->
+        
+
+        
+        
+
+        <script async src="/media/desktop/zpr_layouts_web/js/common.min.js?__8712914d"></script>
+
+
+        
+        
+            <!-- hook_end_body -->
+            <div id='hook_end_body'><!-- ADS_END -->
+
+    <!-- InVideoGam -->
+
+
+    <!-- FloorAd -->
+<script type="text/javascript">
+    try {sas_idmnet.cmd.push(function(){ try {sas_idmnet.layerRelease()}catch (e){}});} catch (ReferenceError) {console.log('Reklamy są wyłączone.');}
+</script>
+
+
+    <!-- SmartAdServer -->
+
+
+
+<script>
+  function sendPushPlacements() {
+    let placementsList = ["s1","s2","s3","t0","t1"];
+    let allPlacements;
+
+    if (typeof fixedPlacements === "undefined") {
+      allPlacements = placementsList;
+    } else {
+      allPlacements = placementsList.concat(fixedPlacements || []);
+    }
+
+    dataLayer[0]["placements"] = allPlacements.toString()
+    
+    }
+  sendPushPlacements();
+</script>
+
+
+    <!-- ToWideo -->
+
+
+
+
+    <!-- InAudioStreamGam -->
+
+
+</div>
+            <!-- /hook_end_body -->
+        
+        
+            <!-- hook_end_body_extended -->
+            <div id='hook_end_body_extended'>
+<script type="text/javascript" src="/media/desktop/zpr_seo_web/js/short_seo_text.min.js?__8712914d" defer></script><script {&#x27;container_id&#x27;: &#x27;taboola-below-category-thumbnails&#x27;, &#x27;container_type&#x27;: &#x27;category&#x27;, &#x27;placement_name&#x27;: &#x27;Below Category Thumbnails&#x27;, &#x27;publisher_id&#x27;: &#x27;timezpr-network&#x27;} type="text/javascript">
+    window._taboola = window._taboola || [];
+    _taboola.push({flush: true});
+</script>
+
+<script type="text/javascript" src="/media/desktop/site_header/js/desktop_site_header.min.js?__8712914d" ></script></div>
+            <!-- /hook_end_body_extended -->
+        
+    
+    <a href="/cdn-cgi/l/email-protection#d1b4b7a5b0bdb8b0ffb2b9beb2b9bdb091a2a4a1b4a3bcb4b5b8b0ffa1bd" class="link__hide" style="display: none;">email</a>
+    <!-- SENTRY-->
+    
+    <!-- /SENTRY-->
+
+    <!-- LAYOUT -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
