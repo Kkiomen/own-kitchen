@@ -13,7 +13,8 @@
         "inertiajs/inertia-laravel": "^3.0",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "laravel/wayfinder": "^0.1.14"
+        "laravel/wayfinder": "^0.1.14",
+        "minishlink/web-push": "^8.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
@@ -24,8 +25,7 @@
         "laravel/sail": "^1.53",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9.3",
-        "pestphp/pest": "^5.0",
-        "pestphp/pest-plugin-laravel": "^5.0"
+        "phpunit/phpunit": "^12.5"
     },
     "autoload": {
         "psr-4": {
@@ -104,7 +104,6 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
             "php-http/discovery": true
         }
     },

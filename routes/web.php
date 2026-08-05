@@ -8,6 +8,7 @@ use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\PantryController;
 use App\Http\Controllers\PantryPhotoController;
 use App\Http\Controllers\PriceHistoryController;
+use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ShoppingListController;
 use App\Http\Controllers\ShoppingListsController;
@@ -26,6 +27,14 @@ Route::middleware('guest')->group(function (): void {
     Route::get('/logowanie', [SessionController::class, 'create'])->name('login');
     // Throttled by address so the form cannot be used to guess a password.
     Route::post('/logowanie', [SessionController::class, 'store'])->middleware('throttle:6,1');
+
+    /*
+     * The camera half of the device link. It writes nothing and reads nothing —
+     * the scanning happens in the browser and the code is redeemed on the route
+     * below — so there is no throttle here; the rate limit that matters is on
+     * the redemption.
+     */
+    Route::get('/logowanie/kod', [DeviceLinkController::class, 'scan'])->name('device-link.scan');
 });
 
 /*
@@ -55,6 +64,14 @@ Route::middleware('auth')->group(function (): void {
     Route::delete('/zadania/zrobione', [TaskController::class, 'clearDone'])->name('tasks.clear-done');
     Route::patch('/zadania/{task}', [TaskController::class, 'update'])->name('tasks.update');
     Route::delete('/zadania/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+
+    /*
+     * This phone's permission to be told about a new task. Not under /zadania:
+     * it is a property of the device rather than of the list, and the next thing
+     * worth announcing will not be a task.
+     */
+    Route::post('/powiadomienia', [PushSubscriptionController::class, 'store'])->name('push.subscribe');
+    Route::delete('/powiadomienia', [PushSubscriptionController::class, 'destroy'])->name('push.unsubscribe');
 
     Route::get('/lodowka', [PantryController::class, 'index'])->name('pantry.index');
     Route::post('/lodowka', [PantryController::class, 'store'])->name('pantry.store');

@@ -65,6 +65,11 @@ export const ICON_PATHS = {
     camera: 'M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1zM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z',
     /** An empty plate: nothing matched. */
     empty: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8 15c1-1.2 2.3-1.8 4-1.8s3 .6 4 1.8M9 9.5h.01M15 9.5h.01',
+    /** A bell: this phone gets told. */
+    bell: 'M12 3a5.5 5.5 0 0 0-5.5 5.5c0 5-2 6.5-2 6.5h15s-2-1.5-2-6.5A5.5 5.5 0 0 0 12 3zM10.3 18.5a2 2 0 0 0 3.4 0',
+    /** The same bell, struck through: it does not. */
+    bellOff:
+        'M12 3a5.5 5.5 0 0 0-5.5 5.5c0 5-2 6.5-2 6.5h15s-2-1.5-2-6.5A5.5 5.5 0 0 0 12 3zM10.3 18.5a2 2 0 0 0 3.4 0M4 4l16 16',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

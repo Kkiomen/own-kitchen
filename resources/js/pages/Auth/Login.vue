@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import AppIcon from '@/components/AppIcon.vue';
 import AuthShell from '@/components/AuthShell.vue';
 import { login, register } from '@/routes';
+import { scan } from '@/routes/device-link';
 
 defineProps<{ canRegister: boolean }>();
 
@@ -111,9 +113,25 @@ function submit(): void {
             </Link>
         </div>
 
-        <p class="mt-8 text-center text-sm text-ink-muted">
-            Masz kod QR od drugiej osoby? Zeskanuj go aparatem — otworzy tę
-            aplikację i zaloguje Cię automatycznie.
-        </p>
+        <!--
+          The camera is opened from here rather than left to the phone's own
+          camera app: the instruction it replaces asked somebody standing in a
+          kitchen to leave the app, find the right app, and trust that a
+          notification would bring them back.
+        -->
+        <div class="mt-6 border-t border-rule pt-6">
+            <Link
+                :href="scan.url()"
+                class="flex h-12 w-full items-center justify-center gap-2 rounded-full border border-rule-strong font-medium text-ink"
+            >
+                <AppIcon name="qr" class="h-5 w-5" />
+                Zaloguj się kodem QR
+            </Link>
+
+            <p class="mt-3 text-center text-sm text-ink-muted">
+                Kod pokazuje druga osoba na swoim telefonie, w „Dodaj
+                urządzenie”.
+            </p>
+        </div>
     </AuthShell>
 </template>

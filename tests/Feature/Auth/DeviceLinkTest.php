@@ -34,6 +34,19 @@ class DeviceLinkTest extends TestCase
         $this->assertSame(1, DeviceLinkToken::query()->count());
     }
 
+    /**
+     * The scanner is reachable without an account — it is how you get one — and
+     * it issues nothing: the code being read was issued on the other phone.
+     */
+    public function test_the_scanner_opens_from_the_login_screen(): void
+    {
+        $this->get(route('device-link.scan'))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Auth/ScanCode'));
+
+        $this->assertSame(0, DeviceLinkToken::query()->count());
+    }
+
     public function test_a_stranger_cannot_ask_for_a_code(): void
     {
         $this->get(route('device-link.create'))->assertRedirect(route('login'));

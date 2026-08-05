@@ -6,6 +6,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\Assignee;
 use App\Models\Task;
+use App\Push\Vapid;
+use App\Tasks\AnnounceTask;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -21,7 +23,7 @@ use Inertia\Response;
  */
 class TaskController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request, Vapid $vapid): Response
     {
         $tasks = Task::query()
             ->of($request->user())
@@ -54,23 +56,41 @@ class TaskController extends Controller
              * against, whatever a phone's clock says.
              */
             'today' => CarbonImmutable::today()->toDateString(),
+            /*
+             * What a phone needs to subscribe itself. Null on an installation
+             * nobody has run `push:keys` on, and the switch then hides rather
+             * than offering something that could only fail — the same rule the
+             * "Mam wszystko" chip follows when there is no kitchen to match
+             * against.
+             */
+            'pushKey' => $vapid->isConfigured() ? $vapid->publicKey : null,
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, AnnounceTask $announce): RedirectResponse
     {
         $data = $request->validate([
             'title' => ['required', 'string', 'max:200'],
             'assignee' => ['required', Rule::enum(Assignee::class)],
             'due_on' => ['nullable', 'date'],
+            /*
+             * Which phone is typing. Not part of the task and never stored on
+             * one — it exists so the notification skips the hand it was written
+             * in. Optional, because a device that never turned notifications on
+             * has no id to send, and "tell every phone" is the right answer for
+             * a caller that cannot name itself.
+             */
+            'device' => ['nullable', 'string', 'max:64'],
         ]);
 
-        Task::query()->create([
+        $task = Task::query()->create([
             'user_id' => $request->user()->id,
             'title' => trim($data['title']),
             'assignee' => $data['assignee'],
             'due_on' => $data['due_on'] ?? null,
         ]);
+
+        $announce->created($task, $data['device'] ?? null);
 
         return back();
     }

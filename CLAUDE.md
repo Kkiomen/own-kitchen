@@ -17,7 +17,7 @@ Status (2026-08-04): the catalogue is built and populated — recipes from four 
 
 ## Stack
 
-Laravel 13 (PHP 8.3) · Inertia.js 3 · Vue 3 (`<script setup>`, TypeScript) · Tailwind CSS 4 · Vite 8 · SQLite · Pest 5 / PHPUnit · Laravel Wayfinder.
+Laravel 13 (PHP 8.3) · Inertia.js 3 · Vue 3 (`<script setup>`, TypeScript) · Tailwind CSS 4 · Vite 8 · SQLite · PHPUnit 12 · Laravel Wayfinder.
 
 ## Commands
 
@@ -69,7 +69,7 @@ Tests run against SQLite `:memory:` (see `phpunit.xml`); local dev uses the comm
   - `import/order` alphabetized, grouped builtin → external → internal → parent → sibling → index.
   - Blank line required before and after every control statement (`if`, `return`, `for`, `while`, `switch`, `try`, `throw`).
   - Braces always (`curly: all`), 1tbs, no single-line blocks.
-- **Class-based tests** — despite Pest being installed, `tests/Pest.php` is empty and existing tests are plain PHPUnit classes extending `Tests\TestCase` with `RefreshDatabase`. Follow the existing style unless deliberately switching the suite over.
+- **Class-based tests** — plain PHPUnit classes extending `Tests\TestCase` with `RefreshDatabase`, and test names that read as sentences. Pest was installed by the starter and never written in: every test in the suite was a PHPUnit class, `tests/Pest.php` was empty, and it has been dropped rather than left as a second way to write a test that nobody uses.
 - `@/*` in TS resolves to `resources/js/*`. `cn()` in `resources/js/lib/utils.ts` merges Tailwind classes.
 - Node scripts are disabled by `.npmrc` (`ignore-scripts=true`).
 
@@ -179,6 +179,17 @@ One household, one account, two phones. There are no per-user roles and no owner
 
 `tests/Feature/Auth/DeviceLinkTest.php` pins expiry, single use, supersession, hashing and the unauthenticated case. If you change the flow, those tests are the specification.
 
+### Scanning the code in the app
+
+"Zaloguj się kodem QR" on the login screen opens `/logowanie/kod` (`DeviceLinkController::scan` → `pages/Auth/ScanCode.vue`), which turns on the camera and reads the code itself. The instruction it replaces asked somebody standing in a kitchen to leave the app, find the phone's camera app, and trust that a notification would bring them back. The redemption is unchanged — `lib/qr-scan.ts` decodes and then navigates to the same `/dolacz/{token}` GET — so every property above still holds.
+
+- **A scanned code is never followed as a URL.** The camera is pointed at whatever is in front of it and a QR code is an address somebody else chose. Only the token is read out (`tokenFrom()`) and handed to *our* route; anything else says "to nie jest kod tej aplikacji" and the scanning carries on rather than looking broken.
+- **Taking the token rather than the address is also what makes it work at all.** The code is drawn from `APP_URL`, which is regularly not the address the scanning phone is browsing — that is the Docker `localhost:8001` note, in the one place it would otherwise bite.
+- **`BarcodeDetector` where there is one, jsQR everywhere else.** iOS has no `BarcodeDetector` at all, so the fallback is not optional; it is a dynamic `import()`, so the phones that have the native decoder never download it (130 KB in its own chunk).
+- **The camera needs a secure origin**, and `unsupported` says so in different words from `denied`: one is fixed by opening the app over https, the other in the browser's settings. Under Docker on `http://192.168.x.x:8001` there is no camera at all — hence the manual paste, which takes the same address the code screen already prints under "Aparat nie czyta kodu?".
+- Decoding runs at `DECODE_INTERVAL_MS` on frames scaled to 640 px, and `onBeforeUnmount` stops the tracks. Reading a code takes a second either way; a decode per frame only heats the phone, and a camera light left on after leaving the screen is how an app gets deleted.
+- The page is in the `guest` group and issues nothing — the code it reads was issued on the other phone — so it carries no throttle of its own. `/dolacz/{token}` stays outside the group, because scanning on a phone already signed in as somebody else must still switch accounts.
+
 ## Search engines
 
 Sign-up is open to friends, but the app is not something to be *found*: you come here because somebody gave you the address. So nothing is indexable — by any engine, not only Google.
@@ -242,6 +253,28 @@ The app is meant to be installed on a phone and used by two people on one accoun
 - The service worker registers **only in production** (`app.ts`), so a stale cache never shadows a rebuild during development.
 - **It deliberately never caches Inertia's XHR** (`X-Inertia` header). Two people share the account; serving one of them a cached response would show them the other's stale view. Pages are network-first with a cache fallback, hashed build assets are cache-first, and recipe photos are cache-first but capped at 300 entries — ~2650 recipes' images would otherwise fill the phone.
 - Bump `VERSION` in `sw.js` when the caching strategy changes; the activate handler drops every cache that is not in the current set.
+
+## Notifications (`app/Push`)
+
+One phone finding out that the other wrote a task down. Ports and adapters again — `Contracts/PushGateway` is the port, `WebPushGateway` and `NullPushGateway` the adapters, `Providers/PushServiceProvider` the composition root — for the reason the house rule allows an interface: the real implementation posts to Google and Apple, so without a seam every test of "does adding a task tell the other phone" would either hit the network or prove nothing.
+
+**A subscription belongs to a device, never to the account.** `push_subscriptions` is scoped to `user_id` like everything else, but the grain that matters is one row per *phone*: one household is one account, so an account-level subscription would mean only whichever phone subscribed last ever rings. `device_id` is a value the client mints once into `localStorage`, and it exists for exactly one thing — **not buzzing the hand that just typed the task**. The endpoint cannot do that job, because the browser may replace it at any time without telling the page, so a request could never name its own. `POST /zadania` therefore carries an optional `device`; absent, every phone is told, on the same "null narrows nothing" rule `SelectedShops` follows.
+
+**The keys are generated once and then left alone.** `php artisan push:keys` prints a VAPID pair for `.env`; the command refuses to print a second one without `--force`, because the public half is baked into every subscription a phone has already made — a new pair does not re-key anything, it silently orphans every device, which go on looking subscribed and never ring again. Missing keys are a *state*, not a fault: `PushServiceProvider` binds `NullPushGateway`, `TaskController` sends `pushKey: null` and the switch hides rather than offering something that could only fail. In Docker the file to edit is `/data/.env` on the volume, not the one in the repository.
+
+**`defer()`, not `dispatch(...)->afterResponse()`, and the difference is not stylistic.** The latter goes through the queue's payload, which **serializes the object graph and runs a restored copy** — so everything it writes to the database survives and everything it does to an object does not. That is the worst way round: it works in production and is untestable, and it cost an afternoon here before the object ids were compared. It is also not on a real queue on purpose: `QUEUE_CONNECTION=database` but nothing in `compose.yaml` runs a worker, so a queued job would sit in the table for ever and the feature would look wired up while staying silent.
+
+**iOS is the constraint the design is shaped by**, since that is what the household carries:
+
+- Push works only from an app **added to the home screen** (16.4+), never from a Safari tab, and only over HTTPS a phone trusts — hence the VPS with a real certificate. The service worker registers in production only, so **notifications cannot be tried against `npm run dev`**; it takes a build.
+- **No action buttons and no custom sound.** Tapping opens `/zadania` and that is the whole interaction, which is why the payload is a title, a line and a URL.
+- The permission is asked for **on the tap**, never on load — the same rule the cooking timer follows, and iOS ignores a prompt raised any other way.
+- `navigator.setAppBadge()` carries the open count onto the icon, which is the half that survives a banner being swiped away unread.
+- **A subscription is deleted only on 404/410.** A timeout or a 500 is a push service having a bad afternoon; acting on it would cost a phone its subscription for a fault that was never its own.
+
+**The `push` handler must always show something.** Every browser grants a subscription on the promise of `userVisibleOnly: true`; a handler that quietly decides a message is not worth a banner gets the subscription revoked after a few tries. That is why an unparseable payload still raises a bare notification. `sw.js` is at **v4** for this handler — a worker without it receives the message and drops it, and the phone looks subscribed while staying silent.
+
+`tests/Feature/PushNotificationTest.php` pins the exclusion, the "cannot name its device" case, one-row-per-endpoint, the 404/410 cleanup, the household scope on unsubscribe, and the unconfigured installation. If the flow changes, those are the specification.
 
 ## Quick-pick categories
 
@@ -452,6 +485,7 @@ Not about food at all, and that is the point: "podjedź po chleb", "oddaj buty d
 - **A task carries a date, never a time.** Asking for an hour would turn writing one down into filling a form; "dziś" and "jutro" are one tap each and cover nearly every case. `today` comes from the server so the shortcut and the overdue marker agree whatever a phone's clock says, and *overdue means the day has passed* — something due today is not late until tomorrow.
 - Handing a task over is a chip on the row, not an edit screen: "zrób to ty" is half the conversations this exists for.
 - **The open count is a shared prop (`openTasks`), so the badge rides on every screen.** The point of writing something down is not having to remember it, and a count you only see once you are already on the tasks screen is a reminder you have to go looking for. It is a closure, so a partial visit that did not ask for it — infinite scroll — does not pay for the query. **Flat, not nested under `tasks`**: the tasks screen has a page prop by that name and a page prop wins, which made the badge vanish on the one screen where the number is most obviously right.
+- **Writing one down tells the other phone**, which is the difference between this screen working and it being another thing to remember to check. See **Notifications** above; the switch lives on this screen rather than in a settings page, for the reason the shop picker sits on the plan.
 - Adding this made the nav five sections. `resources/js/lib/navigation.ts` had "four is the ceiling" written in it; the fifth was added and then *measured* — at 390px each cell is 78px and the widest label renders at 50px. **Podróż later made it six, measured the same way: 65px cells, widest label 49.6px, nothing overflowing.** That is the last one that fits — a seventh leaves 55.7px against a 49.6px label — so the next section is a "więcej" sheet, not another cell. Measure, do not argue.
 
 ### "Co ugotuję z tego, co się psuje" (`App\Pantry\ExpiringSoon`)

@@ -19,7 +19,7 @@ FROM dunglas/frankenphp:1-php8.4 AS build
 
 # `install-php-extensions` comes with the FrankenPHP image and pulls in the
 # system libraries each extension needs, which `docker-php-ext-install` does not.
-RUN install-php-extensions pdo_sqlite mbstring intl zip opcache
+RUN install-php-extensions pdo_sqlite mbstring intl zip opcache gmp
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends curl ca-certificates git unzip \
@@ -74,7 +74,10 @@ RUN mkdir -p \
 #
 FROM dunglas/frankenphp:1-php8.4 AS app
 
-RUN install-php-extensions pdo_sqlite mbstring intl zip opcache
+# `gmp` is for Web Push: the VAPID signature is elliptic-curve arithmetic, and
+# without it the library falls back to a pure-PHP big-integer implementation
+# that works and is markedly slower per notification.
+RUN install-php-extensions pdo_sqlite mbstring intl zip opcache gmp
 
 # curl is the health check, and the health check is what the scheduler waits on
 # before it starts touching the same database.

@@ -4,6 +4,7 @@ use App\Providers\AppServiceProvider;
 use App\Providers\ImportingServiceProvider;
 use App\Providers\OffersServiceProvider;
 use App\Providers\PricingServiceProvider;
+use App\Providers\PushServiceProvider;
 use App\Providers\TravelServiceProvider;
 use App\Providers\VisionServiceProvider;
 
@@ -12,6 +13,7 @@ return [
     ImportingServiceProvider::class,
     OffersServiceProvider::class,
     PricingServiceProvider::class,
+    PushServiceProvider::class,
     TravelServiceProvider::class,
     VisionServiceProvider::class,
 ];

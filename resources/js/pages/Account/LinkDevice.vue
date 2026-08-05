@@ -72,8 +72,9 @@ function regenerate(): void {
 
         <main class="mx-auto max-w-md px-5 py-6 pb-24 sm:pb-6">
             <p class="text-sm leading-relaxed text-ink-muted">
-                Zeskanuj ten kod aparatem drugiego telefonu. Otworzy aplikację i
-                zaloguje na to samo konto — bez podawania hasła.
+                Na drugim telefonie otwórz ekran logowania i wybierz „Zaloguj
+                się kodem QR”, a potem skieruj aparat na ten kod. Zaloguje na to
+                samo konto — bez podawania hasła. Zwykły aparat też zadziała.
             </p>
 
             <div

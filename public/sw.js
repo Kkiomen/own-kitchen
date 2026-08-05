@@ -12,7 +12,10 @@
 
 // v3: the cooking timer's alarm. Bumped so an installed phone picks up the
 // message handler rather than keeping a worker that ignores it.
-const VERSION = 'v3';
+// v4: `push`, so the other phone finds out a task was written down. Same
+// reason for the bump — a worker without the handler receives the message and
+// drops it, and the phone looks subscribed while staying silent.
+const VERSION = 'v4';
 const SHELL_CACHE = `kuchnia-shell-${VERSION}`;
 const ASSET_CACHE = `kuchnia-assets-${VERSION}`;
 const IMAGE_CACHE = `kuchnia-images-${VERSION}`;
@@ -219,6 +222,60 @@ self.addEventListener('message', (event) => {
     alarm = setTimeout(() => {
         void ringAlarm(data.body, data.url);
     }, delay);
+});
+
+/*
+ * Something happened on the other phone.
+ *
+ * Unlike the timer above, this does not depend on the worker still being alive:
+ * the push service wakes it, which is exactly why a task written while the app
+ * is closed arrives and a timer set the same way could not be trusted to.
+ *
+ * `showNotification` is not optional here. Every browser grants a push
+ * subscription on the promise that each message becomes something visible
+ * (`userVisibleOnly: true`); a handler that quietly does nothing gets the
+ * subscription revoked after a few tries.
+ */
+self.addEventListener('push', (event) => {
+    let payload = {};
+
+    try {
+        payload = event.data ? event.data.json() : {};
+    } catch {
+        // A message we cannot read is still a message. Better a bare banner
+        // than the silent drop that costs the subscription.
+    }
+
+    const url = payload.url ?? '/zadania';
+
+    event.waitUntil(
+        (async () => {
+            await self.registration.showNotification(payload.title ?? 'Kuchnia', {
+                body: payload.body ?? '',
+                icon: '/icons/icon-192.png',
+                badge: '/icons/icon-192.png',
+                // One tag for the list, so three tasks written in a minute
+                // replace one another instead of stacking three banners.
+                tag: payload.tag ?? 'kuchnia',
+                renotify: true,
+                data: { url },
+            });
+
+            /*
+             * The count on the app icon. iOS shows it on the home screen, which
+             * is the half of this feature that survives a banner being swiped
+             * away without being read. Guarded: it is unsupported on plenty of
+             * browsers and absent in older iOS.
+             */
+            if (typeof payload.badge === 'number' && self.navigator.setAppBadge) {
+                try {
+                    await self.navigator.setAppBadge(payload.badge);
+                } catch {
+                    // Nothing to do about it, and nothing worth failing over.
+                }
+            }
+        })(),
+    );
 });
 
 self.addEventListener('notificationclick', (event) => {

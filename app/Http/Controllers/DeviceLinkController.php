@@ -34,6 +34,17 @@ class DeviceLinkController extends Controller
     }
 
     /**
+     * The scanner, opened from the login screen. Reading the code with the app's
+     * own camera rather than the phone's camera app is what makes joining a
+     * household one button instead of a set of instructions — and the decoding
+     * happens entirely in the browser, so this renders a page and nothing else.
+     */
+    public function scan(): Response
+    {
+        return Inertia::render('Auth/ScanCode');
+    }
+
+    /**
      * Scanned on the second phone. Deliberately a plain GET so that opening the
      * link is all it takes — that convenience is the whole point, and it is why
      * the code is single use and expires in minutes.

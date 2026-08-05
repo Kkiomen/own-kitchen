@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import AppHeader from '@/components/AppHeader.vue';
 import AppIcon from '@/components/AppIcon.vue';
 import AppNav from '@/components/AppNav.vue';
+import {
+    currentState,
+    deviceId,
+    disablePush,
+    enablePush,
+    pushSupported,
+} from '@/lib/push';
+import type { PushState } from '@/lib/push';
 import { clearDone, destroy, store, update } from '@/routes/tasks';
 
 interface TaskEntry {
@@ -27,6 +35,11 @@ const props = defineProps<{
     assignees: AssigneeOption[];
     /** The server's today, so "dziś" and the overdue marker agree. */
     today: string;
+    /**
+     * The VAPID public key, or null on an installation nobody generated one for.
+     * Null hides the switch rather than showing one that could only fail.
+     */
+    pushKey: string | null;
 }>();
 
 /*
@@ -40,7 +53,49 @@ const form = useForm({
     title: '',
     assignee: 'both',
     due_on: null as string | null,
+    /*
+     * Which phone is typing, so the notification skips it. Read once here rather
+     * than per submit: it is a constant for the life of the installation, and a
+     * localStorage hit on every keystroke-ending tap is noise.
+     */
+    device: pushSupported() ? deviceId() : null,
 });
+
+/*
+ * Whether this phone gets told. Asked of the browser on mount rather than sent
+ * from the server: a permission revoked in the phone's own settings leaves our
+ * row behind, and a switch drawn from the row would read "on" beside a phone
+ * that can no longer ring.
+ */
+const push = ref<PushState>('unsupported');
+const pushBusy = ref(false);
+
+onMounted(() => {
+    void currentState().then((state) => {
+        push.value = state;
+    });
+});
+
+async function togglePush(): Promise<void> {
+    if (pushBusy.value || props.pushKey === null) {
+        return;
+    }
+
+    pushBusy.value = true;
+
+    try {
+        push.value =
+            push.value === 'on'
+                ? await disablePush()
+                : await enablePush(props.pushKey);
+    } catch {
+        // Left as it was: the switch says what the phone actually is, and
+        // pretending otherwise is the one thing it must not do.
+        push.value = await currentState();
+    } finally {
+        pushBusy.value = false;
+    }
+}
 
 function shortLabel(value: string): string {
     return (
@@ -273,7 +328,46 @@ function clearFinished(): void {
                         {{ openFor(option.value) }}
                     </span>
                 </button>
+
+                <!--
+                    Whether this phone gets told when the other one writes
+                    something down. It lives here rather than in a settings
+                    screen for the reason the shop picker sits on the plan: a
+                    switch three taps away is one nobody remembers the state of,
+                    and this one is the difference between the list working and
+                    the list being another thing to remember to check.
+
+                    Hidden entirely where push cannot work — no keys generated,
+                    or a browser without the API — rather than shown disabled.
+                -->
+                <button
+                    v-if="pushKey !== null && push !== 'unsupported'"
+                    type="button"
+                    :disabled="pushBusy || push === 'blocked'"
+                    class="ml-auto flex h-11 items-center gap-2 rounded-full border px-4 text-sm transition-colors disabled:opacity-50"
+                    :class="
+                        push === 'on'
+                            ? 'border-accent bg-accent-soft font-medium text-accent-strong'
+                            : 'border-rule-strong text-ink-muted hover:text-ink'
+                    "
+                    :aria-pressed="push === 'on'"
+                    @click="togglePush"
+                >
+                    <AppIcon :name="push === 'on' ? 'bell' : 'bellOff'" />
+                    <span class="sr-only sm:not-sr-only">
+                        {{ push === 'on' ? 'Powiadomienia' : 'Powiadom mnie' }}
+                    </span>
+                </button>
             </div>
+
+            <!--
+                Only the phone's own settings can undo a refusal, so the app
+                cannot offer a button here — it can only say where to go.
+            -->
+            <p v-if="push === 'blocked'" class="mb-4 text-sm text-ink-muted">
+                Powiadomienia są zablokowane w ustawieniach telefonu — trzeba je
+                włączyć tam, dla tej aplikacji.
+            </p>
 
             <p
                 v-if="open.length === 0"
