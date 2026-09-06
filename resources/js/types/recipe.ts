@@ -122,9 +122,31 @@ export interface RecipeScale {
     isScaled: boolean;
 }
 
+/**
+ * What a portion of a dish is worth.
+ *
+ * `coverage` travels with the figures rather than being rounded away: a recipe
+ * whose butter never reached grams comes out light and looks perfectly
+ * ordinary, so the screen says "co najmniej" instead of quoting a number it
+ * cannot stand behind. Null throughout when the source never stated portions.
+ */
+export interface RecipeNutrition {
+    perPortion: {
+        kcal: number;
+        protein: number | null;
+        fat: number | null;
+        carbs: number | null;
+    } | null;
+    total: { kcal: number };
+    coverage: number;
+    isReliable: boolean;
+    unknown: string[];
+}
+
 export interface RecipeDetail {
     slug: string;
     scale: RecipeScale;
+    nutrition: RecipeNutrition;
     title: string;
     description: string | null;
     imageUrl: string | null;

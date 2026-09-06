@@ -218,7 +218,7 @@ class PriceImportTest extends TestCase
     {
         Http::fake([
             '*variables*' => Http::response($this->variablesPage(0, [
-                ['id' => 1, 'n1' => 'salceson Włoski - za 1kg'],
+                ['id' => 1, 'n1' => 'usługi gastronomiczne - za 1 posiłek'],
             ])),
             '*by-unit*' => Http::response([
                 'totalRecords' => 1,
@@ -234,7 +234,7 @@ class PriceImportTest extends TestCase
         $this->assertSame(0, $summary->matched);
         $this->assertNull($observation->ingredient_id);
         $this->assertTrue($observation->needs_review);
-        $this->assertSame('salceson Włoski - za 1kg', $observation->title);
+        $this->assertSame('usługi gastronomiczne - za 1 posiłek', $observation->title);
     }
 
     /**

@@ -7,6 +7,7 @@ namespace App\Planning;
 use App\Enums\MealSlot;
 use App\Models\MealPlanEntry;
 use App\Models\User;
+use App\Nutrition\RecipeNutrition;
 use App\Pantry\RecipeAvailability;
 use App\Support\PolishDate;
 use Carbon\CarbonImmutable;
@@ -30,7 +31,10 @@ final class MealPlan
      */
     public const int DEFAULT_SERVINGS = 2;
 
-    public function __construct(private readonly RecipeAvailability $availability) {}
+    public function __construct(
+        private readonly RecipeAvailability $availability,
+        private readonly RecipeNutrition $nutrition,
+    ) {}
 
     /** Weeks start on Monday, the way a Polish calendar and a shop leaflet do. */
     public static function weekOf(?string $date): CarbonImmutable
@@ -104,6 +108,7 @@ final class MealPlan
                 'dayOfMonth' => (int) CarbonImmutable::parse($date)->format('j'),
                 'isToday' => $date === CarbonImmutable::today()->toDateString(),
                 'slots' => $this->slotsOf($byDay[$date] ?? [], $shortfall),
+                'nutrition' => $this->dayTotals($byDay[$date] ?? []),
             ];
         }
 
@@ -162,7 +167,93 @@ final class MealPlan
             'totalTimeMinutes' => $recipe?->total_time_minutes,
             'isMealPrep' => $recipe !== null && $recipe->is_meal_prep,
             'missing' => $recipe === null ? null : ($shortfall[$recipe->id] ?? 0),
+            'nutrition' => $this->share($entry),
         ];
+    }
+
+    /**
+     * What one person gets from this meal.
+     *
+     * **Per person, not per meal**, because that is the unit the whole feature
+     * speaks in — the week panel says "kcal / osobę / dzień" and the recipe says
+     * "w jednej porcji". A meal figure sitting under a 2 500 daily target reads
+     * as a fault: the first version of the alternatives sheet showed one and a
+     * lunch looked like it had blown the day on its own.
+     *
+     * The household is `DEFAULT_SERVINGS`, the same assumption `WeekSummary`
+     * makes when nobody has stated a target. It is the one number this app is
+     * entitled to assume: one household, one account, two phones.
+     *
+     * Null when the dish cannot be counted — a zero would read as a light meal.
+     *
+     * @return array<string, float>|null
+     */
+    private function share(MealPlanEntry $entry): ?array
+    {
+        $recipe = $entry->recipe;
+
+        if ($recipe === null) {
+            return null;
+        }
+
+        $energy = $this->nutrition->for($recipe);
+
+        if (! $energy->isReliable() || $energy->perPortion === null) {
+            return null;
+        }
+
+        $portions = $entry->servings / max(self::DEFAULT_SERVINGS, 1);
+        $portion = $energy->perPortion;
+
+        return array_filter([
+            'kcal' => round($portion->kcal * $portions),
+            'protein' => $portion->protein === null ? null : round($portion->protein * $portions),
+            'fat' => $portion->fat === null ? null : round($portion->fat * $portions),
+            'carbs' => $portion->carbs === null ? null : round($portion->carbs * $portions),
+        ], static fn (?float $value): bool => $value !== null);
+    }
+
+    /**
+     * The day added up, and how many of its dishes went uncounted.
+     *
+     * The count travels with the total for the reason it does everywhere else:
+     * a day missing one unreadable dinner is not a light day, and a bare number
+     * cannot tell the difference.
+     *
+     * @param  array<string, list<MealPlanEntry>>  $planned
+     * @return array<string, mixed>|null
+     */
+    private function dayTotals(array $planned): ?array
+    {
+        $totals = ['kcal' => 0.0, 'protein' => 0.0, 'fat' => 0.0, 'carbs' => 0.0];
+        $counted = 0;
+        $uncounted = 0;
+
+        foreach ($planned as $entries) {
+            foreach ($entries as $entry) {
+                $share = $this->share($entry);
+
+                if ($share === null) {
+                    if (! $entry->isNote()) {
+                        $uncounted++;
+                    }
+
+                    continue;
+                }
+
+                foreach ($totals as $key => $value) {
+                    $totals[$key] = $value + ($share[$key] ?? 0.0);
+                }
+
+                $counted++;
+            }
+        }
+
+        if ($counted === 0) {
+            return null;
+        }
+
+        return [...array_map(round(...), $totals), 'uncounted' => $uncounted];
     }
 
     /**

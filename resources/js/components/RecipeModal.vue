@@ -86,6 +86,47 @@ const MAX_SERVINGS = 50;
 const rescaling = ref(false);
 
 const canScale = computed<boolean>(() => props.recipe.scale.base !== null);
+
+/**
+ * A portion's calories, or nothing at all.
+ *
+ * Nothing rather than a zero: a recipe the catalogue cannot count is not a
+ * recipe worth no calories, and a "0 kcal" on a plate of pierogi would be the
+ * one thing worse than staying quiet.
+ */
+const nutrition = computed(() => props.recipe.nutrition.perPortion);
+
+const macros = computed<{ label: string; grams: number }[]>(() => {
+    const portion = props.recipe.nutrition.perPortion;
+
+    if (portion === null) {
+        return [];
+    }
+
+    return (
+        [
+            { label: 'B', grams: portion.protein },
+            { label: 'T', grams: portion.fat },
+            { label: 'W', grams: portion.carbs },
+        ] as { label: string; grams: number | null }[]
+    ).filter(
+        (macro): macro is { label: string; grams: number } =>
+            macro.grams !== null,
+    );
+});
+
+/** The products behind the caveat, named rather than merely counted. */
+const uncountedLabel = computed<string>(() => {
+    const unknown = props.recipe.nutrition.unknown;
+
+    if (unknown.length === 0) {
+        return 'wszystkiego';
+    }
+
+    return (
+        unknown.slice(0, 3).join(', ') + (unknown.length > 3 ? ' i innych' : '')
+    );
+});
 const servings = computed<number>(
     () => props.recipe.scale.servings ?? props.recipe.scale.base ?? 0,
 );
@@ -619,6 +660,66 @@ onBeforeUnmount(() => {
                         Ilości przeliczone z {{ props.recipe.scale.base }} na
                         {{ servings }} {{ servingsWord }}.
                     </p>
+
+                    <!--
+                        What a portion is worth. Read after the scaling, so it
+                        answers about the porcja on screen rather than the one
+                        the source happened to write.
+                    -->
+                    <div
+                        v-if="nutrition !== null"
+                        class="mt-4 rounded-2xl bg-paper-sunk px-4 py-3"
+                    >
+                        <p class="mb-2 label-caps text-ink-muted">
+                            W jednej porcji
+                        </p>
+
+                        <div
+                            class="flex flex-wrap items-baseline gap-x-5 gap-y-1"
+                        >
+                            <p
+                                class="text-xl font-semibold text-ink tabular-nums"
+                            >
+                                {{ nutrition.kcal }}
+                                <span
+                                    class="text-sm font-normal text-ink-muted"
+                                >
+                                    kcal
+                                </span>
+                            </p>
+
+                            <p
+                                v-for="macro in macros"
+                                :key="macro.label"
+                                class="text-sm text-ink tabular-nums"
+                            >
+                                <span class="text-ink-muted">
+                                    {{ macro.label }}
+                                </span>
+                                {{ macro.grams }} g
+                            </p>
+                        </div>
+
+                        <!--
+                            The honest caveat. A figure short by a fifth reads
+                            exactly like a light meal, so where the count is
+                            partial it is called a floor and the missing
+                            products are named.
+                        -->
+                        <p
+                            v-if="!props.recipe.nutrition.isReliable"
+                            class="mt-2 text-sm text-flag"
+                        >
+                            To dolna granica — nie umiem policzyć
+                            {{ uncountedLabel }}.
+                        </p>
+                        <p
+                            v-else-if="props.recipe.nutrition.coverage < 1"
+                            class="mt-2 text-sm text-ink-faint"
+                        >
+                            Bez {{ uncountedLabel }} — może być odrobinę więcej.
+                        </p>
+                    </div>
 
                     <div class="mt-3 flex justify-end">
                         <div class="flex flex-col items-end gap-1">

@@ -496,6 +496,93 @@ A meal nothing is tagged for comes back in `empty` and the screen says so. Filli
 
 **A side dish must never be served as a meal**, and telling one from a meal took three goes. The word alone cannot: "Surówka z młodej kapusty" is a side, "Kotlety rybne z łososia z surówką z kapusty" is dinner beside one. **Position cannot either** — an `opensWithAny()` that looked at the first three words was written, tested against the catalogue and removed, because beszamel.se.pl writes headlines and puts the dish in the second sentence ("Pieczone buraki mieszam z ogórkiem małosolnym. Ta surówka znika…"). What works is corroboration: `sideWords` disqualifies unless `mainCategories` — chicken, beef, pork, fish, pasta, soup, all derived from *ingredients* — vouches that it is a main course. `salatki` deliberately cannot vouch: that is the category a surówka lands in. `sideAlways` closes the one blind spot left, where the title itself names the meat it accompanies ("Surówka do karkówki", "…dodatek do kotletów schabowych") and thereby earns a pork category it has no business holding; nothing overrides those. On the live catalogue this took surówki tagged as kolacja from 208 to 5, and four of the five are genuine main courses. It errs towards dropping a recipe, which is the right way round: a vegetarian main lost from the suggestions is one search away, a bowl of grated carrot for supper is the joke this exists to prevent.
 
+## Calories (`app/Nutrition`)
+
+Nothing in the catalogue carried this. **None of the four recipe sources publishes nutrition**, so no amount of re-importing produces it — `database/data/ingredient-nutrition.php` is the whole of what the app knows about calories, and everything built on it stands on that file.
+
+Per 100 g, keyed on **exact canonical product names** like `ingredient-measures.php`, and the seeder throws on a name that has drifted. Each entry is `[kcal, protein, fat, carbs, external key]`. The **external key** is an English food term (`'cheese, gouda'`), and it is the join key we otherwise do not have: every external nutrition database is searched in English and "Ser żółty" reaches none of them. It is deliberately a search term and never a numeric id — an invented FDC id would look authoritative and resolve to the wrong food.
+
+```bash
+php artisan ingredients:nutrition                                # coverage + what is missing, by frequency
+php artisan db:seed --class=IngredientNutritionSeeder            # after editing the data file
+```
+
+Calories are grams × the figure, so this rides entirely on `IngredientMeasures` — the weights are what turn "2 cebule" into a number. `RecipeNutrition` is only the meeting point of three facts (the line states an amount, the amount reaches grams, the product has a figure) and adds one rule of its own: **a line it cannot read is unread, never zero.** A missing figure counted as zero does not look like a gap, it looks like a light meal.
+
+### The rules that cost the most to find
+
+- **A recipe states the weight of the thing as bought, not as served.** "100 g ryżu" is dry rice at 360 kcal against 130 cooked — a factor of three, on a staple, across every recipe that uses one. Pasta, rice, groats and flour are all dry in the file and that is not an oversight to correct. Read the other way it is why the tinned things are tinned: a Polish recipe asking for "fasola" means the drained contents of a tin. Lentils go the other way and are dry. Both are marked in the file; the inconsistency belongs to the catalogue.
+- **A line that names an ingredient without an amount counts as unread.** This was the correction that mattered most. The first version excused them — nothing to convert, so nothing to fail at — and on the live catalogue that let **4 412 recipes (43%)** report full coverage with real food missing: oil heads the list of products named without an amount at 1 017 lines, then lemon, olive oil, butter, sugar and flour. It moved the honest number from a claimed 87.7% of recipes usable to **68.1%**.
+- **The exception is a spice or a herb**, via `IngredientCategory::isCaloricallyNegligible()` — deliberately **narrower than `isSeasoning()`, which includes fat.** Those are two questions that look alike: "must I buy this?" and "can this move a calorie count?". Oil at 884 kcal/100 g answers them oppositely, and merging them would excuse exactly the wrong lines.
+- **`RecipeEnergy::MINIMUM_COVERAGE` is 80%** and `reliableKcalPerPortion()` is what the planner asks. The screen may show a figure with a caveat; a plan has to add up. A recipe that never stated its portions offers none at all — the same refusal `PlannedIngredients` makes rather than guessing a portion size.
+- `tests/Unit/IngredientNutritionDictionaryTest.php` cross-checks every entry against 4/9/4 with a **wide** band (0.4–2.0) and a named alcohol exemption. It is not a check that the figures are precise — fibre, polyols and ethanol all break Atwater legitimately — it is a check that none is out by a factor of ten, which is what a misplaced decimal does and what reading the file never catches.
+
+Baseline: **321 products, 84.1% of countable lines readable, 68.1% of recipes usable for planning**. The remaining gaps are almost all generic or invented products ("Mięso", "Przyprawy", "suszonych") that belong in the review queue, not here.
+
+## Planning a week to a target (`PlanTargets`, `WeekSummary`)
+
+`PlanGenerator::fill()` takes an optional `PlanTargets` — people, kcal per person, the share of the day each meal carries, and an optional budget. Without it the button is the plain "fill my week" it always was.
+
+**The shares map is also the meal structure.** Asking separately which meals and how the calories split lets the two disagree, and there is nothing sensible to do when they do. Shares that do not add up to a day are **refused, never normalised**: quietly scaling 30/45/20 to a whole hands back a week hitting a target nobody set.
+
+**The planner chooses the helpings, not just the dish, and that is the finding the design turns on.** The catalogue's median portion is under 500 kcal while a 1 125 kcal lunch sits above its ninetieth percentile — so one portion each cannot feed a 2 500-calorie household, and insisting on it would leave every generated week a third short. Up to three helpings each (`MAX_PORTIONS_EACH`); a dish needing four is a dish whose "portion" was never a portion, and it drops out.
+
+**`fits()` asks about the outcome, not the portion.** An earlier version checked the portion against a band — at least a third of the meal, at most a quarter over — and let through dishes that could land nowhere near it: 460 kcal against a 625 kcal supper is 26% short at one helping or 47% over at two, and the band was happy with both. Measured over a real week the worst meal came out 33% under. Judging the closest achievable helping instead subsumes the band and took the average week from −9% to −4%.
+
+### Three failures that each needed their own rule
+
+- **A week planned on calories and price alone is pancakes.** Flour and potatoes are the cheapest calories in any catalogue, and the first live run returned placki ziemniaczane on four evenings out of seven and 75 g of protein a day. `MIN_PROTEIN_SHARE` (15% of a meal's calories) is applied as a **floor with an honest fallback**: enforced when at least `MIN_BALANCED` dishes clear it, dropped for that meal when they do not — the podwieczorek is mostly cake, and an empty Thursday is worse than a light one. A dish whose protein nobody recorded passes either way; unknown is not zero. This took a real week from 75 g to 119 g a day.
+- **Ranking by the fridge before looking at nutrition decides the answer before the nutrition rules run.** A starter cupboard holds flour, potatoes and eggs, so the best-covered candidates for every meal *are* the flour and potato dishes and the scoring never sees anything else to prefer. `shortlist()` therefore takes half from what the fridge covers and half from the rest of the catalogue. "Cook what you have" keeps half the say; the other half is what makes the choice a choice.
+- **Sorting by score and then shuffling the pool throws the ranking away.** Not subtle: with the pool shuffled whole the meal is picked at random from eighty candidates and every rule above decides nothing. `variedByRank()` shuffles within runs of six, so a good dish stays near the front and the same week asked for twice still differs. Caught by a test where a balanced dish and a plate of starch were the only candidates and the starch won half the time.
+
+### Changing your mind: the swap keeps the calories, not the portions
+
+The shuffle beside every planned dish is the answer to "she wants something else on Tuesday", and until it was tested it quietly broke the week's arithmetic: it kept the outgoing dish's `servings`, so replacing four portions of a 200 kcal dish with four of a 500 kcal one added 1 200 calories to the day without a word.
+
+`PlanGenerator::swap()` now aims at **what the meal delivered** — `kcalPerPortion × servings` — expressed as a one-meal `PlanTargets` with `people: 1`, so the replacement's portions are recomputed to land on the same total. In practice 6× bajgle comes back as 2× owsianka. Aiming at the outgoing *portion* was tried first and only ever found dishes of the same portion size, which is a very small thing to offer somebody who wants a change.
+
+It also seeds `eatenToday` from that day's other meals, so a swap cannot hand back the third egg dish of the day the generator refused to plan. A dish with no calorie figure keeps the old behaviour — portions unchanged, any suggestion of the right meal — because there is no total to preserve.
+
+**The week panel is recomputed on every visit, not carried in the generate flash.** It used to sit there quoting a week that no longer existed the moment anything was swapped. The generated report still wins while it is fresh, because only it knows what target was asked for; a watcher on `days` drops it as soon as the plan changes underneath.
+
+### Choosing the replacement rather than being handed one
+
+The shuffle button opens a sheet of candidates (`meal-plan.alternatives` → `PlanGenerator::alternativesFor()`), because a die roll is fine when anything will do and useless when somebody has an opinion about Tuesday. Every row carries what the meal would come to — **kcal per portion, protein, price, and the portions that reach the same total** — plus the pantry badge, and the day's other dominant ingredients sort to the bottom rather than being hidden: the rule exists to stop the generator choosing that way, not to stop a person.
+
+Two things it took a browser to get right:
+
+- **The units have to match the rest of the app.** The sheet first showed the whole meal's calories, so a lunch read "2 223 kcal" against a 2 500 daily target and looked broken — it was four portions for two people. It now leads with kcal per portion, and the header states what is being replaced ("4 porcje · 2170 kcal razem — tyle samo dostaniesz z kazdego ponizej") so the comparison is explicit.
+- **A price built from a minority of a dish is not a price.** "Poledwica wolowa pieczona... 4,89 zl" appeared because the beef had no reading and the onion did. `RecipeFacts::PRICED_ENOUGH` (two thirds of the countable lines) is the floor; below it `costPerPortion` is null, the sheet omits the figure, and the budget ranking treats the dish as neither cheap nor dear.
+
+`replace()` recomputes the portions server-side from the chosen dish's own size — a browser is not where the number that keeps the day honest gets decided.
+
+### Calories on the recipe itself
+
+`RecipeController::detail()` reads `RecipeNutrition::ofLines()` **after** `RecipeScale::applyTo()`, so "w jednej porcji" answers about the porcja on screen rather than the one the source wrote. The modal shows kcal and B/T/W, and — the part that matters — the coverage travels with it: under `MINIMUM_COVERAGE` it says *"To dolna granica"* and **names the products it could not count** ("nie umiem policzyć kotletów wieprzowych bez kości, Olej rzepakowy, bulion"). A figure short by a fifth reads exactly like a light meal, so it may never be shown bare.
+
+### Two failures only a browser found
+
+Both were invisible to the numbers. The week hit 2 460 kcal and 116 g of protein and came in under budget, and it was still not a week anybody would cook.
+
+- **A dish has to be more than one ingredient.** "Jak ugotować kaszę bulgur w Air Fryer" was planned as Monday's dinner — groats, water and salt, which is an instruction rather than a meal. It is not a title problem: "Jak zrobić leczo z cukinii" opens the same way and *is* dinner. The test is structural — `RecipeFact::realIngredients` counts products that are neither seasoning nor water, and `MIN_REAL_INGREDIENTS` is 2. On the live catalogue **236 recipes tagged as a meal have two or fewer and 63 have exactly one**: chipsy, frytki, grzanki, "Jajko w koszulce". A podwieczorek is exempt, because a bowl of something simple is what it is for.
+- **"Nothing repeats within a month" is a rule about rows, and a week is not eaten in rows.** The generator returned five *different* pancake recipes across seven breakfasts — every one a distinct id, no rule broken, pancakes every morning. What repeats is what a dish is **made of**, so `RecipeEnergy::dominantIngredientId` (the product a dish draws most of its calories from) is the thing checked. Scoped **per meal across the week and per day across meals**: the first alone let a Thursday come back as jajecznica, zapiekanka jajeczna and suflet jajeczny. Both yield rather than leaving a hole — a repeat beats an empty Thursday.
+
+After both, the same request returns udka kurczaka, makaron z łososiem, kotlety mielone, zupa szpinakowa z soczewicą: **2 446 kcal and 133 g of protein a head**, 230 zł of ingredients, 93 zł of shopping.
+
+**What is still wrong is the tagging, not the planner.** `recipe_meal_slots` puts "Zupa mleczna z makaronem" and "Nuggetsy z sera halloumi — idealna przekąska na imprezę" in obiad and kolacja, and 64 "Jak ugotować…"/"Jak zrobić…" recipes carry a meal slot. The generator can only choose from what the tagging offers; fixing those means rules in `database/data/meal-slots.php` and a re-run of `recipes:meal-slots`.
+
+### The budget
+
+A **running** allowance, not a fixed share per meal: a fixed share cannot bind, because it has no way to know Monday came in cheap and so either forbids Tuesday something affordable or lets every meal spend the average and lands over. `next()` takes the best-ranked dish that fits what is left — and when nothing does, **it still plans the meal** from the cheapest on offer and counts it in `overspent`. Refusing to plan is not a budgeting strategy.
+
+**It is spent against what the week *eats*, not what it *buys*, and that asymmetry is deliberate.** What the cupboard already covers is a fact about the whole week, worked out once by `PlannedIngredients::toBuy()` after the last meal is chosen; there is no per-dish version that would not be a guess. Shopping is never more than eating, so a week that fits here cannot break the budget at the till — `overspent` is a warning that the target was tight, not a claim the plan is over.
+
+`WeekSummary` measures the plan **as written, not as intended** — which is why it reads the entries back rather than having `fill()` report. A week topped up on top of hand-planned days has to report the whole of what is there. `WeekPrice` carries both totals plus `unpricedProducts`, because roughly a third of what a week calls for has no price behind it and a total that swallowed those would simply be too small.
+
+**`App\Pricing\IngredientCost` is why the plan and the shopping list cannot quote different prices.** Extracted from `CostEstimate` when the planner needed the same answer about a recipe line; a second copy would drift the first time one of them learned something, and drift quietly. It deliberately has no promotion layer: an offer is a fact about a shop somebody is driving to this week, which a fortnight of menus cannot be planned around.
+
+Measured on the live catalogue, a week for two at 2 500 kcal with a 350 zł budget: 21 meals in 0.6 s, **2 395 kcal and 119 g of protein a head per day**, eating 313 zł of ingredients and buying 66 zł of them after the kitchen.
+
 ## Tasks ("Zadania")
 
 Not about food at all, and that is the point: "podjedź po chleb", "oddaj buty do szewca" arrive over Messenger during the day and are then remembered in a thread nobody scrolls back through. `/zadania` is where they land instead.

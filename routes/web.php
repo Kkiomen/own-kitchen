@@ -100,6 +100,16 @@ Route::middleware('auth')->group(function (): void {
     Route::post('/jadlospis/zakupy', [MealPlanController::class, 'shop'])->name('meal-plan.shop');
     Route::post('/jadlospis/generuj', [MealPlanController::class, 'generate'])->name('meal-plan.generate');
     Route::post('/jadlospis/{mealPlanEntry}/inne-danie', [MealPlanController::class, 'swap'])->name('meal-plan.swap');
+
+    /*
+     * The alternatives sheet: which dishes could take this meal's place,
+     * and putting one of them there. Two routes because they are two
+     * moments — reading costs nothing and writes nothing, choosing writes.
+     */
+    Route::get('/jadlospis/{mealPlanEntry}/zamienniki', [MealPlanController::class, 'alternatives'])
+        ->name('meal-plan.alternatives');
+    Route::post('/jadlospis/{mealPlanEntry}/zamien', [MealPlanController::class, 'replace'])
+        ->name('meal-plan.replace');
     Route::patch('/jadlospis/{mealPlanEntry}', [MealPlanController::class, 'update'])->name('meal-plan.update');
     Route::delete('/jadlospis/{mealPlanEntry}', [MealPlanController::class, 'destroy'])->name('meal-plan.destroy');
 

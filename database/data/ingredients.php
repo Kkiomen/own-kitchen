@@ -331,6 +331,7 @@ return [
     ['name' => 'Bułka', 'category' => 'grain', 'unit' => 'piece', 'aliases' => ['bułki', 'bułkę', 'kajzerka', 'kajzerki', 'bułka pszenna']],
     ['name' => 'Rabarbar', 'category' => 'fruit', 'unit' => 'g', 'aliases' => ['rabarbaru', 'łodyg rabarbaru', 'łodygi rabarbaru']],
     ['name' => 'Dorsz', 'category' => 'fish', 'unit' => 'g', 'aliases' => ['dorsza', 'filet z dorsza', 'filetów z dorsza', 'biała ryba', 'filetów białej ryby', 'polędwica z dorsza', 'polędwicy z dorsza']],
+    ['name' => 'Morszczuk', 'category' => 'fish', 'unit' => 'g', 'aliases' => ['morszczuka', 'filety z morszczuka', 'filetów z morszczuka']],
     ['name' => 'Anchois', 'category' => 'fish', 'unit' => 'piece', 'aliases' => ['fileciki anchois', 'filety anchois', 'sardele']],
     ['name' => 'Anyż gwiazdkowy', 'category' => 'spice', 'unit' => 'piece', 'staple' => true, 'aliases' => ['anyżu', 'gwiazdki anyżu', 'anyż']],
     ['name' => 'Goździki', 'category' => 'spice', 'unit' => 'piece', 'staple' => true, 'aliases' => ['goździków', 'goździki całe']],
@@ -378,6 +379,7 @@ return [
     ['name' => 'Hummus', 'category' => 'legume', 'unit' => 'g', 'aliases' => ['domowy hummus', 'hummusu']],
     ['name' => 'Dżem', 'category' => 'sweetener', 'unit' => 'g', 'aliases' => ['konfitur', 'konfitura', 'dżemu', 'dżemu brzoskwiniowego', 'dżemu morelowego']],
     ['name' => 'Sok pomarańczowy', 'category' => 'beverage', 'unit' => 'ml', 'aliases' => ['soku pomarańczowego']],
+    ['name' => 'Sok jabłkowy', 'category' => 'beverage', 'unit' => 'ml', 'aliases' => ['soku jabłkowego', 'sok z jabłek']],
     ['name' => 'Brzoskwinia', 'category' => 'fruit', 'unit' => 'piece', 'aliases' => ['brzoskwinie', 'brzoskwiń', 'brzoskwini']],
     ['name' => 'Alkohol mocny', 'category' => 'beverage', 'unit' => 'ml', 'aliases' => ['mocnego alkoholu', 'mocniejszego alkoholu', 'likieru pomarańczowego', 'angostury', 'żubrówka', 'żubrówki', 'whisky', 'brandy', 'koniak', 'rum']],
     ['name' => 'Katsuobushi', 'category' => 'fish', 'unit' => 'g', 'aliases' => ['pasków suszonej ryby bonito', 'bonito', 'płatki bonito']],
@@ -433,6 +435,17 @@ return [
     // A whole bird, which is what the statistical office prices and what a
     // recipe means by "kurczak" when it does not name a cut. Without it the
     // cheapest meat in the catalogue had no price at all.
+    // The whole bird, and named "cały" on purpose: a bare "Kurczak" would
+    // collide with `kurczak`/`kurczaka`, which belong to Pierś z kurczaka and
+    // must stay there — "100 g kurczaka" in a recipe means the breast, on
+    // thousands of lines. This entry only claims the spellings that can only
+    // mean a whole bird, which is also what the statistical office prices.
+    ['name' => 'Kurczak cały', 'category' => 'meat', 'unit' => 'g', 'aliases' => ['kurczaka całego', 'kurczęta patroszone', 'kurczę patroszone', 'tuszka z kurczaka', 'tuszki z kurczaka']],
+    // Only the two-word spellings: bare `łopatki` belongs to Mięso mielone
+    // wieprzowe, which is what a recipe asking for it usually means.
+    ['name' => 'Łopatka wieprzowa', 'category' => 'meat', 'unit' => 'g', 'aliases' => ['łopatki wieprzowej', 'łopatkę wieprzową', 'łopatka wieprzowa']],
+    ['name' => 'Kaszanka', 'category' => 'meat', 'unit' => 'g', 'aliases' => ['kaszanki', 'kaszanek', 'kaszankę', 'kiszka kaszana']],
+    ['name' => 'Salceson', 'category' => 'meat', 'unit' => 'g', 'aliases' => ['salcesonu', 'salcesonem']],
     ['name' => 'Pędy bambusa', 'category' => 'vegetable', 'unit' => 'g', 'aliases' => ['pędów bambusa', 'bambus']],
 
     // Ninth pass: what the first air fryer import asked for. The device favours

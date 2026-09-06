@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace App\Shopping;
 
-use App\Enums\UnitDimension;
 use App\Models\Promotion;
 use App\Models\ShoppingListItem;
+use App\Pricing\IngredientCost;
 use App\Pricing\PriceBook;
 use App\Shopping\Planning\PlannedBuy;
 use App\Shopping\Planning\PromotionFinder;
 use App\Support\Measurement\MeasureBook;
 use App\Support\Money\Money;
-use App\Support\Money\UnitPrice;
 
 /**
  * "Ile mniej więcej zapłacę za te zakupy."
@@ -42,6 +41,7 @@ final class CostEstimate
 {
     public function __construct(
         private readonly PromotionFinder $promotions,
+        private readonly IngredientCost $costs,
         private readonly PriceBook $prices,
         private readonly MeasureBook $measures,
     ) {}
@@ -86,7 +86,7 @@ final class CostEstimate
             );
         }
 
-        $byAmount = $this->fromUnitPrice($item);
+        $byAmount = $this->costs->byAmount($item->ingredient_id, $item->toQuantity());
 
         if ($byAmount !== null) {
             return new EstimatedLine($item, $byAmount, EstimatedLine::UNIT);
@@ -97,50 +97,5 @@ final class CostEstimate
         return $pack === null
             ? new EstimatedLine($item, null, EstimatedLine::UNKNOWN)
             : new EstimatedLine($item, $pack, EstimatedLine::PACK);
-    }
-
-    /**
-     * The amount on the line, priced per kilo.
-     *
-     * Two conversions have to line up and either may fail. The line's unit and
-     * the price's dimension often differ — "2 cebule" against a price per kilo —
-     * so the amount goes through grams, which only works for a product somebody
-     * has weighed. Where it does not, this returns null and the pack price
-     * answers instead: a rough figure for the product beats a precise one for
-     * the wrong amount of it.
-     */
-    private function fromUnitPrice(ShoppingListItem $item): ?Money
-    {
-        $wanted = $item->toQuantity();
-
-        if ($wanted === null) {
-            return null;
-        }
-
-        $direct = $this->prices->unitPriceFor($item->ingredient_id, $wanted->unit->dimension);
-
-        if ($direct !== null) {
-            return $direct->price->scaledBy($wanted->toBase() / $this->baseUnitsPer($direct));
-        }
-
-        // Not priced in the dimension the line is written in. Grams are the one
-        // bridge the catalogue has, and only for a product with a weight.
-        $grams = $this->measures->for($item->ingredient_id)->toGrams($wanted);
-        $perKilo = $this->prices->unitPriceFor($item->ingredient_id, UnitDimension::Mass);
-
-        if ($grams === null || $perKilo === null) {
-            return null;
-        }
-
-        return $perKilo->price->scaledBy($grams->toBase() / 1000.0);
-    }
-
-    /**
-     * How many base units the quoted price covers: a thousand grams, a thousand
-     * millilitres, or one piece.
-     */
-    private function baseUnitsPer(UnitPrice $price): float
-    {
-        return $price->per === UnitDimension::Count ? 1.0 : 1000.0;
     }
 }

@@ -100,6 +100,47 @@ enum IngredientCategory: string
     }
 
     /**
+     * Whether a line of this can be left out of a calorie count without moving
+     * the number.
+     *
+     * A deliberately **narrower** list than `isSeasoning()`, and the difference
+     * is the whole reason this exists separately: fat is assumed to be at hand
+     * when shopping, and is the single most calorie-dense thing in a kitchen.
+     * Oil at 884 kcal per 100 g heads the list of products a recipe names
+     * without an amount — 1 017 lines of it — so excusing it here would let a
+     * recipe report a confident figure with its frying left out.
+     *
+     * Spices and herbs are excused because no plausible amount of them matters:
+     * a heaped spoon of paprika is fifteen calories, and a recipe is not
+     * mis-planned by that. They are also, by far, the commonest thing a recipe
+     * declines to measure ("sól do smaku"), so counting them as unread would
+     * make almost every dish in the catalogue look uncountable for the most
+     * ordinary reason there is.
+     *
+     * Two questions that look alike and are not: `isSeasoning()` asks "must I
+     * buy this?", this asks "can this move a calorie count?". Merging them would
+     * be wrong in opposite directions on fat.
+     */
+    public function isCaloricallyNegligible(): bool
+    {
+        return in_array($this, [self::Spice, self::Herb], true);
+    }
+
+    /**
+     * The same rule as a list of stored values, for the coverage query that has
+     * to apply it in SQL.
+     *
+     * @return list<string>
+     */
+    public static function caloricallyNegligible(): array
+    {
+        return array_values(array_map(
+            static fn (self $category): string => $category->value,
+            array_filter(self::cases(), static fn (self $category): bool => $category->isCaloricallyNegligible()),
+        ));
+    }
+
+    /**
      * The same rule as a list of stored values, for the one query that has to
      * apply it in SQL.
      *

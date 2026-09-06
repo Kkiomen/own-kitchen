@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Catalogue\IngredientEmoji;
+use App\Nutrition\NutritionBook;
 use App\Support\Measurement\MeasureBook;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -31,6 +32,13 @@ class AppServiceProvider extends ServiceProvider
          * the same question.
          */
         $this->app->singleton(MeasureBook::class);
+
+        /*
+         * The same again, and asked in the same breath: working out what a week
+         * is worth means putting a calorie on a few hundred lines, and every one
+         * of those questions needs this book and the measure book together.
+         */
+        $this->app->singleton(NutritionBook::class);
     }
 
     /**

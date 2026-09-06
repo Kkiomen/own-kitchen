@@ -13,6 +13,8 @@ use App\Models\PantryItem;
 use App\Models\Recipe;
 use App\Models\RecipeIngredient;
 use App\Models\RecipeStep;
+use App\Nutrition\RecipeEnergy;
+use App\Nutrition\RecipeNutrition;
 use App\Pantry\Pantry;
 use App\Pantry\RecipeAvailability;
 use App\Shopping\ShoppingLists;
@@ -34,6 +36,7 @@ class RecipeController extends Controller
         private readonly MeasureBook $measures,
         private readonly RecipeAvailability $availability,
         private readonly ShoppingLists $lists,
+        private readonly RecipeNutrition $nutrition,
     ) {}
 
     public function index(Request $request): Response
@@ -136,6 +139,47 @@ class RecipeController extends Controller
     /**
      * @return array<string, mixed>
      */
+    /**
+     * What a portion of this is worth, and how sure we are.
+     *
+     * The coverage travels with the numbers rather than being rounded away. A
+     * recipe whose butter never reached grams comes out light and looks
+     * perfectly ordinary, so the screen has to be able to say "co najmniej"
+     * instead of quoting a figure it cannot stand behind.
+     *
+     * Null throughout when the source never said how many portions the recipe
+     * makes — 78 of ~10 200 — because there is no honest per-portion figure to
+     * divide into.
+     *
+     * @return array<string, mixed>
+     */
+    private function nutritionOf(RecipeEnergy $energy): array
+    {
+        $portion = $energy->perPortion;
+
+        return [
+            'perPortion' => $portion === null ? null : [
+                'kcal' => round($portion->kcal),
+                'protein' => $portion->protein === null ? null : round($portion->protein, 1),
+                'fat' => $portion->fat === null ? null : round($portion->fat, 1),
+                'carbs' => $portion->carbs === null ? null : round($portion->carbs, 1),
+            ],
+            'total' => [
+                'kcal' => round($energy->total->kcal),
+            ],
+            'coverage' => round($energy->coverage, 2),
+            'isReliable' => $energy->isReliable(),
+            // Named so the screen can say which lines it could not count rather
+            // than only that it could not count them all.
+            'unknown' => array_slice($energy->unknown, 0, 5),
+        ];
+    }
+
+    /**
+     * One recipe, in the shape the modal reads.
+     *
+     * @return array<string, mixed>
+     */
     private function detail(Request $request, Recipe $recipe): array
     {
         $recipe->load([
@@ -155,8 +199,16 @@ class RecipeController extends Controller
 
         $pantry = Pantry::of($request->user(), $this->measures);
 
+        /*
+         * Read after `applyTo`, so the figures describe the portions on screen:
+         * the scaled rows are the ones asked, and dividing them by the scaled
+         * servings is what makes "w jednej porcji" mean the porcja being shown.
+         */
+        $energy = $this->nutrition->ofLines($recipe->ingredients, $scale->servings);
+
         return [
             'slug' => $recipe->slug,
+            'nutrition' => $this->nutritionOf($energy),
             'scale' => [
                 'base' => $scale->base,
                 'servings' => $scale->servings,
