@@ -55,14 +55,14 @@ return [
     [
         'slug' => 'kurczak',
         'name' => 'Kurczak',
-        'ingredients' => ['Pierś z kurczaka', 'Udka z kurczaka', 'Filet drobiowy', 'Kości drobiowe'],
+        'ingredients' => ['Pierś z kurczaka', 'Udka z kurczaka', 'Filet drobiowy', 'Kości drobiowe', 'Mięso mielone drobiowe'],
         'titles' => ['kurczak*', 'drobiow*', 'kurczaki'],
         'excludeTitles' => $imitations,
     ],
     [
         'slug' => 'wolowina',
         'name' => 'Wołowina',
-        'ingredients' => ['Wołowina', 'Polędwica wołowa', 'Mięso gulaszowe'],
+        'ingredients' => ['Wołowina', 'Polędwica wołowa', 'Mięso gulaszowe', 'Mięso mielone wołowe'],
         // A bare "stek" was dropped: it matched "Steki z karkówki", which is pork.
         'titles' => ['wolowin*', 'wolowy', 'wolowa', 'wolowe', 'wolowej'],
         'excludeTitles' => $imitations,
@@ -141,6 +141,9 @@ return [
          * needs the answer to be right.
          */
         'withoutIngredientCategories' => ['meat', 'fish'],
+        // Animal products that do not sit in an animal category. Lard is a Fat
+        // and gelatine is a Baking ingredient; both were passing this rule.
+        'withoutIngredients' => ['Smalec', 'Żelatyna', 'Sos rybny'],
         'tags' => ['vege', 'wegetarianskie', 'weganskie'],
     ],
     [

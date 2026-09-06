@@ -3,6 +3,9 @@ import { router, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import AppIcon from '@/components/AppIcon.vue';
 import IngredientLabel from '@/components/IngredientLabel.vue';
+import UnitSelect from '@/components/UnitSelect.vue';
+import type { PantryUnit } from '@/lib/pantry-units';
+import { pieceUnit } from '@/lib/pantry-units';
 import { confirm, read } from '@/routes/pantry/photo';
 
 interface ScanProduct {
@@ -11,6 +14,10 @@ interface ScanProduct {
     emoji: string;
     defaultUnitId: number | null;
     location: string;
+    /** The measures the catalogue uses for it, commonest first. */
+    unitIds: number[];
+    /** Those of them nothing can turn into grams for this product. */
+    unconvertibleUnitIds: number[];
 }
 
 interface ScanSection {
@@ -34,7 +41,7 @@ interface ScanRow {
 
 const props = defineProps<{
     sections: ScanSection[];
-    units: { id: number; symbol: string; name: string }[];
+    units: PantryUnit[];
     ingredients: ScanProduct[];
 }>();
 
@@ -92,6 +99,14 @@ const matches = computed<ScanProduct[]>(() => {
 
 function unitSymbol(unitId: number | null): string {
     return props.units.find((unit) => unit.id === unitId)?.symbol ?? '';
+}
+
+/** The catalogue's row for a recognised line, which is what knows its measures. */
+function productFor(row: ScanRow): ScanProduct | null {
+    return (
+        props.ingredients.find((product) => product.id === row.ingredientId) ??
+        null
+    );
 }
 
 function take(): void {
@@ -196,9 +211,17 @@ function attach(index: number, product: ScanProduct): void {
     row.emoji = product.emoji;
     row.location = product.location;
     row.include = true;
-    // Same rule as the manual sheet: an amount is only prefilled when there is
-    // a unit to express it in, because one without the other is refused.
-    row.unitId ??= product.defaultUnitId;
+
+    /*
+     * A line pointed at a product by hand gets the same prefill the recognised
+     * ones got on the server: one of it, counted in sztuki. A photograph is a
+     * picture of things, and "1 szt." is the only amount it can suggest without
+     * inventing one — the product's own default measure would offer "1 g".
+     */
+    if (row.unitId === null) {
+        row.unitId = pieceUnit(props.units)?.id ?? product.defaultUnitId;
+        row.quantity ??= row.unitId === null ? null : 1;
+    }
 
     picking.value = null;
     search.value = '';
@@ -446,20 +469,13 @@ function close(): void {
                                 :aria-label="`Ile: ${row.name}`"
                                 class="h-11 w-20 rounded-xl border border-rule-strong px-2 text-base text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none"
                             />
-                            <select
+                            <UnitSelect
                                 v-model="row.unitId"
+                                :units="units"
+                                :product="productFor(row)"
                                 :aria-label="`Jednostka: ${row.name}`"
                                 class="h-11 rounded-xl border border-rule-strong bg-paper-raised px-2 text-sm text-ink focus:border-accent focus:outline-none"
-                            >
-                                <option :value="null">—</option>
-                                <option
-                                    v-for="unit in units"
-                                    :key="unit.id"
-                                    :value="unit.id"
-                                >
-                                    {{ unit.name }}
-                                </option>
-                            </select>
+                            />
                             <select
                                 v-model="row.location"
                                 :aria-label="`Gdzie: ${row.name}`"

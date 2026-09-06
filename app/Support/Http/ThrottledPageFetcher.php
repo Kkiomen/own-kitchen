@@ -22,6 +22,22 @@ final class ThrottledPageFetcher implements PageFetcher
         private readonly string $userAgent,
         private readonly int $crawlDelaySeconds,
         private readonly int $cacheTtlHours,
+        /**
+         * Whether serving a page from the cache also restarts its clock.
+         *
+         * True only where the page is effectively immutable — a recipe published
+         * three years ago is the same recipe today. There it is what keeps
+         * "re-processing is free" actually true: without it the corpus ages out
+         * on a fixed date whether or not anybody is using it, and the first
+         * parser fix after that date costs days of polite crawling rather than
+         * minutes. With it, the corpus lives as long as it is being worked with
+         * and only expires once it is genuinely abandoned.
+         *
+         * False for anything whose content *is* the answer. A leaflet page is its
+         * prices; keeping one alive because we keep reading it is how last
+         * fortnight's prices end up on a plan that says "drive here".
+         */
+        private readonly bool $refreshOnHit = false,
     ) {}
 
     public function get(string $url): string
@@ -34,6 +50,10 @@ final class ThrottledPageFetcher implements PageFetcher
         $cached = $this->cache->get($cacheKey);
 
         if (is_string($cached)) {
+            if ($this->refreshOnHit) {
+                $this->cache->put($cacheKey, $cached, now()->addHours($this->cacheTtlHours));
+            }
+
             return $cached;
         }
 

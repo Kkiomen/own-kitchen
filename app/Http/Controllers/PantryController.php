@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Catalogue\IngredientEmoji;
+use App\Catalogue\IngredientUnits;
 use App\Enums\IngredientCategory;
 use App\Enums\StorageLocation;
 use App\Models\Ingredient;
@@ -27,6 +28,7 @@ class PantryController extends Controller
 {
     public function __construct(
         private readonly IngredientEmoji $emoji,
+        private readonly IngredientUnits $unitsFor,
         private readonly PutAway $putAway,
     ) {}
 
@@ -67,6 +69,9 @@ class PantryController extends Controller
                 ->get(['id', 'code', 'symbol', 'name'])
                 ->map(fn (Unit $unit): array => [
                     'id' => $unit->id,
+                    // The photo review needs to name one of them ("szt.") in
+                    // its own right, and a code is the stable way to.
+                    'code' => $unit->code,
                     'symbol' => $unit->symbol,
                     'name' => $unit->name,
                 ])
@@ -75,26 +80,51 @@ class PantryController extends Controller
                 ->where('user_id', $request->user()->id)
                 ->expiringWithin(3)
                 ->count(),
-            /*
-             * The whole product list, filtered in the browser. There are ~900 of
-             * them — a few dozen kilobytes — and sending them once buys instant
-             * type-ahead that also works with the phone offline, which a search
-             * endpoint would not.
-             */
-            'ingredients' => Ingredient::query()
-                ->where('category', '!=', IngredientCategory::Equipment->value)
-                ->orderBy('name')
-                ->get(['id', 'name', 'category', 'default_unit_id'])
-                ->map(fn (Ingredient $ingredient): array => [
+            'ingredients' => $this->products(),
+        ]);
+    }
+
+    /**
+     * The whole product list, filtered in the browser. There are ~1 600 of them
+     * — a few dozen kilobytes — and sending them once buys instant type-ahead
+     * that also works with the phone offline, which a search endpoint would not.
+     *
+     * Each carries the measures it is actually used in, so the unit picker can
+     * offer those before the other twenty. Products the catalogue has never
+     * measured carry none, and their picker goes on showing the lot.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function products(): array
+    {
+        $shortlists = $this->unitsFor->all();
+
+        return Ingredient::query()
+            ->where('category', '!=', IngredientCategory::Equipment->value)
+            ->orderBy('name')
+            ->get(['id', 'name', 'category', 'default_unit_id'])
+            ->map(function (Ingredient $ingredient) use ($shortlists): array {
+                $shortlist = $shortlists[$ingredient->id] ?? ['units' => [], 'unconvertible' => []];
+
+                return [
                     'id' => $ingredient->id,
                     'name' => $ingredient->name,
                     'emoji' => $this->emoji->for($ingredient->name, $ingredient->category),
                     'defaultUnitId' => $ingredient->default_unit_id,
                     // Both only suggestions — the sheet lets you change either.
                     'location' => StorageLocation::suggestFor($ingredient->category)->value,
-                ])
-                ->all(),
-        ]);
+                    'unitIds' => $shortlist['units'],
+                    /*
+                     * The offered measures this product has never been weighed
+                     * in. Perfectly good to hold, but nothing can line them up
+                     * against a recipe's grams, and the picker says so instead
+                     * of letting the kitchen look more certain than it is.
+                     */
+                    'unconvertibleUnitIds' => $shortlist['unconvertible'],
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     public function store(Request $request): RedirectResponse

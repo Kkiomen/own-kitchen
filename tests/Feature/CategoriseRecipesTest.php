@@ -106,6 +106,25 @@ class CategoriseRecipesTest extends TestCase
     }
 
     /**
+     * Some animal products do not live in an animal category, and the category
+     * check alone let them through: lard is a Fat and gelatine is a Baking
+     * ingredient. Eighteen recipes were claiming to be vegetarian on the
+     * strength of that.
+     */
+    public function test_an_animal_product_outside_the_meat_categories_still_blocks_it(): void
+    {
+        $this->store('Pierogi na smalcu', ['2 łyżki smalcu', '1 cebula']);
+        $this->store('Galaretka', ['20 g żelatyny', '200 g malin']);
+        $this->store('Sałatka', ['1 ogórek', '1 cebula']);
+
+        $this->categorise();
+
+        $this->assertNotContains('wege', $this->categoriesOf('pierogi-na-smalcu'));
+        $this->assertNotContains('wege', $this->categoriesOf('galaretka'));
+        $this->assertContains('wege', $this->categoriesOf('salatka'));
+    }
+
+    /**
      * Re-running must replace, not accumulate: a recipe that no longer matches a
      * rule has to be released, or the counts drift upward for ever.
      */

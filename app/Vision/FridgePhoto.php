@@ -6,6 +6,7 @@ namespace App\Vision;
 
 use App\Catalogue\IngredientEmoji;
 use App\Enums\StorageLocation;
+use App\Enums\UnitDimension;
 use App\Importing\Resolving\IngredientResolver;
 use App\Models\Ingredient;
 use App\Models\Unit;
@@ -47,7 +48,7 @@ final class FridgePhoto
      */
     public function read(string $image, string $mimeType): array
     {
-        $units = Unit::query()->get(['id', 'code', 'symbol'])->keyBy('code');
+        $units = Unit::query()->get(['id', 'code', 'symbol', 'dimension'])->keyBy('code');
 
         /** @var list<string> $codes */
         $codes = $units->keys()->all();
@@ -69,6 +70,29 @@ final class FridgePhoto
     {
         $ingredient = $this->resolver->match($item->name);
         $unit = $item->unitCode === null ? null : $units->get($item->unitCode);
+        $quantity = $unit === null ? null : $item->quantity;
+
+        /*
+         * Nothing stated, so count what the camera counts.
+         *
+         * A photograph is a picture of *things*: one tub, three peppers, a
+         * packet of butter. "1 szt." is therefore the one amount a photo can
+         * suggest without inventing anything — unlike the product's own default
+         * measure, which would put "1 g jogurtu" on the shelf. It is a
+         * suggestion on a screen that exists to be corrected, and it is what
+         * makes the row usable with no typing at all; leaving both fields empty
+         * meant every single line had to be filled in by hand.
+         */
+        if ($ingredient !== null && $unit === null) {
+            $unit = $units->get('piece');
+            $quantity = 1.0;
+        }
+
+        // A countable thing seen but not counted is one of it, for the same
+        // reason. An unstated weight stays unstated: "1 g" would be a lie.
+        if ($quantity === null && $unit?->dimension === UnitDimension::Count) {
+            $quantity = 1.0;
+        }
 
         return [
             /*
@@ -85,7 +109,7 @@ final class FridgePhoto
                 : $this->emoji->for($ingredient->name, $ingredient->category),
             // No unit means no amount: an amount with nothing to count it in is
             // refused by the pantry's own validation.
-            'quantity' => $unit === null ? null : $item->quantity,
+            'quantity' => $unit === null ? null : $quantity,
             'unitId' => $unit?->id,
             'unit' => $unit?->symbol,
             'location' => $this->shelfFor($ingredient)->value,

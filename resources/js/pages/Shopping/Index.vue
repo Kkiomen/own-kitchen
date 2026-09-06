@@ -5,7 +5,10 @@ import AppHeader from '@/components/AppHeader.vue';
 import AppIcon from '@/components/AppIcon.vue';
 import AppNav from '@/components/AppNav.vue';
 import IngredientLabel from '@/components/IngredientLabel.vue';
+import UnitSelect from '@/components/UnitSelect.vue';
 import { formatMoney } from '@/lib/money';
+import type { PantryUnit } from '@/lib/pantry-units';
+import { converts } from '@/lib/pantry-units';
 import { formatQuantity, stepFor, stepped, steppedDown } from '@/lib/quantity';
 import { index as prices } from '@/routes/prices';
 import {
@@ -27,6 +30,10 @@ interface ShoppingProduct {
     name: string;
     emoji: string;
     defaultUnitId: number | null;
+    /** The measures the catalogue uses for it, commonest first. */
+    unitIds: number[];
+    /** Those of them nothing can turn into grams for this product. */
+    unconvertibleUnitIds: number[];
 }
 
 interface ShoppingEntry {
@@ -89,7 +96,7 @@ const props = defineProps<{
     boughtCount: number;
     promotedCount: number;
     estimate: Estimate;
-    units: { id: number; symbol: string; name: string }[];
+    units: PantryUnit[];
     ingredients: ShoppingProduct[];
 }>();
 
@@ -135,6 +142,14 @@ const matches = computed<ShoppingProduct[]>(() => {
 
 const unitSymbol = computed<string>(
     () => props.units.find((unit) => unit.id === form.unit_id)?.symbol ?? '',
+);
+
+/**
+ * A measure nothing can weigh for this product — worth writing on a list, just
+ * not something the kitchen's own amounts can be compared with.
+ */
+const unitUnknown = computed<boolean>(
+    () => !converts(chosen.value, form.unit_id),
 );
 
 async function openSheet(): Promise<void> {
@@ -866,22 +881,20 @@ watch(sheetOpen, (open) => {
                                 >
                                     Jednostka
                                 </label>
-                                <select
+                                <UnitSelect
                                     id="shopping-unit"
                                     v-model="form.unit_id"
+                                    :units="units"
+                                    :product="chosen"
                                     class="h-13 w-full rounded-xl border border-rule-strong bg-paper-raised px-3 text-base text-ink focus:border-accent focus:outline-none"
-                                >
-                                    <option :value="null">—</option>
-                                    <option
-                                        v-for="unit in units"
-                                        :key="unit.id"
-                                        :value="unit.id"
-                                    >
-                                        {{ unit.name }}
-                                    </option>
-                                </select>
+                                />
                             </div>
                         </div>
+
+                        <p v-if="unitUnknown" class="text-xs text-ink-muted">
+                            Nie wiem, ile waży taka miara tego produktu —
+                            zapiszę ją, ale nie porównam z kuchnią.
+                        </p>
 
                         <p class="text-xs text-ink-muted">
                             Ilość możesz pominąć — „kup chleb” to też pełna

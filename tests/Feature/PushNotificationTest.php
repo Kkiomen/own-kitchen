@@ -115,6 +115,62 @@ class PushNotificationTest extends TestCase
         );
     }
 
+    /**
+     * Sign-up is open to friends, so there are other households on the same
+     * installation. A notification is addressed to the *account the task
+     * belongs to* and can never leave it — the one rule here that would be a
+     * privacy failure rather than an annoyance if it broke.
+     */
+    public function test_a_task_never_reaches_another_household(): void
+    {
+        $this->subscribe('phone-b', 'https://push.example/b');
+
+        $stranger = User::factory()->create();
+        PushSubscription::query()->create([
+            'user_id' => $stranger->id,
+            'endpoint' => 'https://push.example/stranger',
+            'public_key' => 'p256dh',
+            'auth_token' => 'auth',
+            'device_id' => 'their-phone',
+        ]);
+
+        $this->actingAs($this->user)
+            ->post(route('tasks.store'), ['title' => 'Oddać buty', 'assignee' => 'both']);
+
+        $this->assertSame([['https://push.example/b']], $this->gateway->endpoints());
+    }
+
+    /**
+     * And the same in the other direction: a device id is minted by a browser
+     * and is not a secret, so one household happening to hold the same string
+     * must not silence — or reach — anybody else's phone.
+     */
+    public function test_two_households_may_hold_the_same_device_id(): void
+    {
+        $this->subscribe('shared-id', 'https://push.example/ours');
+
+        $stranger = User::factory()->create();
+        PushSubscription::query()->create([
+            'user_id' => $stranger->id,
+            'endpoint' => 'https://push.example/theirs',
+            'public_key' => 'p256dh',
+            'auth_token' => 'auth',
+            'device_id' => 'shared-id',
+        ]);
+
+        $this->actingAs($stranger)
+            ->post(route('tasks.store'), [
+                'title' => 'Ich zadanie',
+                'assignee' => 'both',
+                'device' => 'shared-id',
+            ]);
+
+        // Their own phone is excluded by the id, and ours was never in scope to
+        // begin with — so nothing is sent, rather than the collision reaching
+        // across into this household.
+        $this->assertSame([[]], $this->gateway->endpoints());
+    }
+
     public function test_the_notification_names_the_task_and_the_day_it_is_due(): void
     {
         $this->subscribe('phone-b', 'https://push.example/b');

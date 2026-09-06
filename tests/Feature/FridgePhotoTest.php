@@ -108,8 +108,47 @@ class FridgePhotoTest extends TestCase
 
     public function test_an_amount_with_no_unit_is_not_written_down(): void
     {
-        // The pantry refuses one, so proposing one would be proposing an error.
+        // The pantry refuses one, so a bare number is discarded rather than
+        // paired with a measure nobody stated.
         $this->see([new SpottedItem('marchewka', 3.0)]);
+
+        $this->assertNotSame(3.0, $this->read()[0]['quantity']);
+    }
+
+    public function test_a_line_with_no_measure_is_proposed_as_one_of_it(): void
+    {
+        /*
+         * A photograph is a picture of *things*, so "1 szt." is the one amount
+         * it can suggest without inventing anything — and the row arrives
+         * usable rather than as two empty fields to fill in by hand. The
+         * product's own default measure would offer "1 g marchewki" instead,
+         * which is a number nobody would mean.
+         */
+        $this->see([new SpottedItem('marchewka')]);
+
+        $spotted = $this->read();
+
+        $this->assertSame(1.0, $spotted[0]['quantity']);
+        $this->assertSame(Unit::query()->where('code', 'piece')->value('id'), $spotted[0]['unitId']);
+    }
+
+    public function test_a_measure_the_model_did_state_is_kept(): void
+    {
+        // The suggestion above must never overwrite an answer. A label read off
+        // a tub is worth more than anything this app can guess.
+        $this->see([new SpottedItem('marchewka', 300.0, 'g')]);
+
+        $spotted = $this->read();
+
+        $this->assertSame(300.0, $spotted[0]['quantity']);
+        $this->assertSame(Unit::query()->where('code', 'g')->value('id'), $spotted[0]['unitId']);
+    }
+
+    public function test_an_unmatched_line_is_not_given_an_amount(): void
+    {
+        // There is no product to hold it, and the row cannot be saved at all
+        // until somebody points it at one. An amount there would be furniture.
+        $this->see([new SpottedItem('coś w foliowej torebce')]);
 
         $spotted = $this->read();
 

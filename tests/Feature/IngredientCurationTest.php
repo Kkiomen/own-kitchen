@@ -45,6 +45,34 @@ class IngredientCurationTest extends TestCase
     }
 
     /**
+     * Splitting a variety out of a generic product means moving a spelling from
+     * one entry to another, and the dictionary could only ever add.
+     *
+     * "fasoli czerwonej" was resolving to plain Fasola, so Fasola czerwona was
+     * given its own entry — and the seeder refused to run at all, because the new
+     * product could not claim its own name from the old one. An alias deleted
+     * from the file has to actually leave the database.
+     */
+    public function test_a_spelling_removed_from_the_dictionary_stops_being_an_alias(): void
+    {
+        $this->seed(IngredientSeeder::class);
+
+        $onion = Ingredient::query()->where('name', 'Cebula')->firstOrFail();
+
+        // A spelling the file does not list for it, as a stale row would look.
+        IngredientAlias::query()->create([
+            'ingredient_id' => $onion->id,
+            'alias' => 'cebula z poprzedniego slownika',
+        ]);
+
+        $this->seed(IngredientSeeder::class);
+
+        $this->assertDatabaseMissing('ingredient_aliases', ['alias' => 'cebula z poprzedniego slownika']);
+        // The canonical name is never pruned: nothing in the file lists it either.
+        $this->assertDatabaseHas('ingredient_aliases', ['alias' => 'cebula', 'ingredient_id' => $onion->id]);
+    }
+
+    /**
      * Repointing the alias alone would leave the recipe pointing at a product that
      * no longer exists, and leave it flagged for a review that has just happened.
      */

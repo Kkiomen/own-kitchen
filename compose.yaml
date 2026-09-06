@@ -63,6 +63,11 @@ services:
     # `schedule:run` every minute for as long as the container lives. No cron,
     # no supervisor, nothing to install.
     command: ['php', 'artisan', 'schedule:work']
+    # Wylaczony, bo obraz FrankenPHP ma wlasny HEALTHCHECK pukajacy do portu
+    # 2019 (admin Caddy'ego). Scheduler nie serwuje HTTP, wiec ten test nigdy
+    # nie przejdzie i kontener wisi jako `unhealthy` mimo poprawnej pracy.
+    healthcheck:
+      disable: true
     depends_on:
       app:
         condition: service_healthy

@@ -120,6 +120,10 @@ class ImportingServiceProvider extends ServiceProvider
             userAgent: (string) config('importing.user_agent'),
             crawlDelaySeconds: $crawlDelaySeconds,
             cacheTtlHours: (int) config('importing.page_cache_ttl_hours'),
+            // A recipe page does not change, so reading one is a reason to keep
+            // it. This is what makes "a parser fix is a re-run, not a re-crawl"
+            // stay true past the fortnight the pages were first fetched in.
+            refreshOnHit: true,
         );
     }
 }

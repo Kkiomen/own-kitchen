@@ -184,6 +184,18 @@ final class CategoriseRecipes
                 $facts['ingredientCategories'],
             );
 
+            /*
+             * Named products on top of the categories, because some animal
+             * products do not live in an animal category: lard is a Fat and
+             * gelatine is a Baking ingredient, and both were quietly passing.
+             * Naming them here is honest — filing lard under `meat` to make this
+             * work would be a lie told in a second place to fix one.
+             */
+            $forbidden += array_intersect(
+                $rule['withoutIngredients'] ?? [],
+                $facts['ingredients'],
+            );
+
             if ($forbidden === []) {
                 return true;
             }

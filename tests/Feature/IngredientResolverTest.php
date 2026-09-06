@@ -59,6 +59,37 @@ class IngredientResolverTest extends TestCase
         $this->assertSame('Mąka pszenna', $this->resolver->resolve('mąki pszennej')?->ingredient->name);
     }
 
+    /**
+     * A generic head noun swallows the variety that follows it unless the variety
+     * claims the two-word spelling for itself.
+     *
+     * "ser" and "sera" are aliases of Ser żółty, and rightly so: a line reading
+     * "100 g sera" means the yellow block. But that made "sera mozzarella" reduce
+     * to "sera" and every named cheese in the catalogue came back as a block of
+     * gouda — ~500 lines of it, found when a fridge photograph read "biały ser"
+     * off a tub of curd and the kitchen gained the wrong product. The fix is the
+     * dictionary rather than the resolver, so this is what has to stay true.
+     */
+    public function test_a_named_cheese_does_not_collapse_into_plain_cheese(): void
+    {
+        $this->assertSame('Mozzarella', $this->resolver->resolve('sera mozzarella')?->ingredient->name);
+        $this->assertSame('Feta', $this->resolver->resolve('sera typu feta')?->ingredient->name);
+        $this->assertSame('Parmezan', $this->resolver->resolve('sera parmezan')?->ingredient->name);
+        $this->assertSame('Gorgonzola', $this->resolver->resolve('sera gorgonzola')?->ingredient->name);
+        $this->assertSame('Ricotta', $this->resolver->resolve('sera ricotta')?->ingredient->name);
+        $this->assertSame('Halloumi', $this->resolver->resolve('sera halloumi')?->ingredient->name);
+        $this->assertSame('Ser kozi', $this->resolver->resolve('koziego sera')?->ingredient->name);
+
+        // White curd is not a kind of yellow cheese, and either word order means it.
+        $this->assertSame('Twaróg', $this->resolver->resolve('biały ser')?->ingredient->name);
+        $this->assertSame('Twaróg', $this->resolver->resolve('sera twarogowego')?->ingredient->name);
+
+        // Gouda, cheddar and gruyère genuinely are yellow cheese, and the bare
+        // word still has to reach it — this is not a rule about every qualifier.
+        $this->assertSame('Ser żółty', $this->resolver->resolve('sera cheddar')?->ingredient->name);
+        $this->assertSame('Ser żółty', $this->resolver->resolve('tartego sera')?->ingredient->name);
+    }
+
     public function test_an_unknown_product_is_created_but_marked_as_a_guess(): void
     {
         $resolved = $this->resolver->resolve('wynalazek kulinarny bez nazwy');

@@ -46,6 +46,7 @@ class IngredientSeeder extends Seeder
             // The canonical name is itself a valid spelling and must be findable.
             $this->claimCanonicalName($ingredient);
             $this->attachAliases($ingredient, $entry['aliases'] ?? []);
+            $this->pruneAliases($ingredient, $entry['aliases'] ?? []);
         }
     }
 
@@ -97,6 +98,34 @@ class IngredientSeeder extends Seeder
                 $this->supersedeInventedProduct($owner, $ingredient);
             }
         }
+    }
+
+    /**
+     * Drops spellings this product no longer claims.
+     *
+     * The dictionary is the authority, and until now it was only ever an
+     * authority on what a product *does* own: an alias deleted from the file
+     * stayed in the database for ever. That is not a tidiness problem. Splitting
+     * a variety out of a generic product — Fasola czerwona out of Fasola, once
+     * "fasoli czerwonej" turned out to be resolving to plain beans — means moving
+     * a spelling from one entry to another, and the seeder refused to run at all
+     * because the new product could not claim its own name from the old one.
+     *
+     * Only spellings the dictionary knows about are ever removed, and never the
+     * canonical name. An alias a *curated* product holds always came from this
+     * file — including the ones `supersedeInventedProduct()` moved across, which
+     * it moved precisely because the file asked for them.
+     *
+     * @param  list<string>  $aliases
+     */
+    private function pruneAliases(Ingredient $ingredient, array $aliases): void
+    {
+        $keep = array_map($this->normalizer->normalize(...), [$ingredient->name, ...$aliases]);
+
+        IngredientAlias::query()
+            ->where('ingredient_id', $ingredient->id)
+            ->whereNotIn('alias', array_filter($keep))
+            ->delete();
     }
 
     /**

@@ -141,6 +141,96 @@ class IngredientLineParserTest extends TestCase
     {
         $this->assertSame('natki pietruszki', $this->parser->parse('do podania: natki pietruszki')->ingredientPhrase);
         $this->assertSame('sezam', $this->parser->parse('dla chętnych - sezam')->ingredientPhrase);
+        // "oraz" joins this line to the one above and names nothing itself; it
+        // became a product 32 times, including where the butter was readable.
+        $this->assertSame('masła', $this->parser->parse('oraz 50 g masła')->ingredientPhrase);
+    }
+
+    /**
+     * Fresh is not a different product. Left in the name, "świeżych" became one —
+     * 232 lines of it, covering yeast, raspberries and basil leaves alike.
+     * **Dried is deliberately not treated this way**: "suszonych pomidorów"
+     * reduced to "pomidorów" would put fresh tomatoes in a recipe wanting jarred.
+     */
+    public function test_fresh_is_a_descriptor_but_dried_is_part_of_the_name(): void
+    {
+        $this->assertSame('drożdży', $this->parser->parse('25 g świeżych drożdży')->ingredientPhrase);
+        $this->assertSame('malin', $this->parser->parse('1/2 szklanki świeżych malin')->ingredientPhrase);
+        $this->assertSame('suszonych pomidorów', $this->parser->parse('100 g suszonych pomidorów')->ingredientPhrase);
+    }
+
+    /**
+     * A describing word between the number and the measure used to hide the
+     * measure completely, and the line fell back to the bare-count rule.
+     *
+     * "1 płaska łyżeczka soli" became one *piece* of salt and "2 duże ząbki
+     * czosnku" became two pieces of garlic — two cloves are 10 g and two heads
+     * are 90 g, so this is a real amount, not a cosmetic slip. 679 lines were
+     * counted in pieces this way. Descriptors are therefore taken out before the
+     * measure is read, never after.
+     */
+    public function test_a_describing_word_does_not_hide_the_measure(): void
+    {
+        $salt = $this->parser->parse('1 płaska łyżeczka soli');
+
+        $this->assertSame('tsp', $salt->unitCode);
+        $this->assertSame('soli', $salt->ingredientPhrase);
+
+        $garlic = $this->parser->parse('2 duże ząbki czosnku');
+
+        $this->assertSame('clove', $garlic->unitCode);
+        $this->assertSame('czosnku', $garlic->ingredientPhrase);
+
+        $corn = $this->parser->parse('1 mała puszka kukurydzy');
+
+        $this->assertSame('can', $corn->unitCode);
+        $this->assertSame('kukurydzy', $corn->ingredientPhrase);
+    }
+
+    /**
+     * An instruction attached to an ingredient is not part of its name. Left in,
+     * "przeciśniętego przez praskę" became a product and took the garlic with it
+     * — the same mechanism as "do podania" taking the parmesan.
+     */
+    public function test_how_something_was_put_through_a_press_is_not_its_name(): void
+    {
+        $this->assertSame('czosnku', $this->parser->parse('2 ząbki czosnku przeciśniętego przez praskę')->ingredientPhrase);
+    }
+
+    /**
+     * The same labels at the other end of the sentence, which is where the sites
+     * actually write them most often.
+     *
+     * Left in place the whole phrase becomes the product's name, and "do podania"
+     * was invented as a product — after which it owned that spelling and took the
+     * parmesan, the chives and the soured cream on 93 lines with it. That is the
+     * "Sos:" mechanism arriving from the right-hand side.
+     */
+    public function test_it_strips_a_serving_note_from_the_end_of_a_line(): void
+    {
+        $this->assertSame('parmezan', $this->parser->parse('parmezan do podania')->ingredientPhrase);
+        $this->assertSame('natka pietruszki', $this->parser->parse('natka pietruszki do dekoracji')->ingredientPhrase);
+        // "świeża" is a descriptor and moves to the note, so what is left is the herb.
+        $this->assertSame('kolendra', $this->parser->parse('świeża kolendra, do podania')->ingredientPhrase);
+        $this->assertSame('śmietany', $this->parser->parse('2 łyżki śmietany do podania')->ingredientPhrase);
+    }
+
+    /**
+     * "do smażenia" and "do formy" are not on that list and must not be read as
+     * if they were: "olej do smażenia" names the oil it is asking for. This is
+     * the narrow half of the rule the section-caption work already learned — a
+     * caption read as a product is recoverable, a product read as a label is not.
+     */
+    public function test_it_leaves_a_purpose_that_is_part_of_the_name(): void
+    {
+        $this->assertSame('olej do smażenia', $this->parser->parse('olej do smażenia')->ingredientPhrase);
+        $this->assertSame('masło do formy', $this->parser->parse('masło do formy')->ingredientPhrase);
+    }
+
+    /** A line that is nothing but a label keeps its text, or a review has nothing to read. */
+    public function test_a_line_that_is_only_a_label_is_not_emptied(): void
+    {
+        $this->assertSame('do podania', $this->parser->parse('do podania')->ingredientPhrase);
     }
 
     public function test_it_handles_a_decimal_written_with_a_comma(): void

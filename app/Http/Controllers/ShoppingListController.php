@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Catalogue\IngredientEmoji;
+use App\Catalogue\IngredientUnits;
 use App\Catalogue\RecipeScale;
 use App\Enums\IngredientCategory;
 use App\Enums\ShoppingAisle;
@@ -39,6 +40,7 @@ class ShoppingListController extends Controller
         private readonly IngredientEmoji $emoji,
         private readonly CostEstimate $estimate,
         private readonly SelectedShops $shops,
+        private readonly IngredientUnits $unitsFor,
     ) {}
 
     public function index(Request $request, ?ShoppingList $shoppingList = null): Response
@@ -148,25 +150,49 @@ class ShoppingListController extends Controller
             ],
             'units' => Unit::query()
                 ->orderBy('dimension')
-                ->get(['id', 'symbol', 'name'])
+                ->get(['id', 'code', 'symbol', 'name'])
                 ->map(fn (Unit $unit): array => [
                     'id' => $unit->id,
+                    'code' => $unit->code,
                     'symbol' => $unit->symbol,
                     'name' => $unit->name,
                 ])
                 ->all(),
-            'ingredients' => Ingredient::query()
-                ->where('category', '!=', IngredientCategory::Equipment->value)
-                ->orderBy('name')
-                ->get(['id', 'name', 'category', 'default_unit_id'])
-                ->map(fn (Ingredient $ingredient): array => [
+            'ingredients' => $this->products(),
+        ]);
+    }
+
+    /**
+     * The whole product list for the type-ahead, each with the measures the
+     * catalogue actually uses for it — the same narrowing the kitchen's picker
+     * gets, because the two forms state the same kind of fact and a shortlist
+     * on only one of them would make the answer depend on which screen you
+     * happened to open.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private function products(): array
+    {
+        $shortlists = $this->unitsFor->all();
+
+        return Ingredient::query()
+            ->where('category', '!=', IngredientCategory::Equipment->value)
+            ->orderBy('name')
+            ->get(['id', 'name', 'category', 'default_unit_id'])
+            ->map(function (Ingredient $ingredient) use ($shortlists): array {
+                $shortlist = $shortlists[$ingredient->id] ?? ['units' => [], 'unconvertible' => []];
+
+                return [
                     'id' => $ingredient->id,
                     'name' => $ingredient->name,
                     'emoji' => $this->emoji->for($ingredient->name, $ingredient->category),
                     'defaultUnitId' => $ingredient->default_unit_id,
-                ])
-                ->all(),
-        ]);
+                    'unitIds' => $shortlist['units'],
+                    'unconvertibleUnitIds' => $shortlist['unconvertible'],
+                ];
+            })
+            ->values()
+            ->all();
     }
 
     public function store(Request $request): RedirectResponse

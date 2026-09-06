@@ -6,6 +6,9 @@ import AppIcon from '@/components/AppIcon.vue';
 import AppNav from '@/components/AppNav.vue';
 import FridgeScan from '@/components/FridgeScan.vue';
 import IngredientLabel from '@/components/IngredientLabel.vue';
+import UnitSelect from '@/components/UnitSelect.vue';
+import type { PantryUnit } from '@/lib/pantry-units';
+import { converts } from '@/lib/pantry-units';
 import { formatQuantity } from '@/lib/quantity';
 import { destroy, store, update } from '@/routes/pantry';
 
@@ -16,6 +19,10 @@ interface PantryProduct {
     defaultUnitId: number | null;
     /** Where this kind of thing usually goes — a suggestion, not a rule. */
     location: string;
+    /** The measures the catalogue uses for it, commonest first. */
+    unitIds: number[];
+    /** Those of them nothing can turn into grams for this product. */
+    unconvertibleUnitIds: number[];
 }
 
 interface PantryEntry {
@@ -40,7 +47,7 @@ interface PantrySection {
 
 const props = defineProps<{
     sections: PantrySection[];
-    units: { id: number; symbol: string; name: string }[];
+    units: PantryUnit[];
     ingredients: PantryProduct[];
     expiringSoon: number;
     /** False when no OpenAI key is configured — then there is no camera at all. */
@@ -107,6 +114,15 @@ const unitSymbol = computed<string>(
     () => props.units.find((unit) => unit.id === form.unit_id)?.symbol ?? '',
 );
 
+/**
+ * A measure nothing can weigh for this product. Said out loud rather than
+ * refused: two słoiki of something is a fact, just not one the recipes can be
+ * compared with.
+ */
+const unitUnknown = computed<boolean>(
+    () => !converts(chosen.value, form.unit_id),
+);
+
 async function openSheet(): Promise<void> {
     sheetOpen.value = true;
     editing.value = null;
@@ -124,12 +140,20 @@ function openEdit(item: PantryEntry, location: string): void {
     resetEntry();
     justAdded.value = [];
     editing.value = item;
+    // The catalogue's own row, so the unit picker knows this product's measures
+    // while a shelf is being corrected exactly as it does while it is filled.
+    const product = props.ingredients.find(
+        (candidate) => candidate.id === item.ingredientId,
+    );
+
     chosen.value = {
         id: item.ingredientId,
         name: item.name,
         emoji: item.emoji,
         defaultUnitId: item.unitId,
         location,
+        unitIds: product?.unitIds ?? [],
+        unconvertibleUnitIds: product?.unconvertibleUnitIds ?? [],
     };
     form.ingredient_id = item.ingredientId;
     form.location = location;
@@ -462,22 +486,20 @@ watch(sheetOpen, (open) => {
                                 >
                                     Jednostka
                                 </label>
-                                <select
+                                <UnitSelect
                                     id="pantry-unit"
                                     v-model="form.unit_id"
+                                    :units="units"
+                                    :product="chosen"
                                     class="h-13 w-full rounded-xl border border-rule-strong bg-paper-raised px-3 text-base text-ink focus:border-accent focus:outline-none"
-                                >
-                                    <option :value="null">—</option>
-                                    <option
-                                        v-for="unit in units"
-                                        :key="unit.id"
-                                        :value="unit.id"
-                                    >
-                                        {{ unit.name }}
-                                    </option>
-                                </select>
+                                />
                             </div>
                         </div>
+
+                        <p v-if="unitUnknown" class="text-xs text-ink-muted">
+                            Nie wiem, ile waży taka miara tego produktu —
+                            zapiszę ją, ale nie porównam z przepisem.
+                        </p>
 
                         <p class="text-xs text-ink-muted">
                             Ilość możesz pominąć — wtedy zapiszę po prostu, że

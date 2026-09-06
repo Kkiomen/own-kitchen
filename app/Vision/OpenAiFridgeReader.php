@@ -37,12 +37,17 @@ final class OpenAiFridgeReader implements FridgeReader
         Nie zgaduj i nie dopisuj rzeczy, które zwykle bywają w lodówce, a których tu nie widać.
         Jeśli czegoś nie potrafisz rozpoznać, pomiń to — pominięty produkt jest lepszy niż zmyślony.
 
+        Wypisz każdy produkt osobno, także wtedy, gdy leży ich kilka rodzajów obok siebie.
+        Przejrzyj po kolei wszystkie półki, szuflady i półki na drzwiach.
+
         Zasady zapisu:
         - nazwa po polsku, w mianowniku liczby pojedynczej ("cebula", nie "cebuli", nie "cebule"),
         - nazwa ogólna produktu, bez marki i bez opisu opakowania ("mleko", nie "mleko Łaciate 3,2%"),
-        - policzalne rzeczy licz w sztukach ("piece"), jeśli da się je policzyć,
-        - podaj ilość tylko wtedy, gdy jesteś jej pewien; w przeciwnym razie zostaw null,
-        - nie wypisuj rzeczy niejadalnych (pojemniki, półki, magnesy, chemia).
+        - policz to, co widać: trzy papryki to quantity 3 i unit "piece",
+        - opakowania też licz w sztukach ("piece") — jeden kubek jogurtu to 1 sztuka,
+        - jeśli na etykiecie widać wyraźnie gramaturę ("200 g", "1 l"), podaj ją zamiast sztuk,
+        - nie zgaduj wagi, której nie widać; wtedy policz sztuki albo zostaw quantity null,
+        - nie wypisuj rzeczy niejadalnych (pojemniki, półki, magnesy, chemia, leki).
         TEXT;
 
     public function __construct(private readonly Http $http) {}
@@ -81,10 +86,23 @@ final class OpenAiFridgeReader implements FridgeReader
                             ['type' => 'text', 'text' => self::INSTRUCTION],
                             [
                                 'type' => 'image_url',
-                                // Sent inline rather than as a URL: the photo is
-                                // somebody's kitchen and there is nowhere public
-                                // to put it, nor any reason to.
-                                'image_url' => ['url' => $this->dataUri($image, $mimeType)],
+                                'image_url' => [
+                                    // Sent inline rather than as a URL: the photo
+                                    // is somebody's kitchen and there is nowhere
+                                    // public to put it, nor any reason to.
+                                    'url' => $this->dataUri($image, $mimeType),
+                                    /*
+                                     * Stated rather than left to "auto". The
+                                     * browser already shrinks the picture to
+                                     * 1280 px, and at that size the low-detail
+                                     * path is a 512 px thumbnail of a packed
+                                     * shelf — which is how a tub of skyr becomes
+                                     * "jogurt" and a label becomes unreadable.
+                                     * The extra tiles cost a fraction of a
+                                     * grosz per photo.
+                                     */
+                                    'detail' => 'high',
+                                ],
                             ],
                         ],
                     ]],
