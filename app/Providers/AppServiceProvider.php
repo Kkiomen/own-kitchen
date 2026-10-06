@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Catalogue\IngredientEmoji;
 use App\Nutrition\NutritionBook;
+use App\Planning\Season;
 use App\Support\Measurement\MeasureBook;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -39,6 +40,9 @@ class AppServiceProvider extends ServiceProvider
          * of those questions needs this book and the measure book together.
          */
         $this->app->singleton(NutritionBook::class);
+
+        // Read once: a week's planning asks it about every candidate it looks at.
+        $this->app->singleton(Season::class);
     }
 
     /**

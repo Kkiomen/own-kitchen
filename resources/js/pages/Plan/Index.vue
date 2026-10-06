@@ -15,8 +15,11 @@ import {
     store,
     update,
 } from '@/routes/meal-plan';
+import * as verdictRoutes from '@/routes/recipe-verdict';
 import { show } from '@/routes/recipes';
 import { show as shoppingList } from '@/routes/shopping';
+
+type Verdict = 'like' | 'dislike';
 
 /** One dish or note planned for one meal. */
 interface PlanEntry {
@@ -32,6 +35,8 @@ interface PlanEntry {
     recipeServings: number | null;
     totalTimeMinutes: number | null;
     isMealPrep: boolean;
+    /** "lubimy" or "nie proponuj", or null when nobody has said. */
+    verdict: Verdict | null;
     /** How many products this dish is short of, or null for a note. */
     missing: number | null;
     /**
@@ -123,7 +128,7 @@ const props = defineProps<{
     /** Only present while the alternatives sheet is open. */
     alternatives?: MealAlternative[];
     /** The meal being replaced, in the same units as the offers. */
-    replacing?: { servings: number; kcal: number | null };
+    replacing?: { servings: number; kcal: number | null; matched: boolean };
     /** What the targets form opens with; the shares come from `PlanTargets`. */
     defaultTargets: {
         people: number;
@@ -501,6 +506,58 @@ function openSwap(entry: PlanEntry): void {
 
 function closeSwap(): void {
     swapSheet.value = null;
+}
+
+/**
+ * The verdict on the dish in the sheet, read from the live week rather than
+ * from the entry the sheet was opened with — that copy goes stale the moment
+ * the heart is tapped.
+ */
+const swapVerdict = computed<Verdict | null>(() => {
+    const id = swapSheet.value?.id;
+
+    for (const day of props.days) {
+        for (const slot of day.slots) {
+            const found = slot.entries.find((entry) => entry.id === id);
+
+            if (found) {
+                return found.verdict;
+            }
+        }
+    }
+
+    return null;
+});
+
+const savingVerdict = ref(false);
+
+/**
+ * "Lubimy to" / "nie proponuj więcej". Tapping the verdict already given takes
+ * it back, so a mistaken tap is one tap to undo.
+ */
+function setVerdict(entry: PlanEntry, verdict: Verdict): void {
+    if (!entry.slug || savingVerdict.value) {
+        return;
+    }
+
+    savingVerdict.value = true;
+
+    const options = {
+        preserveScroll: true,
+        preserveState: true,
+        only: ['days'],
+        onFinish: () => {
+            savingVerdict.value = false;
+        },
+    };
+
+    if (swapVerdict.value === verdict) {
+        router.delete(verdictRoutes.destroy.url(entry.slug), options);
+
+        return;
+    }
+
+    router.put(verdictRoutes.update.url(entry.slug), { verdict }, options);
 }
 
 function choose(alternative: MealAlternative): void {
@@ -1173,6 +1230,11 @@ watch([sheet, generatorOpen], ([picker, generator]) => {
                                             :href="show.url(entry.slug)"
                                             class="block truncate text-sm text-ink hover:text-accent-strong"
                                         >
+                                            <AppIcon
+                                                v-if="entry.verdict === 'like'"
+                                                name="heart"
+                                                class="mr-1 inline fill-current align-[-2px] text-accent-strong"
+                                            />
                                             {{ entry.title }}
                                         </Link>
                                         <span
@@ -1867,12 +1929,69 @@ watch([sheet, generatorOpen], ([picker, generator]) => {
                             people, and this is the line that says so.
                         -->
                         <p
-                            v-if="props.replacing?.kcal"
+                            v-if="props.replacing && !props.replacing.matched"
+                            class="mt-1 text-sm text-ink-faint"
+                        >
+                            Dodatek do obiadu — porcje zostają bez zmian
+                        </p>
+                        <p
+                            v-else-if="props.replacing?.kcal"
                             class="mt-1 text-sm text-ink-faint tabular-nums"
                         >
                             {{ props.replacing.servings }} porcje ·
                             {{ props.replacing.kcal }} kcal razem — tyle samo
                             dostaniesz z każdego poniżej
+                        </p>
+
+                        <!--
+                            The household's taste, said where it is formed:
+                            looking at a dish and deciding it is not for us.
+                            The planner reads both — a liked dish comes back
+                            after a fortnight, a rejected one never.
+                        -->
+                        <div class="mt-2 flex flex-wrap gap-2">
+                            <button
+                                type="button"
+                                class="flex h-11 items-center gap-1.5 rounded-full border px-4 text-sm"
+                                :class="
+                                    swapVerdict === 'like'
+                                        ? 'border-accent bg-accent text-ink'
+                                        : 'border-rule-strong text-ink-muted hover:text-ink'
+                                "
+                                :aria-pressed="swapVerdict === 'like'"
+                                :disabled="savingVerdict"
+                                @click="setVerdict(swapSheet, 'like')"
+                            >
+                                <AppIcon
+                                    name="heart"
+                                    :class="{
+                                        'fill-current': swapVerdict === 'like',
+                                    }"
+                                />
+                                Lubimy to
+                            </button>
+                            <button
+                                type="button"
+                                class="flex h-11 items-center gap-1.5 rounded-full border px-4 text-sm"
+                                :class="
+                                    swapVerdict === 'dislike'
+                                        ? 'border-flag bg-paper-sunk text-ink'
+                                        : 'border-rule-strong text-ink-muted hover:text-ink'
+                                "
+                                :aria-pressed="swapVerdict === 'dislike'"
+                                :disabled="savingVerdict"
+                                @click="setVerdict(swapSheet, 'dislike')"
+                            >
+                                <AppIcon name="ban" />
+                                Nie proponuj więcej
+                            </button>
+                        </div>
+                        <p
+                            v-if="swapVerdict === 'dislike'"
+                            class="mt-2 text-sm text-ink-muted"
+                        >
+                            Nie zaproponuję go już nigdy — wybierz coś w zamian
+                            poniżej.
                         </p>
                     </div>
 

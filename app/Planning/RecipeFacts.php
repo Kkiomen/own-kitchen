@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Planning;
 
+use App\Enums\Appliance;
+use App\Enums\IngredientCategory;
 use App\Models\Recipe;
 use App\Nutrition\RecipeNutrition;
 use App\Pantry\RecipeAvailability;
@@ -32,6 +34,8 @@ final readonly class RecipeFacts
         private RecipeNutrition $nutrition,
         private IngredientCost $costs,
         private RecipeAvailability $availability,
+        private Season $season,
+        private DishFamily $families,
     ) {}
 
     /**
@@ -46,13 +50,16 @@ final readonly class RecipeFacts
 
         $recipes = Recipe::query()
             ->whereIn('id', $recipeIds)
-            ->with(['ingredients.ingredient', 'ingredients.unit'])
-            ->get(['id', 'servings']);
+            ->with(['ingredients.ingredient', 'ingredients.unit', 'categories:id,slug'])
+            ->get(['id', 'servings', 'title', 'total_time_minutes', 'appliance']);
 
+        $seasonal = array_flip($this->season->seasonalProducts());
         $facts = [];
 
         foreach ($recipes as $recipe) {
             $energy = $this->nutrition->for($recipe);
+
+            $categories = array_values($recipe->categories->pluck('slug')->all());
 
             $facts[$recipe->id] = new RecipeFact(
                 kcalPerPortion: $energy->reliableKcalPerPortion(),
@@ -60,10 +67,61 @@ final readonly class RecipeFacts
                 proteinPerPortion: $energy->isReliable() ? $energy->perPortion?->protein : null,
                 realIngredients: $this->realIngredients($recipe),
                 dominantIngredientId: $energy->dominantIngredientId,
+                minutes: $recipe->total_time_minutes,
+                categories: $categories,
+                occasion: $this->season->occasionOf($recipe->title),
+                seasonalProduce: $this->seasonalProduceOf($recipe, $seasonal),
+                isHeadline: self::isHeadline($recipe->title),
+                family: $this->families->of($recipe->title),
+                servings: $recipe->servings,
+                isAirFryer: $recipe->appliance === Appliance::AirFryer,
+                isHomeClassic: $this->families->isHomeClassic($recipe->title),
+                isPlantProtein: $this->families->isPlantProtein($recipe->title),
+                isOffal: $this->families->isOffal($recipe->title),
+                cuisine: $this->families->cuisineOf($recipe->title),
+                signature: $this->families->signatureOf($recipe->title),
+                starchShare: $energy->isReliable() ? $this->starchShare($recipe, $energy->kcalByIngredient) : null,
+                namesStarch: $this->families->namesStarch($recipe->title),
+                inSauce: $this->families->isInSauce($recipe->title),
+                hasMeatInTitle: $this->families->namesMeat($recipe->title),
+                vegetables: self::vegetablesIn($recipe),
+                isRich: self::isRich($recipe, $energy->kcalByIngredient),
+                soupKind: $this->families->of($recipe->title) === 'zupa' || in_array('zupy', $categories, true)
+                    ? $this->families->soupKindOf($recipe->title)
+                    : null,
             );
         }
 
         return $facts;
+    }
+
+    /**
+     * A second sentence is what gives a headline away. Half of beszamel.se.pl's
+     * 7 400 titles have one and no other source writes them; a dish is named
+     * in a phrase, a news item is written in sentences.
+     */
+    private static function isHeadline(string $title): bool
+    {
+        return preg_match('/[.!?]\s+\p{Lu}/u', $title) === 1;
+    }
+
+    /**
+     * @param  array<string, int>  $seasonal
+     * @return list<string>
+     */
+    private function seasonalProduceOf(Recipe $recipe, array $seasonal): array
+    {
+        $found = array_fill_keys($this->season->produceNamedIn($recipe->title), true);
+
+        foreach ($recipe->ingredients as $line) {
+            $name = $line->ingredient?->name;
+
+            if ($name !== null && isset($seasonal[$name]) && ! $line->is_optional) {
+                $found[$name] = true;
+            }
+        }
+
+        return array_keys($found);
     }
 
     /**
@@ -101,6 +159,113 @@ final readonly class RecipeFacts
     }
 
     private const string WATER = 'woda';
+
+    /**
+     * The vegetables and fruit a dish is built from.
+     *
+     * Onion, garlic and potatoes are left out: they are in nearly every pot, and
+     * "Kiełbasa z cebulką" was a supper the dietitian counted as having no
+     * vegetable at all. A number rather than a flag, so a supper of bread and
+     * cheese can be told from one with a tomato on it and from a salad.
+     */
+    private static function vegetablesIn(Recipe $recipe): int
+    {
+        $found = [];
+
+        foreach ($recipe->ingredients as $line) {
+            $product = $line->ingredient;
+
+            if ($product === null || $line->is_optional) {
+                continue;
+            }
+
+            if (in_array($product->category, [IngredientCategory::Vegetable, IngredientCategory::Fruit], true)
+                && preg_match('/^(cebul|czosn|ziemn|szalot)/', $product->slug) !== 1) {
+                $found[$product->id] = true;
+            }
+        }
+
+        return count($found);
+    }
+
+    /**
+     * Processed meat and the rich cheeses, when they carry a real share of the
+     * dish — a tenth of its calories. Halloumi three times in three weeks,
+     * kiełbasa, chorizo and szynka beside it, was the dietitian's third
+     * complaint in every round; a rasher of boczek for flavour is not that.
+     *
+     * @param  array<int, float>  $kcalByIngredient
+     */
+    private static function isRich(Recipe $recipe, array $kcalByIngredient): bool
+    {
+        $total = array_sum($kcalByIngredient);
+
+        foreach ($recipe->ingredients as $line) {
+            $product = $line->ingredient;
+
+            if ($product === null || $line->is_optional || ! in_array($product->slug, self::RICH, true)) {
+                continue;
+            }
+
+            // Unknown calories: being there at all is the answer.
+            if ($total <= 0 || ($kcalByIngredient[$product->id] ?? 0.0) / $total >= 0.1) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private const array RICH = [
+        'boczek', 'szynka', 'kielbasa', 'guanciale', 'wedlina', 'salami', 'chorizo', 'parowki',
+        'kaszanka', 'slonina', 'salceson', 'halloumi', 'camembert', 'gorgonzola', 'burrata',
+        'mascarpone', 'serek-topiony',
+    ];
+
+    /**
+     * How much of a dish's energy comes from what fills a plate — potatoes,
+     * groats, rice, pasta, bread, dumplings.
+     *
+     * By calories rather than by presence, because flour, breadcrumbs and the
+     * soaked roll in kotlety mielone are all grain and none of them is the
+     * potatoes the cutlet still needs. Null when nothing could be counted.
+     *
+     * @param  array<int, float>  $kcalByIngredient
+     */
+    private function starchShare(Recipe $recipe, array $kcalByIngredient): ?float
+    {
+        $total = array_sum($kcalByIngredient);
+
+        if ($total <= 0) {
+            return null;
+        }
+
+        $starch = [];
+
+        foreach ($recipe->ingredients as $line) {
+            $product = $line->ingredient;
+
+            if ($product !== null && ! $line->is_optional && self::isStarch($product->slug, $product->category)) {
+                $starch[$product->id] = $kcalByIngredient[$product->id] ?? 0.0;
+            }
+        }
+
+        return array_sum($starch) / $total;
+    }
+
+    /**
+     * Grain that is eaten as itself, plus the two vegetables a plate is built
+     * on. Flour, crumbs and flakes bind or coat; they never stand on a plate.
+     */
+    private static function isStarch(string $slug, IngredientCategory $category): bool
+    {
+        if (in_array($slug, ['ziemniak', 'bataty'], true)) {
+            return true;
+        }
+
+        return $category === IngredientCategory::Grain
+            && preg_match('/^(maka|platki|otreby|bulka-tarta|panko|herbatniki|biszkopty|chipsy)/', $slug) !== 1;
+    }
 
     /**
      * How much of a dish has to have a price before its total is worth quoting.

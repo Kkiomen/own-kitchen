@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Planning;
 
 use App\Enums\MealSlot;
+use App\Enums\RecipeVerdict;
 use App\Models\MealPlanEntry;
+use App\Models\RecipePreference;
 use App\Models\User;
 use App\Nutrition\RecipeNutrition;
 use App\Pantry\RecipeAvailability;
@@ -30,6 +32,13 @@ final class MealPlan
      * app allows itself.
      */
     public const int DEFAULT_SERVINGS = 2;
+
+    /**
+     * The household's verdict on each recipe in the week being shown.
+     *
+     * @var array<int, string>
+     */
+    private array $verdicts = [];
 
     public function __construct(
         private readonly RecipeAvailability $availability,
@@ -92,6 +101,12 @@ final class MealPlan
         $entries = $this->entriesOn($user, $dates);
 
         $shortfall = $this->availability->missingCounts($user, $this->recipeIds($entries));
+        $this->verdicts = RecipePreference::query()
+            ->of($user)
+            ->whereIn('recipe_id', $this->recipeIds($entries))
+            ->pluck('verdict', 'recipe_id')
+            ->map(static fn (RecipeVerdict $verdict): string => $verdict->value)
+            ->all();
 
         $byDay = [];
 
@@ -167,6 +182,8 @@ final class MealPlan
             'totalTimeMinutes' => $recipe?->total_time_minutes,
             'isMealPrep' => $recipe !== null && $recipe->is_meal_prep,
             'missing' => $recipe === null ? null : ($shortfall[$recipe->id] ?? 0),
+            // "lubimy" / "nie proponuj", so the card can show which it already is.
+            'verdict' => $recipe === null ? null : ($this->verdicts[$recipe->id] ?? null),
             'nutrition' => $this->share($entry),
         ];
     }

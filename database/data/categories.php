@@ -160,6 +160,38 @@ return [
         ],
     ],
     [
+        'slug' => 'pieczywo',
+        'name' => 'Pieczywo',
+        /*
+         * Bread you bake yourself. It is never a meal — the meal plan excludes
+         * it everywhere — because it is what the kanapka is made *from*: "Chałka
+         * z Air Fryera" was planned as a breakfast.
+         *
+         * The title alone cannot say it, because "Bajgiel z wędzonym łososiem"
+         * names bread too and *is* breakfast. What separates them is the pot:
+         * flour and something to raise it means the bread is being made.
+         */
+        'requireIngredients' => [
+            ['Mąka pszenna', 'Mąka pełnoziarnista', 'Mąka orkiszowa', 'Mąka żytnia', 'Mąka owsiana', 'Mąka kukurydziana'],
+            ['Drożdże', 'Proszek do pieczenia', 'Soda oczyszczona'],
+        ],
+        'titles' => [
+            'chleb', 'chleba', 'chlebek', 'chlebki', 'chalka', 'chalki', 'bajgle',
+            'bajgiel', 'bulki', 'bulka', 'buleczki', 'ciabatta', 'ciabatte', 'focaccia',
+            'focaccie', 'bagietka', 'bagietki', 'podplomyki', 'podplomyk', 'pita', 'pity',
+            'pieczywo', 'precle', 'obwarzanki', 'schiacciata', 'lepiosz*', 'naan',
+        ],
+        'excludeIngredientCategories' => ['meat', 'fish'],
+        'tags' => ['pieczywo', 'chleb'],
+        // Sweet bakes stay out: a banana loaf or a jam bun is a podwieczorek, which
+        // `wypieki` already offers.
+        'excludeTitles' => [
+            'kanapk*', 'z pieczywem', 'na chlebie', 'pudding chlebowy', 'bananow*',
+            'drozdzowk*', 'slodk*', 'z dzemem', 'z jablkami', 'z rabarbarem', 'czekolad*',
+            'z kruszonka', 'cynamon*', 'z rodzynkami', 'z nadzieniem',
+        ],
+    ],
+    [
         'slug' => 'desery',
         'name' => 'Desery',
         // "lody" stays a whole word: "łodyga" would otherwise be ice cream.

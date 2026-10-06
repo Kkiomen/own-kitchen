@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Planning;
 
 use App\Enums\MealSlot;
+use App\Enums\RecipeVerdict;
 use App\Models\MealPlanEntry;
 use App\Models\PantryItem;
 use App\Models\Recipe;
+use App\Models\RecipePreference;
 use App\Models\User;
 use App\Pantry\RecipeAvailability;
 use Carbon\CarbonImmutable;
@@ -61,10 +63,39 @@ final class PlanGenerator
      * variety the shuffle already provides, at the cost of reading every one of
      * their ingredient lists.
      */
-    private const int TARGETED_POOL = 240;
+    private const int TARGETED_POOL = 400;
 
     /** Second helpings, yes; eight helpings, no. */
     private const int MAX_PORTIONS_EACH = 3;
+
+    /** How many Polish classics every obiad shortlist is sure to look at. */
+    private const int CLASSICS_IN_SHORTLIST = 80;
+
+    /**
+     * The kinds of dish both reviewers counted on their fingers: naleśniki for
+     * breakfast and again for supper, three egg dishes in four days. Once a
+     * day at most, and each one more in the week costs twice what another
+     * salad does.
+     */
+    private const array ONCE_A_DAY = ['nalesniki', 'jajka'];
+
+    /**
+     * How many soup obiady a week is pulled towards. Both reviewers of every
+     * generated round counted one or two and called it "not a Polish week";
+     * a pot eaten on two days counts twice, as it is two soup obiady.
+     */
+    private const int SOUPS_A_WEEK = 3;
+
+    /**
+     * A soup served as the whole obiad has to be a meal: three bowls of rosół
+     * each was "a 2 500-calorie day" on paper and, in the reviewer's words,
+     * someone going through the cupboards at four. Grochówka and gulaszowa
+     * reach the meal in two; a broth that needs three sinks well below them.
+     */
+    private const float THIN_SOUP_PENALTY = 0.12;
+
+    /** What a third helping costs a dish in the ranking — see `score()`. */
+    private const float THIRD_HELPING_PENALTY = 0.18;
 
     /**
      * How many real ingredients a main meal has to be built from.
@@ -149,7 +180,51 @@ final class PlanGenerator
     public function __construct(
         private readonly RecipeAvailability $availability,
         private readonly RecipeFacts $facts,
+        private readonly Season $season,
+        private readonly DishFamily $families,
+        private readonly SideDishes $sides,
     ) {}
+
+    /**
+     * Forget everything a previous call worked out. One instance may be asked
+     * to fill a week and then to swap a meal in the same request.
+     */
+    private function reset(User $user): void
+    {
+        $this->liked = [];
+        $this->disliked = [];
+
+        foreach (RecipePreference::query()->of($user)->get(['recipe_id', 'verdict']) as $preference) {
+            if ($preference->verdict === RecipeVerdict::Like) {
+                $this->liked[$preference->recipe_id] = true;
+            } else {
+                $this->disliked[$preference->recipe_id] = true;
+            }
+        }
+
+        $this->used = [];
+        $this->known = [];
+        $this->eaten = [];
+        $this->eatenToday = [];
+        $this->scores = [];
+        $this->themesOn = [];
+        $this->themeCount = [];
+        $this->formCount = [];
+        $this->familiesOn = [];
+        $this->familyCount = [];
+        $this->familyWeek = [];
+        $this->dominantWeek = [];
+        $this->meatOn = [];
+        $this->airFryerMeals = 0;
+        $this->cuisineWeek = [];
+        $this->usedSignatures = [];
+        $this->produceWeek = [];
+        $this->sideCount = [];
+        $this->soupKinds = [];
+        $this->soupObiad = [];
+        $this->richWeek = 0;
+        $this->styleWeek = [];
+    }
 
     /**
      * Fill in exactly the meals asked for, day by day.
@@ -172,10 +247,7 @@ final class PlanGenerator
         int $servings = MealPlan::DEFAULT_SERVINGS,
         ?PlanTargets $targets = null,
     ): array {
-        $this->used = [];
-        $this->known = [];
-        $this->eaten = [];
-        $this->eatenToday = [];
+        $this->reset($user);
         $taken = $this->alreadyPlanned($user, array_keys($wanted));
         $missing = $this->shortfallFor($user);
 
@@ -201,6 +273,7 @@ final class PlanGenerator
 
             $repeatUntil = null;
             $repeated = null;
+            $repeatedPlate = null;
 
             foreach ($dates as $index => $date) {
                 if (isset($taken[$date][$slot->value])) {
@@ -217,9 +290,30 @@ final class PlanGenerator
                     break;
                 }
 
-                $portions = $targets === null
-                    ? $servings
-                    : $this->portionsFor($recipe, $slot, $targets);
+                // The second day of a batch is the same plate: the potatoes come
+                // out of the same pot as the gulasz.
+                $plate = $repeatUntil === $index && $repeatedPlate !== null
+                    ? $repeatedPlate
+                    : $this->plate($recipe, $slot, (string) $date, $targets, $servings);
+                $portions = $plate['portions'];
+
+                // The soup first, so the day reads in the order it is eaten.
+                if ($plate['starter'] !== null) {
+                    $people = $targets === null ? $servings : $targets->people;
+                    $rows[] = [
+                        'user_id' => $user->id,
+                        'date' => $date,
+                        'slot' => $slot->value,
+                        'recipe_id' => $plate['starter'],
+                        'servings' => $people,
+                    ];
+                    $this->spend($this->factFor($plate['starter']), intdiv($people, max($this->peopleEating, 1)));
+                    $this->formCount['zupy'] = ($this->formCount['zupy'] ?? 0) + 1;
+                    $this->used[$plate['starter']] = true;
+                    $this->usedSignatures[] = $this->factFor($plate['starter'])->signature ?? [];
+                    $this->rememberSoup($this->factFor($plate['starter']));
+                    $this->soupObiad[(string) $date] = true;
+                }
 
                 $rows[] = [
                     'user_id' => $user->id,
@@ -230,6 +324,17 @@ final class PlanGenerator
                 ];
                 $added++;
 
+                foreach ($plate['sides'] as $side) {
+                    $rows[] = [
+                        'user_id' => $user->id,
+                        'date' => $date,
+                        'slot' => $slot->value,
+                        'recipe_id' => $side['id'],
+                        'servings' => $side['portions'],
+                    ];
+                    $this->spend($this->factFor($side['id']), intdiv($side['portions'], max($this->peopleEating, 1)));
+                }
+
                 /*
                  * A batch's second day is a second helping out of the same pot,
                  * and `PlannedIngredients` scales the shopping by the portions
@@ -238,9 +343,24 @@ final class PlanGenerator
                  */
                 $this->spend($this->factFor($recipe->id), intdiv($portions, max($this->peopleEating, 1)));
 
-                $isBatch = $recipe->isMealPrep && $repeatUntil !== $index;
+                /*
+                 * Only the obiad is cooked once and eaten twice. Applied to every
+                 * meal it put the same sandwich on two breakfasts running and the
+                 * same porridge on two suppers — food nobody cooks ahead, repeated
+                 * for no reason, which is exactly what reads as a dull week.
+                 */
+                $isBatch = $slot === MealSlot::Lunch
+                    && ($recipe->isMealPrep || $this->feedsTwice($recipe, $portions) || $this->isPot($recipe))
+                    && ($this->factFor($recipe->id)?->reheatsWell() ?? true)
+                    && $repeatUntil !== $index
+                    && ! $this->isWeekendDate($dates[$index + 1] ?? null);
+
+                if ($repeatUntil === $index) {
+                    $this->remember($recipe, $slot, (string) $date);
+                }
                 $repeatUntil = $isBatch ? $index + 1 : null;
                 $repeated = $recipe;
+                $repeatedPlate = $plate;
             }
         }
 
@@ -296,10 +416,7 @@ final class PlanGenerator
      */
     public function swap(User $user, MealPlanEntry $entry): ?RecipeCandidate
     {
-        $this->used = [];
-        $this->known = [];
-        $this->eaten = [];
-        $this->eatenToday = [];
+        $this->reset($user);
         $this->budgetLeft = null;
         $this->mealsLeft = 0;
 
@@ -307,6 +424,20 @@ final class PlanGenerator
 
         $this->alreadyPlanned($user, [$date]);
         $this->rememberTheDay($user, $entry);
+
+        $kind = $this->sideKindOf($entry);
+
+        if ($kind !== null) {
+            $side = $this->otherSides($entry, $kind)[0] ?? null;
+
+            if ($side === null) {
+                return null;
+            }
+
+            $entry->update(['recipe_id' => $side]);
+
+            return new RecipeCandidate($side, false);
+        }
 
         $targets = $this->sameMealAgain($entry);
         $this->peopleEating = $targets === null ? 1 : $targets->people;
@@ -347,10 +478,7 @@ final class PlanGenerator
      */
     public function alternativesFor(User $user, MealPlanEntry $entry, int $limit = 12): array
     {
-        $this->used = [];
-        $this->known = [];
-        $this->eaten = [];
-        $this->eatenToday = [];
+        $this->reset($user);
         $this->budgetLeft = null;
         $this->mealsLeft = 0;
 
@@ -358,6 +486,15 @@ final class PlanGenerator
 
         $this->alreadyPlanned($user, [$date]);
         $this->rememberTheDay($user, $entry);
+
+        $kind = $this->sideKindOf($entry);
+
+        if ($kind !== null) {
+            $sides = collect(array_slice($this->otherSides($entry, $kind), 0, $limit))
+                ->map(static fn (int $id): RecipeCandidate => new RecipeCandidate($id, false));
+
+            return $this->describe($sides, $entry, null, $user);
+        }
 
         $targets = $this->sameMealAgain($entry);
         $this->peopleEating = $targets === null ? 1 : $targets->people;
@@ -410,7 +547,7 @@ final class PlanGenerator
                 imageUrl: $recipe->image_url,
                 servings: $targets === null
                     ? $entry->servings
-                    : $this->helpingsFor($fact, $targets->kcalFor($entry->slot)) * $targets->people,
+                    : $this->helpingsFor($fact, $targets->kcalFor($entry->slot), $entry->slot) * $targets->people,
                 kcalPerPortion: $fact->kcalPerPortion,
                 proteinPerPortion: $fact->proteinPerPortion,
                 costPerPortion: $fact->costPerPortion,
@@ -432,6 +569,14 @@ final class PlanGenerator
     public function replace(User $user, MealPlanEntry $entry, Recipe $recipe): void
     {
         $this->known = [];
+
+        // One potato for another: a side is one helping each, whatever it is.
+        if ($this->sideKindOf($entry) !== null) {
+            $entry->update(['recipe_id' => $recipe->id]);
+
+            return;
+        }
+
         $targets = $this->sameMealAgain($entry);
         $this->peopleEating = $targets === null ? 1 : $targets->people;
 
@@ -441,7 +586,7 @@ final class PlanGenerator
         // preserve, so the portions that were planned stay as they were.
         $servings = $targets === null || $fact === null
             ? $entry->servings
-            : $this->helpingsFor($fact, $targets->kcalFor($entry->slot)) * $targets->people;
+            : $this->helpingsFor($fact, $targets->kcalFor($entry->slot), $entry->slot) * $targets->people;
 
         $entry->update(['recipe_id' => $recipe->id, 'servings' => $servings]);
     }
@@ -562,11 +707,14 @@ final class PlanGenerator
         $candidates = DB::table('recipes')
             ->join('recipe_meal_slots as suits', 'suits.recipe_id', '=', 'recipes.id')
             ->where('suits.slot', $slot->value)
-            ->select(['recipes.id', 'recipes.is_meal_prep'])
+            ->select(['recipes.id', 'recipes.is_meal_prep', 'recipes.title'])
             ->get()
-            ->map(static fn (object $row): RecipeCandidate => new RecipeCandidate(
+            ->map(fn (object $row): RecipeCandidate => new RecipeCandidate(
                 (int) $row->id,
                 (bool) $row->is_meal_prep,
+                // Only the obiad is built on them; asking of every breakfast
+                // title would cost a pass of regexes for nothing.
+                $slot === MealSlot::Lunch && $this->families->isHomeClassic((string) $row->title),
             ))
             /*
              * Dropped here rather than when one is drawn: a month of dinners is
@@ -574,7 +722,7 @@ final class PlanGenerator
              * window of eighty down to nothing while thousands of untried
              * recipes sat one row outside it.
              */
-            ->reject(fn (RecipeCandidate $recipe): bool => isset($this->used[$recipe->id]));
+            ->reject(fn (RecipeCandidate $recipe): bool => isset($this->used[$recipe->id]) || isset($this->disliked[$recipe->id]));
 
         if ($missing !== []) {
             $candidates = $candidates
@@ -586,11 +734,54 @@ final class PlanGenerator
         }
 
         if ($targets === null) {
-            return $candidates->take(self::POOL)->shuffle()->values();
+            return $this->plainPool($candidates, $slot, $missing);
         }
 
         return $this->fittingPool($candidates, $slot, $targets);
     }
+
+    /**
+     * The pool when nobody set a target: no calories to hit, but the same
+     * idea of what a dish is.
+     *
+     * This used to be "the eighty the fridge covers best, shuffled", and that
+     * is where the dull weeks came from — no rule about a dish ever reached
+     * it, so a pot of plain groats was as good a dinner as anything. It now
+     * reads the same facts the targeted pool does and lets the day decide
+     * between them (`next()`); the kitchen keeps its say as a small head start.
+     *
+     * @param  Collection<int, RecipeCandidate>  $candidates
+     * @param  array<int, int>  $missing
+     * @return Collection<int, RecipeCandidate>
+     */
+    private function plainPool(Collection $candidates, MealSlot $slot, array $missing): Collection
+    {
+        $shortlist = $this->shortlist($candidates);
+
+        $facts = $this->facts->forRecipes(array_values(
+            $shortlist->map(static fn (RecipeCandidate $recipe): int => $recipe->id)->all(),
+        ));
+
+        $this->known += $facts;
+
+        $pool = $shortlist->filter(
+            fn (RecipeCandidate $recipe): bool => isset($facts[$recipe->id]) && $this->isSubstantial($facts[$recipe->id], $slot),
+        );
+
+        foreach ($pool as $recipe) {
+            $short = $missing === [] ? 0 : min($missing[$recipe->id] ?? self::FRIDGE_CAP, self::FRIDGE_CAP);
+            $this->scores[$slot->value][$recipe->id] = self::FRIDGE_WEIGHT * $short
+                + $this->proteinPenalty($facts[$recipe->id]);
+        }
+
+        return $pool->values();
+    }
+
+    /** Past this many missing products the fridge has stopped helping. */
+    private const int FRIDGE_CAP = 4;
+
+    /** How much one missing product counts against a dish when there is no target. */
+    private const float FRIDGE_WEIGHT = 0.04;
 
     /**
      * The same pool narrowed to what can actually hit this meal's calories.
@@ -636,8 +827,10 @@ final class PlanGenerator
         $scores = [];
 
         foreach ($balanced as $recipe) {
-            $scores[$recipe->id] = $this->score($facts[$recipe->id], $wanted, $targets);
+            $scores[$recipe->id] = $this->score($facts[$recipe->id], $wanted, $targets, $slot);
         }
+
+        $this->scores[$slot->value] = $scores;
 
         return $this->variedByRank(
             $balanced
@@ -758,6 +951,28 @@ final class PlanGenerator
      */
     private function shortlist(Collection $candidates): Collection
     {
+        /*
+         * What the household said it likes always gets a look. Out of five
+         * thousand lunches a random half-shortlist would otherwise find a
+         * favourite about once a month, which is not what "more of this" means.
+         */
+        $liked = $candidates->filter(fn (RecipeCandidate $recipe): bool => isset($this->liked[$recipe->id]));
+        $candidates = $candidates->reject(fn (RecipeCandidate $recipe): bool => isset($this->liked[$recipe->id]))->values();
+
+        /*
+         * And so do the Polish classics, a slice of them each time. Drawn at
+         * random from five thousand obiady they are a minority, and three
+         * reviewed weeks in a row had not one schabowy, pierogi or gołąbki
+         * between them — the ranking cannot prefer what it never sees.
+         */
+        $classics = $candidates->filter(static fn (RecipeCandidate $recipe): bool => $recipe->isHomeClassic)
+            ->shuffle()
+            ->take(self::CLASSICS_IN_SHORTLIST);
+        $liked = $liked->concat($classics);
+        $candidates = $candidates->reject(
+            static fn (RecipeCandidate $recipe): bool => $classics->contains('id', $recipe->id),
+        )->values();
+
         $covered = $candidates->take(intdiv(self::TARGETED_POOL, 2));
 
         $rest = $candidates
@@ -765,7 +980,7 @@ final class PlanGenerator
             ->shuffle()
             ->take(self::TARGETED_POOL - $covered->count());
 
-        return $covered->concat($rest)->values();
+        return $liked->concat($covered)->concat($rest)->values();
     }
 
     /**
@@ -789,7 +1004,7 @@ final class PlanGenerator
             return false;
         }
 
-        $miss = $this->bestMiss($fact, $wanted);
+        $miss = $this->bestMiss($fact, $wanted, $slot);
 
         return $miss !== null && $miss <= self::MAX_MISS;
     }
@@ -803,7 +1018,13 @@ final class PlanGenerator
      */
     private function isSubstantial(RecipeFact $fact, MealSlot $slot): bool
     {
+        /*
+         * Nothing recognised at all is not "one ingredient", it is not knowing:
+         * the same "unknown is not zero" rule the protein floor follows. A dish
+         * planned against a calorie target never gets here without lines.
+         */
         return $slot === MealSlot::Snack
+            || $fact->realIngredients === 0
             || $fact->realIngredients >= self::MIN_REAL_INGREDIENTS;
     }
 
@@ -815,7 +1036,7 @@ final class PlanGenerator
      * portions, so a plan that quietly assumed one would be describing a meal
      * that never happens.
      */
-    private function bestMiss(?RecipeFact $fact, float $wanted): ?float
+    private function bestMiss(?RecipeFact $fact, float $wanted, MealSlot $slot): ?float
     {
         $kcal = $fact?->kcalPerPortion;
 
@@ -825,7 +1046,7 @@ final class PlanGenerator
 
         $best = null;
 
-        for ($helpings = 1; $helpings <= self::MAX_PORTIONS_EACH; $helpings++) {
+        for ($helpings = 1; $helpings <= $this->maxHelpings($slot); $helpings++) {
             $miss = abs($helpings * $kcal - $wanted) / max($wanted, 1.0);
             $best = $best === null ? $miss : min($best, $miss);
         }
@@ -837,11 +1058,20 @@ final class PlanGenerator
      * Lower is better: how far a whole number of portions lands from the target,
      * plus what it costs when money is being counted.
      */
-    private function score(RecipeFact $fact, float $wanted, PlanTargets $targets): float
+    private function score(RecipeFact $fact, float $wanted, PlanTargets $targets, MealSlot $slot): float
     {
-        $each = $this->helpingsFor($fact, $wanted);
+        $each = $this->helpingsFor($fact, $wanted, $slot);
 
-        $miss = ($this->bestMiss($fact, $wanted) ?? 1.0) + $this->proteinPenalty($fact);
+        /*
+         * Three helpings each is allowed and should be the exception: a week
+         * that read "6 porcji" of porridge for two people on four mornings out
+         * of seven hit its calories and looked absurd. A dish that feeds the
+         * meal in one or two helpings is preferred when it fits as well.
+         */
+        $miss = ($this->bestMiss($fact, $wanted, $slot) ?? 1.0)
+            + $this->proteinPenalty($fact)
+            + ($each >= self::MAX_PORTIONS_EACH ? self::THIRD_HELPING_PENALTY : 0.0)
+            + ($each >= self::MAX_PORTIONS_EACH && $this->isSoup($fact) ? self::THIN_SOUP_PENALTY : 0.0);
 
         if ($targets->budget === null || $fact->costPerPortion === null) {
             return $miss;
@@ -883,11 +1113,23 @@ final class PlanGenerator
      * the band allows, so a rounding error cannot turn a light snack into eight
      * helpings.
      */
-    private function helpingsFor(RecipeFact $fact, float $wanted): int
+    private function helpingsFor(RecipeFact $fact, float $wanted, MealSlot $slot): int
     {
         $each = $fact->portionsFor($wanted) ?? 1.0;
 
-        return min(max((int) round($each), 1), self::MAX_PORTIONS_EACH);
+        return min(max((int) round($each), 1), $this->maxHelpings($slot));
+    }
+
+    /**
+     * Breakfast and supper stop at two. "6 porcji owsianki" for two people is
+     * what a third helping looks like on a morning, and "placki z wątróbką ×6"
+     * at supper was the same mistake in the evening: both reviewers singled
+     * them out. Those meals are eaten from one plate, and a dish that cannot
+     * feed them in two is the wrong dish rather than a dish to triple.
+     */
+    private function maxHelpings(MealSlot $slot): int
+    {
+        return in_array($slot, [MealSlot::Breakfast, MealSlot::Dinner], true) ? 2 : self::MAX_PORTIONS_EACH;
     }
 
     /**
@@ -905,7 +1147,7 @@ final class PlanGenerator
             return $targets->people;
         }
 
-        return $this->helpingsFor($fact, $targets->kcalFor($slot)) * $targets->people;
+        return $this->helpingsFor($fact, $targets->kcalFor($slot), $slot) * $targets->people;
     }
 
     /**
@@ -925,13 +1167,47 @@ final class PlanGenerator
                 $taken[$date][$entry->slot->value] = true;
             }
 
-            if ($entry->recipe_id !== null) {
+            if ($entry->recipe_id !== null && $this->stillRecent($entry, $dates)) {
                 $this->used[$entry->recipe_id] = true;
             }
         }
 
+        $titles = Recipe::query()->whereIn('id', array_keys($this->used))->pluck('title');
+
+        foreach ($titles as $title) {
+            $this->usedSignatures[] = $this->families->signatureOf($title);
+        }
+
         return $taken;
     }
+
+    /**
+     * Whether an entry is close enough to the days being filled to count as
+     * "eaten lately".
+     *
+     * A month for everything, except a dish the household said it likes, which
+     * may come back after a fortnight: holding a favourite back for as long as
+     * anything else treats "more of this" as no information at all.
+     *
+     * @param  list<string>  $dates
+     */
+    private function stillRecent(MealPlanEntry $entry, array $dates): bool
+    {
+        if (! isset($this->liked[(int) $entry->recipe_id])) {
+            return true;
+        }
+
+        foreach ($dates as $date) {
+            if (abs($entry->date->diffInDays(CarbonImmutable::parse($date))) < self::LIKED_DAYS) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** How soon a liked dish may come back. */
+    private const int LIKED_DAYS = 14;
 
     /**
      * Everything planned within a month either side of the days being filled.
@@ -1116,11 +1392,19 @@ final class PlanGenerator
      */
     private function next(Collection $pool, MealSlot $slot, string $date, ?PlanTargets $targets): ?RecipeCandidate
     {
-        $available = $pool->reject(fn (RecipeCandidate $recipe): bool => isset($this->used[$recipe->id]));
+        $day = CarbonImmutable::parse($date);
+
+        $available = $pool->reject(fn (RecipeCandidate $recipe): bool => isset($this->used[$recipe->id])
+            || ! $this->isInSeason($this->factFor($recipe->id), $day)
+            || $this->isRepeatedDish($this->factFor($recipe->id)));
 
         if ($available->isEmpty()) {
             return null;
         }
+
+        // Best for *this* day first: the pool knows the dish, only the day knows
+        // what was eaten yesterday, whether it is Sunday, and what month it is.
+        $available = $this->rankedForDay($available, $slot, $day);
 
         $fresh = $available->reject(
             fn (RecipeCandidate $recipe): bool => $this->repeats($recipe, $slot, $date),
@@ -1139,7 +1423,7 @@ final class PlanGenerator
         $wanted = $targets->kcalFor($slot);
 
         $affordable = $available->first(
-            fn (RecipeCandidate $recipe): bool => $this->costPerHelping($recipe, $wanted) <= $allowance,
+            fn (RecipeCandidate $recipe): bool => $this->costPerHelping($recipe, $wanted, $slot) <= $allowance,
         );
 
         if ($affordable !== null) {
@@ -1149,7 +1433,7 @@ final class PlanGenerator
         $this->overspent++;
 
         return $this->take($pool, $available->sortBy(
-            fn (RecipeCandidate $recipe): float => $this->costPerHelping($recipe, $wanted),
+            fn (RecipeCandidate $recipe): float => $this->costPerHelping($recipe, $wanted, $slot),
         )->first(), $slot, $date);
     }
 
@@ -1163,7 +1447,7 @@ final class PlanGenerator
      * happened to mention. What it cannot be priced at is reported instead —
      * see `WeekPrice::confidence()`.
      */
-    private function costPerHelping(RecipeCandidate $recipe, float $wanted): float
+    private function costPerHelping(RecipeCandidate $recipe, float $wanted, MealSlot $slot): float
     {
         $fact = $this->factFor($recipe->id);
 
@@ -1171,7 +1455,7 @@ final class PlanGenerator
             return 0.0;
         }
 
-        return $fact->costPerPortion->toZloty() * $this->helpingsFor($fact, $wanted);
+        return $fact->costPerPortion->toZloty() * $this->helpingsFor($fact, $wanted, $slot);
     }
 
     /**
@@ -1184,15 +1468,1105 @@ final class PlanGenerator
         }
 
         $this->used[$recipe->id] = true;
-
-        $dominant = $this->factFor($recipe->id)?->dominantIngredientId;
-
-        if ($dominant !== null) {
-            $this->eaten[$slot->value][$dominant] = true;
-            $this->eatenToday[$date][$dominant] = true;
-        }
+        $this->usedSignatures[] = $this->factFor($recipe->id)->signature ?? [];
+        $this->rememberSoup($this->factFor($recipe->id));
+        $this->remember($recipe, $slot, $date);
 
         return $recipe;
+    }
+
+    /**
+     * Whether a dish belongs on this date at all: its occasion has come round,
+     * and it does not lean on a product that is close to absent.
+     */
+    private function isInSeason(?RecipeFact $fact, CarbonImmutable $day): bool
+    {
+        return $fact === null
+            || ($this->season->allows($fact->occasion, $day)
+                && ! $this->season->isOutOfSeason($fact->seasonalProduce, $day));
+    }
+
+    /**
+     * The same dish as one eaten this month, from another source. The month
+     * rule is about rows; this is the same rule about plates.
+     */
+    private function isRepeatedDish(?RecipeFact $fact): bool
+    {
+        if ($fact?->soupKind !== null && isset($this->soupKinds[$fact->soupKind])) {
+            return true;
+        }
+
+        if ($fact === null || $fact->signature === []) {
+            return false;
+        }
+
+        foreach ($this->usedSignatures as $used) {
+            if (DishFamily::sameDish($fact->signature, $used)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Record what a planned meal is made of, so the rest of the week can be
+     * varied against it. Also called for the second day of a batch, which is a
+     * chicken day as much as the first was.
+     */
+    private function remember(RecipeCandidate $recipe, MealSlot $slot, string $date): void
+    {
+        $fact = $this->factFor($recipe->id);
+
+        if ($fact?->dominantIngredientId !== null) {
+            $this->eaten[$slot->value][$fact->dominantIngredientId] = true;
+            $this->eatenToday[$date][$fact->dominantIngredientId] = true;
+        }
+
+        if ($fact?->dominantIngredientId !== null) {
+            $this->dominantWeek[$fact->dominantIngredientId] = ($this->dominantWeek[$fact->dominantIngredientId] ?? 0) + 1;
+        }
+
+        if ($fact?->family !== null) {
+            $this->familiesOn[$date][$slot->value] = $fact->family;
+            $this->familyCount[$slot->value][$fact->family] = ($this->familyCount[$slot->value][$fact->family] ?? 0) + 1;
+            $this->familyWeek[$fact->family] = ($this->familyWeek[$fact->family] ?? 0) + 1;
+        }
+
+        foreach (array_diff($fact?->themes() ?? [], ['wege']) as $meat) {
+            $this->meatOn[$date][$meat] = true;
+        }
+
+        if ($fact?->isAirFryer === true) {
+            $this->airFryerMeals++;
+        }
+
+        if ($fact?->isRich === true) {
+            $this->richWeek++;
+        }
+
+        if ($fact?->cuisine !== null) {
+            $this->cuisineWeek[$fact->cuisine] = ($this->cuisineWeek[$fact->cuisine] ?? 0) + 1;
+        }
+
+        foreach ($fact->seasonalProduce ?? [] as $product) {
+            $this->produceWeek[$product] = ($this->produceWeek[$product] ?? 0) + 1;
+        }
+
+        /*
+         * Tofu is counted at every meal, not only the main ones: a tofu spread
+         * at breakfast, tofu in Wednesday's obiad and a tofu bowl for supper
+         * was a generated week, and the rotation below — which looks at main
+         * meals only — saw one of the three.
+         */
+        if ($fact !== null && ! $this->isMainMeal($slot) && in_array('roslinne', $fact->themes(), true)) {
+            $this->themeCount['roslinne'] = ($this->themeCount['roslinne'] ?? 0) + 1;
+        }
+
+        if ($fact === null || ! $this->isMainMeal($slot)) {
+            return;
+        }
+
+        foreach ($fact->themes() as $theme) {
+            $this->themesOn[$date][$theme] = true;
+            $this->themeCount[$theme] = ($this->themeCount[$theme] ?? 0) + 1;
+        }
+
+        // A soup the catalogue never filed under Zupy is still a soup obiad.
+        $form = $fact->form() ?? ($this->isSoup($fact) ? 'zupy' : null);
+
+        if ($form !== null) {
+            $this->formCount[$form] = ($this->formCount[$form] ?? 0) + 1;
+        }
+    }
+
+    private const int SET_ASIDE = 10_000;
+
+    /**
+     * Whether this entry is a side or a starter beside a main — what the swap
+     * sheet needs to know to say "the same calories from each" or not.
+     */
+    public function isSideOnPlate(MealPlanEntry $entry): bool
+    {
+        $this->known = [];
+
+        return $this->sideKindOf($entry) !== null;
+    }
+
+    /**
+     * Whether this entry is a side or a starter on a plate rather than the
+     * meal itself, and of which kind.
+     *
+     * A meal planned as a soup, a main and a surówka is three entries, and the
+     * shuffle beside the potatoes used to treat them as the meal: it handed
+     * back a main course sized to the potatoes' calories. A side is a side only
+     * when something else shares its meal, so a dish planned on its own is
+     * swapped like any meal.
+     */
+    private function sideKindOf(MealPlanEntry $entry): ?string
+    {
+        if ($entry->recipe_id === null || $this->platemates($entry) === []) {
+            return null;
+        }
+
+        return $this->sides->kindOf($entry->recipe_id);
+    }
+
+    /**
+     * The other dishes in the same meal on the same day.
+     *
+     * @return list<int>
+     */
+    private function platemates(MealPlanEntry $entry): array
+    {
+        return array_values(array_map(intval(...), MealPlanEntry::query()
+            ->where('user_id', $entry->user_id)
+            ->onDates([$entry->date->toDateString()])
+            ->where('slot', $entry->slot->value)
+            ->whereKeyNot($entry->getKey())
+            ->whereNotNull('recipe_id')
+            ->pluck('recipe_id')
+            ->all()));
+    }
+
+    /**
+     * The sides of this kind that could take this one's place, best first: the
+     * same rules a plate is built by, judged against the main it sits beside —
+     * rice beside a curry, a soup of the main's own kitchen.
+     *
+     * @return list<int>
+     */
+    private function otherSides(MealPlanEntry $entry, string $kind): array
+    {
+        $main = null;
+
+        foreach ($this->platemates($entry) as $id) {
+            if ($this->sides->kindOf($id) === null) {
+                $main = $this->factFor($id);
+
+                break;
+            }
+        }
+
+        $main ??= $this->factFor((int) $entry->recipe_id);
+
+        if ($main === null) {
+            return [];
+        }
+
+        $day = $entry->date->toImmutable();
+        $styles = $kind === SideDishes::STARCH ? $this->starchStylesFor($main) : null;
+        // Far past anything a week reaches, so the outgoing side comes last.
+        $this->sideCount[(int) $entry->recipe_id] = self::SET_ASIDE;
+        $found = [];
+
+        /*
+         * Drawn as a plate would draw them, without repeating an answer — and
+         * each pick counts against its kind, so a list of potatoes is a list of
+         * potatoes, groats and rice rather than twelve ways to cook kasza.
+         */
+        for ($i = 0; $i < 24; $i++) {
+            $side = $this->pickSide($kind, $day, $main, $styles);
+
+            if ($side === null || isset($found[$side]) || $side === (int) $entry->recipe_id) {
+                break;
+            }
+
+            $found[$side] = true;
+            $this->sideCount[$side] = self::SET_ASIDE;
+
+            if ($kind === SideDishes::STARCH) {
+                $style = $this->sides->styleOf($side);
+                $this->styleWeek[$style] = ($this->styleWeek[$style] ?? 0) + 1;
+            }
+        }
+
+        return array_keys($found);
+    }
+
+    /**
+     * The obiad as it is served: the main course, and beside it potatoes or
+     * groats and a surówka when the main is the meat-and-vegetables half of a
+     * plate.
+     *
+     * "Dorsz z porami" for 1 000 kcal was three helpings each of fish and
+     * leeks — the calories were right and the plate was not one anybody eats.
+     * With a side the main goes back to a helping or two and the rest of the
+     * meal is what a Polish obiad always had. A plate that cannot land near the
+     * target with its sides is served as before, without them: the sides are
+     * an improvement, never a reason to miss the meal.
+     *
+     * The soup, when there is one, comes first: zupa, then drugie danie. Only
+     * while the week is short of soup (`SOUPS_A_WEEK`), never before a main
+     * that is a soup itself, and never one built on the main's own meat —
+     * rosół before roast chicken is chicken twice.
+     *
+     * @return array{portions: int, sides: list<array{id: int, portions: int}>, starter: int|null}
+     */
+    private function plate(RecipeCandidate $main, MealSlot $slot, string $date, ?PlanTargets $targets, int $servings): array
+    {
+        $alone = [
+            'portions' => $targets === null ? $servings : $this->portionsFor($main, $slot, $targets),
+            'sides' => [],
+            'starter' => null,
+        ];
+        $fact = $this->factFor($main->id);
+
+        if ($slot !== MealSlot::Lunch || $fact === null) {
+            return $alone;
+        }
+
+        $day = CarbonImmutable::parse($date);
+        $soup = ! $this->isSoup($fact) && ($this->formCount['zupy'] ?? 0) < self::SOUPS_A_WEEK
+            ? $this->pickSide(SideDishes::SOUP, $day, $fact, null)
+            : null;
+        $starch = $this->wantsSides($fact)
+            ? $this->pickSide(SideDishes::STARCH, $day, $fact, $this->starchStylesFor($fact))
+            : null;
+        /*
+         * A surówka beside every second course. It used to be meat and fish only,
+         * and the dietitian counted four in twenty-one obiady: udka with pyzy,
+         * schab with kluski, half the plate missing.
+         */
+        $salad = $starch !== null || ($fact->vegetables < 2 && ! $this->isSoup($fact) && $fact->family !== 'salatka')
+            ? $this->pickSide(SideDishes::SALAD, $day, $fact, null)
+            : null;
+
+        /*
+         * Pierogi, a pot of pasta, a pomidorowa: a whole dish with next to no
+         * vegetable in it gets a surówka on its own — four such obiady in a
+         * week were the dietitian's first complaint once every second course
+         * had its potatoes.
+         */
+        $beside = $starch === null
+            ? ($salad === null ? [] : [[$salad]])
+            : array_values(array_filter([[$starch, $salad], [$starch]], static fn (array $sides): bool => ! in_array(null, $sides, true)));
+        $plates = [];
+
+        if ($soup !== null) {
+            foreach ($this->besideSoup($this->factFor($soup), $beside, $salad, $day) as $sides) {
+                $plates[] = [$soup, ...$sides];
+            }
+        }
+
+        array_push($plates, ...$beside);
+
+        foreach ($plates as $sides) {
+            /** @var list<int> $sides */
+            $portions = $targets === null ? $servings : $this->portionsBeside($fact, $sides, $slot, $targets, $starch !== null);
+
+            if ($portions === null) {
+                continue;
+            }
+
+            foreach ($sides as $side) {
+                $this->sideCount[$side] = ($this->sideCount[$side] ?? 0) + 1;
+            }
+
+            if ($starch !== null && in_array($starch, $sides, true)) {
+                $style = $this->sides->styleOf($starch);
+                $this->styleWeek[$style] = ($this->styleWeek[$style] ?? 0) + 1;
+            }
+
+            $starter = $soup !== null && $sides[0] === $soup ? $soup : null;
+
+            return [
+                'portions' => $portions,
+                'sides' => array_map(
+                    static fn (int $side): array => ['id' => $side, 'portions' => $targets === null ? $servings : $targets->people],
+                    $starter === null ? $sides : array_slice($sides, 1),
+                ),
+                'starter' => $starter,
+            ];
+        }
+
+        return $alone;
+    }
+
+    /**
+     * What kind of starch a main is eaten with. A curry, a stir fry or chili
+     * goes on rice; anything in a sauce — gulasz, potrawka, duszone, "w sosie"
+     * — on groats, boiled potatoes or kluski, which take the sauce; the rest
+     * may have any.
+     *
+     * @return list<string>|null
+     */
+    private function starchStylesFor(RecipeFact $fact): ?array
+    {
+        if (in_array($fact->cuisine, ['azjatycka', 'indyjska', 'meksykanska'], true)) {
+            return [SideDishes::RICE];
+        }
+
+        if ($fact->family === 'curry' || $fact->inSauce) {
+            return [SideDishes::GROATS, SideDishes::BOILED, SideDishes::DUMPLINGS, SideDishes::RICE];
+        }
+
+        return null;
+    }
+
+    /**
+     * A soup before this main: not one already had this week, and not a second
+     * meat — "zupa z pulpecikami" before dorsz w curry was two proteins and, to
+     * both reviewers, a dinner for four. Before a meatless main any soup will do.
+     */
+    private function suitsAsStarter(RecipeFact $soup, RecipeFact $main): bool
+    {
+        // Krupnik before Kung Pao is two kitchens on one table.
+        if ($soup->cuisine !== $main->cuisine) {
+            return false;
+        }
+
+        if ($this->isRepeatedDish($soup) || ! $this->sharesNoMeat($soup, $main)) {
+            return false;
+        }
+
+        // A different base from the main: pomidorowa z ryżem before gołąbki
+        // was rice and tomato twice; roast-tomato soup before cod with tomatoes
+        // the same.
+        if (array_intersect($soup->seasonalProduce, $main->seasonalProduce) !== []
+            || ($soup->namesStarch && $main->namesStarch)) {
+            return false;
+        }
+
+        return array_diff($main->themes(), ['wege']) === []
+            || (array_diff($soup->themes(), ['wege']) === [] && ! $soup->hasMeatInTitle);
+    }
+
+    private function rememberSoup(?RecipeFact $fact): void
+    {
+        if ($fact?->soupKind !== null) {
+            $this->soupKinds[$fact->soupKind] = true;
+        }
+    }
+
+    /**
+     * The kinds of soup this week has had, whether as a starter or as the whole
+     * obiad. A batch's second day is the same pot, not a second żurek.
+     *
+     * @var array<string, true>
+     */
+    private array $soupKinds = [];
+
+    /**
+     * The days whose obiad had a soup before the main — supper there is light.
+     *
+     * @var array<string, true>
+     */
+    private array $soupObiad = [];
+
+    private function sharesNoMeat(RecipeFact $one, RecipeFact $other): bool
+    {
+        return array_intersect(
+            array_diff($one->themes(), ['wege']),
+            array_diff($other->themes(), ['wege']),
+        ) === [] && $one->dominantIngredientId !== $other->dominantIngredientId;
+    }
+
+    private function isSoup(RecipeFact $fact): bool
+    {
+        return $fact->form() === 'zupy' || $fact->family === 'zupa';
+    }
+
+    /**
+     * Whether a main course still wants its potatoes: an obiad whose calories
+     * are not already mostly starch, and which is not a dish that is a whole
+     * plate by itself — soup, pasta, a salad, something wrapped or baked.
+     */
+    private function wantsSides(RecipeFact $fact): bool
+    {
+        // By form only soups and salads: "Pulpety z tofu" is filed under Makarony
+        // with no pasta in it, and was served as six bare helpings.
+        return $fact->lacksStarch()
+            && ! in_array($fact->form(), ['zupy', 'salatki'], true)
+            && ! in_array($fact->family, ['zupa', 'makaron', 'salatka', 'kanapki', 'tortille', 'nalesniki', 'owsianka', 'jajka', 'zapiekanka'], true);
+    }
+
+    /**
+     * How many portions of the main, beside one helping each of these sides,
+     * come closest to the meal's calories — or null when none comes close
+     * enough, which sends the plate back to the main alone.
+     *
+     * @param  list<int>  $sides
+     */
+    private function portionsBeside(RecipeFact $main, array $sides, MealSlot $slot, PlanTargets $targets, bool $wantsSides): ?int
+    {
+        $kcal = $main->kcalPerPortion;
+
+        if ($kcal === null || $kcal <= 0) {
+            return null;
+        }
+
+        $wanted = $targets->kcalFor($slot);
+        $beside = 0.0;
+
+        foreach ($sides as $side) {
+            $beside += $this->factFor($side)->kcalPerPortion ?? 0.0;
+        }
+
+        /*
+         * Two helpings of the main at most when something comes with it: "dorsz
+         * ×6" after a soup was three portions of fish each, and the point of a
+         * side is that the plate is filled by the potatoes instead.
+         */
+        $helpings = min(max((int) round(($wanted - $beside) / $kcal), 1), min($this->maxHelpings($slot), 2));
+        $miss = abs($helpings * $kcal + $beside - $wanted) / max($wanted, 1.0);
+
+        /*
+         * A cutlet that wants its potatoes may miss the meal by a little more
+         * rather than go without them: "Kotlety schabowe" alone on a Sunday
+         * plate was the one thing the home cook said she would never serve.
+         */
+        $allowed = $wantsSides && $sides !== [] ? self::MAX_MISS * 1.5 : self::MAX_MISS;
+
+        return $miss <= $allowed ? $helpings * $targets->people : null;
+    }
+
+    /**
+     * What goes beside the main when a soup comes first.
+     *
+     * On a working day three recipes is the most anybody cooks — zupa, the
+     * main and one side — so the surówka drops out; a weekend may have all
+     * four. A soup that is itself mostly potatoes, rice or groats brings the
+     * starch, and a second one on the same plate was "trzy źródła skrobi
+     * naraz" to the dietitian.
+     *
+     * @param  list<list<int|null>>  $beside
+     * @return list<list<int>>
+     */
+    private function besideSoup(?RecipeFact $soup, array $beside, ?int $salad, CarbonImmutable $day): array
+    {
+        $starchy = $soup !== null && ($soup->namesStarch || ($soup->starchShare ?? 0.0) >= 0.35);
+
+        if ($starchy) {
+            return $salad !== null && $day->isWeekend() ? [[$salad], []] : [[]];
+        }
+
+        $options = array_values(array_filter(
+            $beside,
+            static fn (array $sides): bool => $day->isWeekend() || count($sides) < 2,
+        ));
+
+        /*
+         * A main that wants its potatoes keeps them: when soup and starch
+         * together overshoot the meal, the soup goes, not the starch — "zupa,
+         * then udka with nothing beside them" was the plate both reviewers
+         * named first.
+         */
+        /** @var list<list<int>> $options */
+        return $beside === [] ? [[]] : $options;
+    }
+
+    /**
+     * One side of this kind for this day: in season, not eaten yet this week
+     * when anything else will do, and otherwise left to chance — a side has
+     * no calories to fit and no protein to rotate, only a plate to vary.
+     *
+     * @param  list<string>|null  $styles  the kinds of starch this main is eaten with; null for any
+     */
+    private function pickSide(string $kind, CarbonImmutable $day, RecipeFact $main, ?array $styles): ?int
+    {
+        $sides = $this->sides->of($kind);
+        $this->known += $sides;
+
+        $open = array_filter(
+            $sides,
+            fn (RecipeFact $fact, int $id): bool => ! isset($this->disliked[$id])
+                && $this->isInSeason($fact, $day)
+                && ($styles === null || in_array($this->sides->styleOf($id), $styles, true))
+                // An "Azjatycka surówka" belongs beside a stir fry, not a schab.
+                && in_array($this->sides->cuisineOf($id), [null, $main->cuisine], true)
+                && ($kind !== SideDishes::SOUP || $this->suitsAsStarter($fact, $main)),
+            ARRAY_FILTER_USE_BOTH,
+        );
+
+        if ($open === []) {
+            return null;
+        }
+
+        /*
+         * Pomidorowa, żurek, krupnik — most of the time. A starter drawn from
+         * every soup in the catalogue came back as laksa and brukselkowa, and
+         * the reviewers' complaint was precisely that the week had no rosół.
+         * One time in three anything goes, so the week does not become the same
+         * five soups on rotation.
+         */
+        if ($kind === SideDishes::SOUP && random_int(0, 2) > 0) {
+            $classics = array_filter($open, static fn (RecipeFact $fact): bool => $fact->isHomeClassic);
+            $open = $classics === [] ? $open : $classics;
+        }
+
+        /*
+         * Least used first — this week, and the month around it too: the same
+         * kasza jaglana in each of three generated weeks read as the only side
+         * the household knew.
+         */
+        $uses = fn (int $id): int => ($this->sideCount[$id] ?? 0) + (isset($this->used[$id]) ? 1 : 0);
+        $fewest = min(array_map($uses, array_keys($open)));
+        $fresh = array_values(array_filter(
+            array_keys($open),
+            fn (int $id): bool => $uses($id) === $fewest,
+        ));
+
+        /*
+         * Anything not out of season, by chance. Taking the single best season
+         * fit served the same Brussels-sprout surówka every week of October:
+         * in season is a reason to allow a side, not to insist on it.
+         */
+        $allowed = array_values(array_filter(
+            $fresh,
+            fn (int $id): bool => $this->season->fitOf($open[$id]->seasonalProduce, $day) >= 0,
+        ));
+
+        /*
+         * Roast potatoes one time in three when nothing says otherwise. Left to
+         * chance they came up six times in three weeks, because the catalogue
+         * holds far more ways to roast a potato than to cook kasza, and both
+         * reviewers asked for groats and boiled potatoes instead.
+         */
+        if ($kind === SideDishes::STARCH) {
+            $allowed = $this->leastUsedStyle($allowed);
+        }
+
+        if ($allowed === []) {
+            return null;
+        }
+
+        return $allowed[array_rand($allowed)];
+    }
+
+    /**
+     * The starch sides of the kind this week has had least of.
+     *
+     * Rotated by kind and not only by recipe, because the catalogue holds
+     * dozens of kluski and kopytka and a handful of kasza: drawn by recipe the
+     * week came back with dumplings at ten obiady of twenty. Ties go to groats,
+     * then boiled potatoes, rice, roast potatoes and dumplings last — the order
+     * both reviewers asked for — and dumplings come once a week at most while
+     * anything else is on offer.
+     *
+     * @param  list<int>  $ids
+     * @return list<int>
+     */
+    private function leastUsedStyle(array $ids): array
+    {
+        $byStyle = [];
+
+        foreach ($ids as $id) {
+            $byStyle[$this->sides->styleOf($id)][] = $id;
+        }
+
+        if (count($byStyle) > 1 && ($this->styleWeek[SideDishes::DUMPLINGS] ?? 0) >= 1) {
+            unset($byStyle[SideDishes::DUMPLINGS]);
+        }
+
+        $order = [SideDishes::GROATS, SideDishes::BOILED, SideDishes::RICE, SideDishes::ROASTED, SideDishes::DUMPLINGS];
+        $best = null;
+
+        foreach ($order as $style) {
+            if (isset($byStyle[$style]) && ($best === null || ($this->styleWeek[$style] ?? 0) < ($this->styleWeek[$best] ?? 0))) {
+                $best = $style;
+            }
+        }
+
+        return $best === null ? $ids : $byStyle[$best];
+    }
+
+    /**
+     * How many obiady this week each kind of starch side has been.
+     *
+     * @var array<string, int>
+     */
+    private array $styleWeek = [];
+
+    /**
+     * How often each side has been on a plate this week, so the potatoes give
+     * way to groats and the cabbage surówka to a carrot one.
+     *
+     * @var array<int, int>
+     */
+    private array $sideCount = [];
+
+    /**
+     * Whether the pot this recipe makes is two of these meals.
+     *
+     * A gulasz for eight eaten by two people at two helpings each is Monday and
+     * Tuesday, whether or not its source called it meal prep — and cooking it
+     * once is how a working week actually goes. Before this only the lunch-box
+     * site's recipes were ever cooked ahead, which both reviewers of a generated
+     * week noticed: an obiad cooked from scratch every working day, and pots
+     * "for six" planned as three helpings each to use them up.
+     */
+    private function feedsTwice(RecipeCandidate $recipe, int $portions): bool
+    {
+        $servings = $this->factFor($recipe->id)?->servings;
+
+        return $servings !== null && $portions > 0 && $servings >= 2 * $portions;
+    }
+
+    /**
+     * Whether a batch may run on into this day. The weekend is when there is
+     * time to cook, and its obiad is the one the week looks forward to — so
+     * Friday's pot is not Saturday's lunch.
+     */
+    private function isWeekendDate(?string $date): bool
+    {
+        return $date !== null && CarbonImmutable::parse($date)->isWeekend();
+    }
+
+    private function isMainMeal(MealSlot $slot): bool
+    {
+        return $slot === MealSlot::Lunch || $slot === MealSlot::Dinner;
+    }
+
+    /**
+     * The candidates re-ordered for one particular day, best first.
+     *
+     * The pool's own score says how good a dish is for this *meal*; this adds
+     * what only the day knows. Dishes within `VARIETY_BAND` of the best are
+     * shuffled, so a week asked for twice is still not the same week.
+     *
+     * @param  Collection<int, RecipeCandidate>  $available
+     * @return Collection<int, RecipeCandidate>
+     */
+    private function rankedForDay(Collection $available, MealSlot $slot, CarbonImmutable $day): Collection
+    {
+        $scores = [];
+
+        foreach ($available as $recipe) {
+            $scores[$recipe->id] = ($this->scores[$slot->value][$recipe->id] ?? 0.0)
+                + $this->dayPenalty($recipe->id, $slot, $day);
+        }
+
+        return $this->variedByRank(
+            $available->sortBy(static fn (RecipeCandidate $recipe): float => $scores[$recipe->id])->values(),
+            $scores,
+        );
+    }
+
+    /**
+     * How much worse a dish is on this day than its meal score says. Lower is
+     * better, and a bonus is a negative number.
+     *
+     * Every term is a nudge, never a ban — "a repeat beats a hole in the week"
+     * holds here as everywhere. The sizes are relative to the calorie miss the
+     * score already carries (up to `MAX_MISS`, 0.2): a chicken dinner the day
+     * after a chicken lunch costs about as much as missing the calories by a
+     * sixth, so it loses to any decent alternative and still wins over nothing.
+     */
+    private function dayPenalty(int $recipeId, MealSlot $slot, CarbonImmutable $day): float
+    {
+        $fact = $this->factFor($recipeId);
+
+        if ($fact === null) {
+            return 0.0;
+        }
+
+        return $this->substancePenalty($fact, $slot)
+            + $this->timePenalty($fact, $slot, $day)
+            + $this->rotationPenalty($fact, $slot, $day)
+            + $this->seasonPenalty($fact, $day)
+            + $this->familyPenalty($fact, $slot, $day)
+            + $this->shapePenalty($fact, $slot, $day)
+            + ($fact->isAirFryer ? 0.05 * $this->airFryerMeals : 0.0)
+            + ($fact->cuisine === null ? 0.0 : 0.15 * ($this->cuisineWeek[$fact->cuisine] ?? 0))
+            + ($fact->dominantIngredientId === null ? 0.0 : 0.1 * ($this->dominantWeek[$fact->dominantIngredientId] ?? 0))
+            + ($fact->isHeadline ? self::HEADLINE_PENALTY : 0.0)
+            + ($fact->isRich ? self::RICH_PENALTY * ($this->richWeek + 1) : 0.0)
+            + (isset($this->liked[$recipeId]) ? -self::LIKED_BONUS : 0.0);
+    }
+
+    /**
+     * What one more dish of kiełbasa, chorizo, szynka or halloumi costs, times
+     * how many the week already has. A little for the first, so a kiełbasa
+     * z cebulką can still be Friday's supper; enough by the third that a week
+     * stops reading like a deli counter.
+     */
+    private const float RICH_PENALTY = 0.08;
+
+    /** How many rich dishes the week already holds — see `RICH_PENALTY`. */
+    private int $richWeek = 0;
+
+    /**
+     * How far a tabloid headline sinks against a dish with a name.
+     *
+     * Not a verdict on the cooking — a lot of those recipes are fine — but a
+     * week reading "Tani sposób na sycące śniadanie. Ta zapiekanka zachwyca"
+     * on Tuesday does not tell anybody what is for breakfast, and a plan you
+     * cannot read at a glance is a plan that looks dull. Small enough that a
+     * headline still wins when it is the better fit for the day.
+     */
+    private const float HEADLINE_PENALTY = 0.15;
+
+    /**
+     * How far "lubimy to" lifts a dish: more than any single nudge for the day,
+     * so a favourite that fits comes back, and less than a missed calorie
+     * target, so it cannot buy its way into a meal it does not feed.
+     */
+    private const float LIKED_BONUS = 0.15;
+
+    /** @var array<int, true> */
+    private array $liked = [];
+
+    /**
+     * "Nie proponuj więcej" — out of every pool, the swap and the alternatives
+     * sheet included. Still in the catalogue for whoever searches for it.
+     *
+     * @var array<int, true>
+     */
+    private array $disliked = [];
+
+    /**
+     * A main meal of two or three things is a technique, not a dish — "Jajko
+     * w koszulce", a bowl of groats. They pass `isSubstantial`, and they are
+     * still what makes a week look thin when you scroll through its photos.
+     */
+    private function substancePenalty(RecipeFact $fact, MealSlot $slot): float
+    {
+        if (! $this->isMainMeal($slot)) {
+            return 0.0;
+        }
+
+        return match (true) {
+            $fact->realIngredients === 0 => 0.0,
+            $fact->realIngredients <= 2 => 0.3,
+            $fact->realIngredients === 3 => 0.1,
+            $fact->realIngredients >= 6 => -0.03,
+            default => 0.0,
+        };
+    }
+
+    /**
+     * Quick on working days, generous at the weekend.
+     *
+     * A 50-minute breakfast on a Tuesday is a plan nobody follows, and a
+     * Sunday obiad of egg cutlets is a plan nobody looks forward to. The time is
+     * what the source declared; a dish that never said is judged on nothing.
+     */
+    private function timePenalty(RecipeFact $fact, MealSlot $slot, CarbonImmutable $day): float
+    {
+        $minutes = $fact->minutes;
+
+        if ($minutes === null) {
+            return 0.0;
+        }
+
+        if (! $day->isWeekend()) {
+            return match ($slot) {
+                MealSlot::Breakfast, MealSlot::SecondBreakfast => $minutes > 45 ? 0.3 : ($minutes > 20 ? 0.12 : 0.0),
+                MealSlot::Dinner => $minutes > 60 ? 0.25 : ($minutes > 40 ? 0.1 : 0.0),
+                MealSlot::Lunch => $minutes > 90 ? 0.2 : ($minutes > 60 ? 0.1 : 0.0),
+                default => 0.0,
+            };
+        }
+
+        return match ($slot) {
+            // The meal a weekend is for: something that takes its time.
+            MealSlot::Lunch => ($minutes >= 45 ? -0.12 : ($minutes < 25 ? 0.08 : 0.0)) + $this->sundayPenalty($fact, $day),
+            MealSlot::Breakfast => $minutes >= 15 ? -0.05 : 0.0,
+            default => 0.0,
+        };
+    }
+
+    /**
+     * The Sunday obiad is a main course, and in Poland it is usually meat or
+     * fish: a generated Sunday of "Zupa z pieczonych warzyw" was a perfectly
+     * good soup on the one day of the week that is not for a soup alone.
+     */
+    private function sundayPenalty(RecipeFact $fact, CarbonImmutable $day): float
+    {
+        if (! $day->isSunday()) {
+            return 0.0;
+        }
+
+        $penalty = $fact->form() === 'zupy' ? 0.12 : 0.0;
+
+        /*
+         * A centrepiece: meat or fish, and something more than a weeknight
+         * plate. "Pulpety z tofu" and liver were generated Sundays — fine
+         * dishes, and nobody's idea of a Sunday dinner. A dish whose source
+         * never stated its time is judged by how much goes into it instead,
+         * because one whole source (kwestiasmaku) states no times at all.
+         */
+        $isCentrepiece = array_diff($fact->themes(), ['wege', 'roslinne']) !== []
+            && ! $fact->isOffal
+            && ($fact->minutes === null ? $fact->realIngredients >= 6 : $fact->minutes >= 40);
+
+        /*
+         * Offal is not merely "not a centrepiece": "Wątróbka z kaczki" kept
+         * winning Sundays on the strength of naming a home classic (kaczka), so
+         * it gets no lift from that and a push of its own.
+         */
+        if ($fact->isOffal) {
+            return $penalty + 0.4;
+        }
+
+        return ($isCentrepiece ? $penalty - 0.1 : $penalty + 0.2) - ($fact->isHomeClassic ? 0.08 : 0.0);
+    }
+
+    /**
+     * Chicken on Monday, fish on Tuesday, a meat-free Wednesday — not chicken
+     * four times because the chicken recipes happened to fit.
+     *
+     * The dominant-ingredient rule cannot see this: breast, thighs and wings
+     * are three different products and one week of chicken. So the obiad and
+     * the kolacja are spread across the quick-pick protein categories, and
+     * soup and pasta are kept to a couple each.
+     */
+    private function rotationPenalty(RecipeFact $fact, MealSlot $slot, CarbonImmutable $day): float
+    {
+        $date = $day->toDateString();
+
+        /*
+         * The same meat twice in a day, whichever meals it falls in. Sausages
+         * for breakfast, pork shoulder for obiad and kiełbasa for supper was a
+         * generated Saturday: three portions of pork, and the rule below only
+         * ever compared the obiad with the kolacja.
+         */
+        $sameDay = 0.0;
+
+        foreach (array_diff($fact->themes(), ['wege']) as $meat) {
+            if (isset($this->meatOn[$date][$meat]) && ! isset($this->themesOn[$date][$meat])) {
+                $sameDay += 0.25;
+            }
+        }
+
+        if (! $this->isMainMeal($slot)) {
+            return $sameDay + (in_array('roslinne', $fact->themes(), true) ? 0.2 * ($this->themeCount['roslinne'] ?? 0) : 0.0);
+        }
+
+        $penalty = $sameDay;
+
+        foreach ($fact->themes() as $theme) {
+
+            // Korean chicken for obiad and chicken skewers for supper, in the
+            // fourth round of reviews, after this was 0.3: one meat a day.
+            if (isset($this->themesOn[$date][$theme])) {
+                $penalty += $theme === 'wege' ? 0.05 : 0.6;
+            }
+
+            foreach ([$day->subDay()->toDateString(), $day->addDay()->toDateString()] as $neighbour) {
+                if (isset($this->themesOn[$neighbour][$theme])) {
+                    $penalty += $theme === 'wege' ? 0.0 : 0.15;
+                }
+            }
+
+            $penalty += match ($theme) {
+                'wege' => 0.03,
+                'roslinne' => 0.2,
+                default => 0.08,
+            } * ($this->themeCount[$theme] ?? 0);
+
+            // Fish twice a week, the advice every dietitian gives and the first
+            // thing both reviewers of a generated week found missing.
+            if ($theme === 'ryby' && ($this->themeCount['ryby'] ?? 0) < 2) {
+                $penalty -= 0.12;
+            }
+        }
+
+        $form = $fact->form();
+        $formsSoFar = $form === null ? 0 : ($this->formCount[$form] ?? 0);
+
+        // Soup is an obiad's own course in Poland, so it may come round three
+        // times before it counts as a rut; pasta and salad after two.
+        $allowed = $form === 'zupy' ? self::SOUPS_A_WEEK : 2;
+
+        if ($formsSoFar >= $allowed) {
+            $penalty += 0.15 * ($formsSoFar - $allowed + 1);
+        }
+
+        return $penalty;
+    }
+
+    /**
+     * Pancakes for breakfast and pancakes again for supper; three sandwich
+     * spreads in one week of breakfasts.
+     *
+     * Every one of those was a different recipe built on a different product,
+     * so no other rule saw a repeat — and a week is remembered by the kind of
+     * dish on the plate, not by its dominant ingredient. Applied to every meal:
+     * the morning repeats itself more than any other.
+     */
+    private function familyPenalty(RecipeFact $fact, MealSlot $slot, CarbonImmutable $day): float
+    {
+        $family = $fact->family;
+
+        if ($family === null) {
+            return 0.0;
+        }
+
+        $penalty = 0.0;
+        $today = $this->familiesOn[$day->toDateString()] ?? [];
+
+        $heavy = in_array($family, self::ONCE_A_DAY, true);
+
+        foreach ($today as $otherSlot => $otherFamily) {
+            if ($otherSlot !== $slot->value && $otherFamily === $family) {
+                $penalty += $heavy ? 0.6 : 0.2;
+            }
+        }
+
+        if (($this->familiesOn[$day->subDay()->toDateString()][$slot->value] ?? null) === $family
+            || ($this->familiesOn[$day->addDay()->toDateString()][$slot->value] ?? null) === $family) {
+            $penalty += 0.15;
+        }
+
+        // Per meal and per week: pancakes at breakfast on Tuesday and for supper
+        // on Thursday are two pancake days, whichever meal they fell in.
+        return $penalty
+            + 0.15 * ($this->familyCount[$slot->value][$family] ?? 0)
+            + ($heavy ? 0.5 : 0.15) * ($this->familyWeek[$family] ?? 0);
+    }
+
+    /**
+     * What each meal is for, beyond its calories.
+     *
+     * Kolacja in Poland is the lighter meal: a generated week with a beef bake
+     * for supper and roast pork after a fish obiad was two dinners a day. The
+     * obiad, the other way round, is where soup belongs — a few times a week,
+     * and both reviewers found weeks with none. And pancakes at seven on a
+     * Tuesday are a weekend breakfast served on the wrong day.
+     *
+     * The obiad also leans, a little, towards the dishes a Polish home is built
+     * on, and towards fish on a Friday — a reviewer's verdict on a fairly drawn
+     * week was that it read like a vegan fitness blog, not a Polish kitchen.
+     */
+    private function shapePenalty(RecipeFact $fact, MealSlot $slot, CarbonImmutable $day): float
+    {
+        return match ($slot) {
+            MealSlot::Dinner => $this->dinnerShape($fact, $day),
+            MealSlot::Lunch => ($this->isSoup($fact) && ($this->formCount['zupy'] ?? 0) < self::SOUPS_A_WEEK ? -0.22 : 0.0)
+                + ($fact->isHomeClassic ? -0.15 : 0.0)
+                // "W polskim domu piątkowa ryba to odruch" — three fishless
+                // Fridays in a row after this was -0.1.
+                + ($day->isFriday() && in_array('ryby', $fact->themes(), true) ? -0.3 : 0.0),
+            MealSlot::Breakfast => $this->breakfastShape($fact, $day),
+            default => 0.0,
+        };
+    }
+
+    /**
+     * Kolacja on a working day is not a second cooking. The obiad was cooked,
+     * often yesterday; supper is bread and something on it, a salad, eggs — a
+     * reviewer counted three cookings a day on working days and gave the week
+     * three out of ten for realism.
+     */
+    private function dinnerShape(RecipeFact $fact, CarbonImmutable $day): float
+    {
+        return $this->cookedSupper($fact, $day) + $this->vegetableSupper($fact);
+    }
+
+    /**
+     * A supper of bread and cheese, or kiełbasa with onion, has no vegetable on
+     * it — the dietitian's first complaint in four rounds running. One
+     * vegetable takes most of the cost away, two take all of it. A dish whose
+     * lines were never read is left alone: unknown is not "none".
+     */
+    private function vegetableSupper(RecipeFact $fact): float
+    {
+        if ($fact->realIngredients === 0) {
+            return 0.0;
+        }
+
+        /*
+         * And a salad with no protein is a side, not a supper: "sałatka z
+         * marynowanego selera z ananasem" and "sałatka z pora i groszku" were
+         * both suppers in the same week.
+         */
+        $share = $fact->proteinShare();
+        $thin = $share !== null && $share < 0.12 ? 0.2 : 0.0;
+
+        return $thin + match (min($fact->vegetables, 2)) {
+            0 => 0.2,
+            1 => 0.05,
+            default => -0.03,
+        };
+    }
+
+    private function cookedSupper(RecipeFact $fact, CarbonImmutable $day): float
+    {
+        $cooked = in_array($fact->family, ['zapiekanka', 'curry', 'kotlety', 'makaron', 'nalesniki'], true);
+
+        // After zupa and drugie danie, a bake for supper is a third cooked meal.
+        if ($cooked && isset($this->soupObiad[$day->toDateString()])) {
+            return 0.35;
+        }
+
+        // Five zapiekanki for supper in three weeks was too many for both
+        // reviewers: the second in a week costs as much as a soup obiad's.
+        if ($fact->family === 'zapiekanka') {
+            $bakes = $this->familyCount[MealSlot::Dinner->value]['zapiekanka'] ?? 0;
+
+            if ($bakes > 0) {
+                return 0.3 * $bakes;
+            }
+        }
+
+        if ($day->isWeekend()) {
+            return $cooked ? 0.1 : 0.0;
+        }
+
+        return $cooked ? 0.15 : (in_array($fact->family, ['kanapki', 'salatka', 'jajka'], true) ? -0.05 : 0.0);
+    }
+
+    /**
+     * A big pot: soup, stew, curry — what a household cooks on Monday and eats
+     * again on Tuesday, whatever the recipe says it serves.
+     */
+    private function isPot(RecipeCandidate $recipe): bool
+    {
+        $fact = $this->factFor($recipe->id);
+
+        return $fact !== null
+            && ($fact->form() === 'zupy' || in_array($fact->family, ['zupa', 'curry', 'zapiekanka'], true));
+    }
+
+    /**
+     * A weekday breakfast is a sandwich or a bowl; a weekend one is pancakes or
+     * eggs done properly. Liver pâté on a Saturday morning was the first sign
+     * the generator did not know the difference.
+     */
+    private function breakfastShape(RecipeFact $fact, CarbonImmutable $day): float
+    {
+        $leisurely = in_array($fact->family, ['nalesniki', 'jajka'], true);
+        $everyday = in_array($fact->family, ['kanapki', 'owsianka'], true);
+
+        if ($day->isWeekend()) {
+            return $leisurely ? -0.08 : ($everyday ? 0.06 : 0.0);
+        }
+
+        /*
+         * Working days: no batter at seven in the morning (Dutch Baby on a
+         * Tuesday), and no beef or pork plate either — a Sloppy Joe was a
+         * generated Friday breakfast.
+         */
+        $heavy = array_intersect($fact->themes(), ['wolowina', 'wieprzowina']) !== [];
+
+        return ($fact->family === 'nalesniki' ? 0.2 : 0.0)
+            + ($heavy ? 0.12 : 0.0)
+            + ($everyday ? -0.05 : 0.0)
+            + ($fact->isPlantProtein ? 0.1 : 0.0);
+    }
+
+    /** A pumpkin soup in October rises; strawberries in December sink. */
+    private function seasonPenalty(RecipeFact $fact, CarbonImmutable $day): float
+    {
+        $fit = $this->season->fitOf($fact->seasonalProduce, $day);
+
+        // In season is not the same as every day.
+        $repeats = 0;
+
+        foreach ($fact->seasonalProduce as $product) {
+            $repeats += $this->produceWeek[$product] ?? 0;
+        }
+
+        $penalty = 0.08 * $repeats;
+
+        /*
+         * Out of season is nearly a ban, on purpose: 0.2 let "Karkówka ze
+         * szparagami" through in October because it fitted the calories well.
+         * Asparagus in October is not a fit, it is an import.
+         */
+        return $penalty + ($fit >= 0 ? -0.06 * min($fit, 2) : 0.2 * min(-$fit, 4));
     }
 
     /**
@@ -1239,4 +2613,88 @@ final class PlanGenerator
      * @var array<string, array<int, true>>
      */
     private array $eatenToday = [];
+
+    /**
+     * How good each candidate is for its meal, before the day is considered.
+     *
+     * @var array<string, array<int, float>>
+     */
+    private array $scores = [];
+
+    /**
+     * The protein each day's main meals are built around.
+     *
+     * @var array<string, array<string, true>>
+     */
+    private array $themesOn = [];
+
+    /** @var array<string, int> */
+    private array $themeCount = [];
+
+    /** @var array<string, int> */
+    private array $formCount = [];
+
+    /**
+     * The kind of dish each meal of each day became.
+     *
+     * @var array<string, array<string, string>>
+     */
+    private array $familiesOn = [];
+
+    /**
+     * How often each meal has been each kind of dish this week.
+     *
+     * @var array<string, array<string, int>>
+     */
+    private array $familyCount = [];
+
+    /**
+     * Every meat each day has had, breakfast included.
+     *
+     * @var array<string, array<string, true>>
+     */
+    private array $meatOn = [];
+
+    /**
+     * How many air fryer recipes the week holds. One source writes nothing
+     * else, and nine of them in three weeks read as a machine, not a kitchen.
+     */
+    private int $airFryerMeals = 0;
+
+    /**
+     * How often the week has gone to each cuisine — Thai soup on Monday and
+     * Thai chicken on Friday read as the same dinner twice.
+     *
+     * @var array<string, int>
+     */
+    private array $cuisineWeek = [];
+
+    /**
+     * The dish names eaten this month, as signatures.
+     *
+     * @var list<list<string>>
+     */
+    private array $usedSignatures = [];
+
+    /**
+     * How often each seasonal product has been on the table this week. Kale is
+     * in season in October, and it was also four obiady running.
+     *
+     * @var array<string, int>
+     */
+    private array $produceWeek = [];
+
+    /** @var array<string, int> each kind of dish, across every meal of the week */
+    private array $familyWeek = [];
+
+    /**
+     * How often the week has leaned on each product, across every meal.
+     *
+     * The per-meal rule stopped tofu twice at breakfast and let it through at
+     * lunch, lunch again and supper — four tofu meals in four days, each in a
+     * different slot.
+     *
+     * @var array<int, int>
+     */
+    private array $dominantWeek = [];
 }

@@ -31,14 +31,34 @@ final class TitleNeedle
      */
     public static function matchesAny(string $title, array $needles): bool
     {
-        foreach ($needles as $needle) {
-            if (self::matches($title, $needle)) {
-                return true;
-            }
+        if ($needles === []) {
+            return false;
         }
 
-        return false;
+        return preg_match(self::patternFor($needles), $title) === 1;
     }
+
+    /**
+     * One alternation per list, compiled once: the same rule as `matches()`
+     * applied to every needle at once. Planning a week asks a dozen lists about
+     * every one of some thirteen hundred candidates, and a regex per needle
+     * made that most of the five seconds the planner took.
+     *
+     * @param  non-empty-list<string>  $needles
+     */
+    private static function patternFor(array $needles): string
+    {
+        $key = implode('|', $needles);
+
+        return self::$patterns[$key] ??= '/\b(?:'.implode('|', array_map(static function (string $needle): string {
+            $isPrefix = str_ends_with($needle, '*');
+
+            return preg_quote($isPrefix ? rtrim($needle, '*') : $needle, '/').($isPrefix ? '' : '\b');
+        }, $needles)).')/u';
+    }
+
+    /** @var array<string, string> */
+    private static array $patterns = [];
 
     /*
      * There was briefly an `opensWithAny()` here, on the theory that the dish a

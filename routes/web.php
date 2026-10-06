@@ -10,6 +10,7 @@ use App\Http\Controllers\PantryPhotoController;
 use App\Http\Controllers\PriceHistoryController;
 use App\Http\Controllers\PushSubscriptionController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\RecipePreferenceController;
 use App\Http\Controllers\ShoppingListController;
 use App\Http\Controllers\ShoppingListsController;
 use App\Http\Controllers\ShoppingPlanController;
@@ -54,6 +55,8 @@ Route::middleware('auth')->group(function (): void {
      * have somewhere to come back to.
      */
     Route::get('/przepis/{recipe:slug}/gotowanie', [CookingController::class, 'show'])->name('cooking.show');
+    Route::put('/przepis/{recipe:slug}/ocena', [RecipePreferenceController::class, 'update'])->name('recipe-verdict.update');
+    Route::delete('/przepis/{recipe:slug}/ocena', [RecipePreferenceController::class, 'destroy'])->name('recipe-verdict.destroy');
 
     /*
      * `zrobione` before `{task}`, or "zrobione" is read as a task id — the same

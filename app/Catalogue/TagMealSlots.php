@@ -47,9 +47,10 @@ final class TagMealSlots
 
                 foreach ($recipes as $recipe) {
                     $facts = $this->factsOf($recipe);
+                    $named = $this->namedIn($rules, $facts['title']);
 
                     foreach ($rules as $slot => $rule) {
-                        if (! $this->matches($rule, $facts)) {
+                        if (! $this->matches($rule, $facts, $named === [] ? null : in_array($slot, $named, true))) {
                             continue;
                         }
 
@@ -122,10 +123,35 @@ final class TagMealSlots
     }
 
     /**
+     * The meals a title names outright — "…idealna na śniadanie albo na obiad".
+     *
+     * The strongest signal there is, because it is the only one the author
+     * stated: "Tostadas z kurczakiem to obiad idealny" is a lunch whatever its
+     * tortilla says, and "Nuggetsy z halloumi — przekąska na imprezę" is not a
+     * supper. So a title naming any meal is given exactly the meals it names.
+     *
+     * @param  array<string, array<string, mixed>>  $rules
+     * @return list<string>
+     */
+    private function namedIn(array $rules, string $title): array
+    {
+        $named = [];
+
+        foreach ($rules as $slot => $rule) {
+            if (TitleNeedle::matchesAny($title, $rule['named'] ?? [])) {
+                $named[] = $slot;
+            }
+        }
+
+        return $named;
+    }
+
+    /**
      * @param  array<string, mixed>  $rule
      * @param  array{title: string, tags: list<string>, categories: list<string>, mealPrep: bool}  $facts
+     * @param  bool|null  $named  whether the title names this meal; null when it names none
      */
-    private function matches(array $rule, array $facts): bool
+    private function matches(array $rule, array $facts, ?bool $named): bool
     {
         // Disqualifiers first: a cake is never dinner, however its title reads.
         if (array_intersect($rule['excludeCategories'] ?? [], $facts['categories']) !== []) {
@@ -138,6 +164,19 @@ final class TagMealSlots
 
         if ($this->isSideDish($rule, $facts)) {
             return false;
+        }
+
+        if ($named !== null) {
+            return $named;
+        }
+
+        /*
+         * A main course reaching breakfast on a tag or a category alone is how
+         * "Schab pieczony w air fryerze" became one. In these categories the
+         * title has to name one of this meal's own dishes.
+         */
+        if (array_intersect($rule['dishRequiredIn'] ?? [], $facts['categories']) !== []) {
+            return TitleNeedle::matchesAny($facts['title'], $rule['titles'] ?? []);
         }
 
         if (($rule['mealPrep'] ?? false) && $facts['mealPrep']) {

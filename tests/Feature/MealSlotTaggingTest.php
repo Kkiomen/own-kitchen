@@ -291,6 +291,112 @@ class MealSlotTaggingTest extends TestCase
         $this->assertSame([], $this->slotsOf($recipe->title));
     }
 
+    /** `jogurt*` reached "jogurtowo-czosnkowym", and a chicken dinner became breakfast. */
+    public function test_a_yoghurt_sauce_does_not_make_a_breakfast(): void
+    {
+        $recipe = $this->recipe('Kurczak w sosie jogurtowo-czosnkowym z pieczonymi warzywami');
+        $recipe->categories()->attach($this->category('kurczak'));
+
+        $this->assertNotContains('breakfast', $this->slotsOf($recipe->title));
+    }
+
+    public function test_a_soup_is_never_breakfast(): void
+    {
+        $recipe = $this->recipe('Rosół z naleśnikowymi roladkami');
+        $recipe->categories()->attach($this->category('zupy'));
+        $recipe->categories()->attach($this->category('sniadania'));
+
+        $slots = $this->slotsOf($recipe->title);
+
+        $this->assertContains('lunch', $slots);
+        $this->assertNotContains('breakfast', $slots);
+    }
+
+    /** beszamel headlines list ingredients; an ingredient is not a meal. */
+    public function test_naming_an_ingredient_does_not_name_a_meal(): void
+    {
+        $this->recipe('Biorę ziemniaki i jajka. Tymi kotlecikami zajada się cała rodzina');
+
+        $this->assertNotContains('breakfast', $this->slotsOf('Biorę ziemniaki i jajka. Tymi kotlecikami zajada się cała rodzina'));
+    }
+
+    /** The author said what meal it is, and nothing here knows better. */
+    public function test_a_title_naming_a_meal_gets_only_that_meal(): void
+    {
+        $recipe = $this->recipe('Tostadas z kurczakiem to obiad idealny');
+        $recipe->categories()->attach($this->category('sniadania'));
+
+        $this->assertSame(['lunch'], $this->slotsOf($recipe->title));
+    }
+
+    public function test_a_title_naming_two_meals_gets_both(): void
+    {
+        $this->recipe('Biała kiełbasa na śniadanie albo na obiad');
+
+        $this->assertSame(['breakfast', 'lunch'], $this->slotsOf('Biała kiełbasa na śniadanie albo na obiad'));
+    }
+
+    /** In a meat category a tag alone is not enough: the title must name a breakfast. */
+    public function test_a_main_course_needs_a_breakfast_dish_to_be_breakfast(): void
+    {
+        $roast = $this->recipe('Schab pieczony w air fryerze');
+        $roast->categories()->attach($this->category('wieprzowina'));
+        $roast->categories()->attach($this->category('sniadania'));
+
+        $bagel = $this->recipe('Bajgiel z boczkiem i jajkiem sadzonym');
+        $bagel->categories()->attach($this->category('wieprzowina'));
+
+        $this->assertNotContains('breakfast', $this->slotsOf($roast->title));
+        $this->assertContains('breakfast', $this->slotsOf($bagel->title));
+    }
+
+    /** "Chałka z Air Fryera" was a breakfast: it is what breakfast is made from. */
+    public function test_bread_you_bake_is_no_meal_at_all(): void
+    {
+        $recipe = $this->recipe('Chałka z Air Fryera');
+        $recipe->categories()->attach($this->category('pieczywo'));
+        $recipe->categories()->attach($this->category('sniadania'));
+
+        $this->assertSame([], $this->slotsOf($recipe->title));
+    }
+
+    public function test_porridge_is_not_supper(): void
+    {
+        $recipe = $this->recipe('Owsianka z chia i granatem');
+        $recipe->categories()->attach($this->category('sniadania'));
+
+        $this->assertSame(['breakfast'], $this->slotsOf($recipe->title));
+    }
+
+    /** A salmon tortilla reached obiad through the fish in it. */
+    public function test_a_cold_wrap_is_not_the_obiad(): void
+    {
+        $recipe = $this->recipe('Tortilla z wędzonym łososiem i szpinakiem');
+        $recipe->categories()->attach($this->category('ryby'));
+
+        $this->assertNotContains('lunch', $this->slotsOf($recipe->title));
+    }
+
+    public function test_preserves_are_not_a_meal(): void
+    {
+        $recipe = $this->recipe('Sałatka z cukinii na zimę');
+        $recipe->categories()->attach($this->category('salatki'));
+
+        $this->assertSame([], $this->slotsOf($recipe->title));
+    }
+
+    /** A stock is what the soup is made from, and "żurek bez zakwasu" is still żurek. */
+    public function test_a_stock_is_not_a_meal_but_a_soup_naming_one_is(): void
+    {
+        $stock = $this->recipe('Jak zrobić wywar mięsny na barszcz czerwony?');
+        $stock->categories()->attach($this->category('zupy'));
+        $soup = $this->recipe('Żurek bez zakwasu smakuje obłędnie');
+        $soup->categories()->attach($this->category('zupy'));
+
+        $this->assertSame([], $this->slotsOf($stock->title));
+        $this->assertContains('lunch', $this->slotsOf($soup->title));
+    }
+
     public function test_a_meal_can_be_swapped_for_another_of_the_same_kind(): void
     {
         $user = User::factory()->create();

@@ -40,6 +40,14 @@ final readonly class RecipeEnergy
         public float $coverage,
         public array $unknown = [],
         public ?int $dominantIngredientId = null,
+        /**
+         * Calories per product across the whole dish, largest first — what the
+         * planner reads to tell a dish built on potatoes from one that merely
+         * has a soaked roll in its kotlety.
+         *
+         * @var array<int, float>
+         */
+        public array $kcalByIngredient = [],
     ) {}
 
     /**

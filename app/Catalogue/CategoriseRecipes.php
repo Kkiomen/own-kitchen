@@ -167,6 +167,23 @@ final class CategoriseRecipes
         }
 
         /*
+         * Conditions every match needs on top of the usual signals: one product
+         * from each group. This is how a structural fact joins a title — "Bajgle
+         * na jogurcie" is bread because it is made from flour and something to
+         * raise it, while "Bajgiel z wędzonym łososiem" starts from a bagel.
+         */
+        foreach ($rule['requireIngredients'] ?? [] as $group) {
+            if (array_intersect($group, $facts['ingredients']) === []) {
+                return false;
+            }
+        }
+
+        // A homemade pita wrapped round chicken is a meal that bakes its bread.
+        if (array_intersect($rule['excludeIngredientCategories'] ?? [], $facts['ingredientCategories']) !== []) {
+            return false;
+        }
+
+        /*
          * "Contains no meat or fish" — but only when every ingredient on the
          * recipe is one we vouch for.
          *

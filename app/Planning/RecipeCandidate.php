@@ -18,5 +18,10 @@ final readonly class RecipeCandidate
     public function __construct(
         public int $id,
         public bool $isMealPrep,
+        /**
+         * One of the dishes a Polish home is built on. Known before any facts
+         * are read, so the shortlist can make sure they are looked at at all.
+         */
+        public bool $isHomeClassic = false,
     ) {}
 }

@@ -7,6 +7,7 @@ namespace Tests\Feature;
 use App\Enums\IngredientCategory;
 use App\Enums\IngredientSource;
 use App\Enums\MealSlot;
+use App\Models\Category;
 use App\Models\Ingredient;
 use App\Models\IngredientNutrition;
 use App\Models\MealPlanEntry;
@@ -97,6 +98,181 @@ class TargetedPlanTest extends TestCase
         $result = $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1200);
 
         $this->assertSame(0, $result['added']);
+    }
+
+    public function test_breakfast_is_never_more_than_two_helpings_each(): void
+    {
+        // Three helpings of a 400 kcal porridge would hit a 1 200 kcal morning
+        // exactly — and "6 porcji owsianki" for two is not a breakfast.
+        $this->dish('Owsianka', MealSlot::Breakfast, kcalPerPortion: 400, protein: 20);
+
+        $result = $this->fill(['2027-05-03'], [MealSlot::Breakfast], kcalPerPerson: 1200);
+
+        $this->assertSame(0, $result['added']);
+    }
+
+    /**
+     * "Dorsz z porami" as three helpings each was the calories of an obiad and
+     * nobody's idea of one. A cutlet comes with potatoes and a surówka, and
+     * the cutlet goes back to the helpings a person actually eats.
+     */
+    public function test_a_main_course_is_served_with_potatoes_and_a_surowka(): void
+    {
+        $this->sides();
+        $this->dish('Kotlet z kurczaka', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1200);
+
+        // 1 200 kcal: 300 of potatoes, 100 of surówka and two cutlets each.
+        $this->assertSame([
+            ['title' => 'Kotlet z kurczaka', 'servings' => 2 * 2],
+            ['title' => 'Ziemniaki z koperkiem', 'servings' => 2],
+            ['title' => 'Surówka z marchewki', 'servings' => 2],
+        ], $this->plateOn('2027-05-03'));
+    }
+
+    /** "Stir fry z tempehem" beside kluski śląskie was a generated obiad. */
+    public function test_an_asian_main_is_served_with_rice(): void
+    {
+        $this->sides();
+        $this->dish('Ryż z ziołami', MealSlot::Snack, kcalPerPortion: 300, protein: 6, made: IngredientCategory::Grain);
+        $this->dish('Kurczak po tajsku', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1200);
+
+        $plate = array_column($this->plateOn('2027-05-03'), 'title');
+
+        $this->assertContains('Ryż z ziołami', $plate);
+        $this->assertNotContains('Ziemniaki z koperkiem', $plate);
+    }
+
+    /**
+     * Zupa, then drugie danie. Every review round asked for soup two or three
+     * times a week, and a soup filling enough to be the whole obiad is rare.
+     */
+    public function test_a_soup_comes_first_and_the_main_makes_room_for_it(): void
+    {
+        $this->sides();
+        $this->dish('Zupa pomidorowa', MealSlot::Snack, kcalPerPortion: 300, protein: 10);
+        $this->dish('Kotlet z kurczaka', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1100);
+
+        // A Monday: three recipes at most, so the surówka waits for the weekend.
+        // 300 of soup, 300 of potatoes and one cutlet each.
+        $this->assertSame([
+            ['title' => 'Zupa pomidorowa', 'servings' => 2],
+            ['title' => 'Kotlet z kurczaka', 'servings' => 2],
+            ['title' => 'Ziemniaki z koperkiem', 'servings' => 2],
+        ], $this->plateOn('2027-05-03'));
+    }
+
+    /** Soup, then udka with nothing beside them, was the plate both reviewers named first. */
+    public function test_when_soup_and_potatoes_do_not_both_fit_the_soup_goes(): void
+    {
+        $this->sides();
+        $this->dish('Zupa pomidorowa', MealSlot::Snack, kcalPerPortion: 300, protein: 10);
+        $this->dish('Duszone udka', MealSlot::Lunch, kcalPerPortion: 900, protein: 50, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1100);
+
+        $plate = array_column($this->plateOn('2027-05-03'), 'title');
+
+        $this->assertContains('Ziemniaki z koperkiem', $plate);
+        $this->assertNotContains('Zupa pomidorowa', $plate);
+    }
+
+    /** Krupnik before Kung Pao is two kitchens on one table. */
+    public function test_a_soup_comes_only_before_a_main_of_its_own_kitchen(): void
+    {
+        $this->sides();
+        $this->dish('Ryż z ziołami', MealSlot::Snack, kcalPerPortion: 300, protein: 6, made: IngredientCategory::Grain);
+        $this->dish('Zupa pomidorowa', MealSlot::Snack, kcalPerPortion: 300, protein: 10);
+        $this->dish('Kurczak po tajsku', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1100);
+
+        $this->assertNotContains('Zupa pomidorowa', array_column($this->plateOn('2027-05-03'), 'title'));
+    }
+
+    /**
+     * The shuffle beside the potatoes used to hand back a main course sized to
+     * the potatoes' calories. A side swaps for a side of its own kind.
+     */
+    public function test_swapping_a_side_offers_another_side_of_its_kind(): void
+    {
+        $this->sides();
+        $kasza = $this->dish('Kasza gryczana', MealSlot::Snack, kcalPerPortion: 300, protein: 8, made: IngredientCategory::Grain);
+        $this->dish('Kotlet z kurczaka', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+        $this->dish('Gulasz wołowy', MealSlot::Lunch, kcalPerPortion: 300, protein: 25, categories: ['wolowina']);
+
+        // A Saturday, so the plate is main, starch and surówka.
+        $this->fill(['2027-05-08'], [MealSlot::Lunch], kcalPerPerson: 1200);
+
+        $starch = MealPlanEntry::query()
+            ->whereIn('recipe_id', Recipe::query()->whereIn('title', ['Ziemniaki z koperkiem', 'Kasza gryczana'])->pluck('id'))
+            ->firstOrFail();
+        $before = $starch->recipe_id;
+        $servings = $starch->servings;
+
+        $generator = $this->app->make(PlanGenerator::class);
+        $offered = array_map(
+            static fn ($one): string => $one->title,
+            $generator->alternativesFor($this->user, $starch),
+        );
+
+        $this->assertSame([$before === $kasza->id ? 'Ziemniaki z koperkiem' : 'Kasza gryczana'], $offered);
+
+        $generator->swap($this->user, $starch);
+        $starch->refresh();
+
+        $this->assertNotSame($before, $starch->recipe_id);
+        $this->assertSame($servings, $starch->servings);
+    }
+
+    /** A soup that is mostly potatoes brings the starch itself. */
+    public function test_a_starchy_soup_takes_the_place_of_the_potatoes(): void
+    {
+        $this->sides();
+        $this->dish('Zupa ziemniaczana', MealSlot::Snack, kcalPerPortion: 300, protein: 6, made: IngredientCategory::Grain);
+        $this->dish('Kotlet z kurczaka', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1100);
+
+        $this->assertNotContains('Ziemniaki z koperkiem', array_column($this->plateOn('2027-05-03'), 'title'));
+    }
+
+    /** Bread and cheese for supper was the dietitian's first complaint four rounds running. */
+    public function test_a_supper_with_a_vegetable_beats_one_without(): void
+    {
+        $this->dish('Kanapki z serem', MealSlot::Dinner, kcalPerPortion: 400, protein: 25, made: IngredientCategory::Dairy);
+        $salad = $this->dish('Sałatka z pomidorami', MealSlot::Dinner, kcalPerPortion: 400, protein: 25, made: IngredientCategory::Vegetable);
+
+        // A Saturday, so neither is a cooked supper on a working day.
+        $this->fill(['2027-05-08'], [MealSlot::Dinner], kcalPerPerson: 800);
+
+        $this->assertSame($salad->id, MealPlanEntry::query()->value('recipe_id'));
+    }
+
+    public function test_a_soup_is_a_whole_obiad_by_itself(): void
+    {
+        $this->sides();
+        $this->dish('Zupa z kurczakiem', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1200);
+
+        $this->assertSame(['Zupa z kurczakiem'], array_column($this->plateOn('2027-05-03'), 'title'));
+    }
+
+    /** "…z ziemniakami" already has its potatoes, whatever share of it they are. */
+    public function test_a_dish_naming_its_own_potatoes_gets_no_more(): void
+    {
+        $this->sides();
+        $this->dish('Kurczak z ziemniakami', MealSlot::Lunch, kcalPerPortion: 400, protein: 30, categories: ['kurczak']);
+
+        $this->fill(['2027-05-03'], [MealSlot::Lunch], kcalPerPerson: 1200);
+
+        $this->assertSame(['Kurczak z ziemniakami'], array_column($this->plateOn('2027-05-03'), 'title'));
     }
 
     public function test_a_dish_that_cannot_land_near_the_target_is_not_planned(): void
@@ -567,14 +743,19 @@ class TargetedPlanTest extends TestCase
      * One line and one portion keeps the arithmetic legible: 100 g of a product
      * worth N kcal per 100 g is a dish worth N kcal.
      */
+    /**
+     * @param  list<string>  $categories
+     */
     private function dish(
         string $title,
         MealSlot $slot,
         float $kcalPerPortion,
         float $protein,
         ?int $pricePerKilo = null,
+        IngredientCategory $made = IngredientCategory::Other,
+        array $categories = [],
     ): Recipe {
-        $product = $this->product($title.' produkt');
+        $product = $this->product($title.' produkt', $made);
 
         IngredientNutrition::query()->create([
             'ingredient_id' => $product->id,
@@ -658,6 +839,40 @@ class TargetedPlanTest extends TestCase
             'slot' => $slot->value,
         ]);
 
+        foreach ($categories as $slug) {
+            $recipe->categories()->attach(Category::query()->firstOrCreate(
+                ['slug' => $slug],
+                ['name' => $slug, 'position' => 0],
+            ));
+        }
+
         return $recipe;
+    }
+
+    /** The potatoes and the surówka a plate can be built from. */
+    private function sides(): void
+    {
+        // Planned as a snack so neither can be drawn as the obiad itself.
+        $this->dish('Ziemniaki z koperkiem', MealSlot::Snack, kcalPerPortion: 300, protein: 6, made: IngredientCategory::Grain);
+        $this->dish('Surówka z marchewki', MealSlot::Snack, kcalPerPortion: 100, protein: 2);
+    }
+
+    /**
+     * @return list<array{title: string, servings: int}>
+     */
+    private function plateOn(string $date): array
+    {
+        return MealPlanEntry::query()
+            ->where('user_id', $this->user->id)
+            ->onDates([$date])
+            ->where('slot', MealSlot::Lunch->value)
+            ->with('recipe')
+            ->orderBy('id')
+            ->get()
+            ->map(static fn (MealPlanEntry $entry): array => [
+                'title' => (string) $entry->recipe?->title,
+                'servings' => $entry->servings,
+            ])
+            ->all();
     }
 }

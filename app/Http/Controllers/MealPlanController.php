@@ -384,6 +384,9 @@ class MealPlanController extends Controller
             'replacing' => [
                 'servings' => $mealPlanEntry->servings,
                 'kcal' => $outgoing === null ? null : round($outgoing),
+                // A side swaps one helping for one helping, so the calories are
+                // not matched and the sheet must not claim they are.
+                'matched' => ! $this->generator->isSideOnPlate($mealPlanEntry),
             ],
             'alternatives' => array_map(
                 fn (MealAlternative $one): array => [

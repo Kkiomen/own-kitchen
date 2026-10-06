@@ -1,6 +1,7 @@
 <?php
 
 use App\Offers\OfferRefresh;
+use App\Planning\SideDishes;
 use App\Pricing\PriceRefresh;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -52,3 +53,14 @@ Schedule::command('prices:import')
     ->when(fn (): bool => app(PriceRefresh::class)->isStale())
     ->withoutOverlapping()
     ->runInBackground();
+
+/*
+ * Keep the planner's side dishes ready. Admitting them costs seconds — facts for
+ * some fifteen hundred recipes — and the cache key follows the catalogue and
+ * its prices, so the first "wygeneruj tydzień" after any price import used to
+ * pay for it while somebody watched a spinner. Hourly, because when nothing has
+ * changed this is a handful of cheap queries and a cache hit.
+ */
+Schedule::call(static function (): void {
+    app(SideDishes::class)->of(SideDishes::STARCH);
+})->name('planning:warm-sides')->hourly()->withoutOverlapping();

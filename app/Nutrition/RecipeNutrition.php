@@ -107,6 +107,7 @@ final readonly class RecipeNutrition
              * cannot, and neither can the categories.
              */
             dominantIngredientId: $byIngredient === [] ? null : (int) array_key_first($byIngredient),
+            kcalByIngredient: $byIngredient,
         );
     }
 

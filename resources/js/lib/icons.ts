@@ -70,6 +70,10 @@ export const ICON_PATHS = {
     /** The same bell, struck through: it does not. */
     bellOff:
         'M12 3a5.5 5.5 0 0 0-5.5 5.5c0 5-2 6.5-2 6.5h15s-2-1.5-2-6.5A5.5 5.5 0 0 0 12 3zM10.3 18.5a2 2 0 0 0 3.4 0M4 4l16 16',
+    /** A heart: lubimy to — plan it again. */
+    heart: 'M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.2a4.3 4.3 0 0 1 7.5 2.6C19.5 15.4 12 20 12 20z',
+    /** A circle struck through: never suggest this one again. */
+    ban: 'M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM6.4 6.4l11.2 11.2',
 } as const;
 
 export type IconName = keyof typeof ICON_PATHS;

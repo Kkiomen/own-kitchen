@@ -128,6 +128,31 @@ class CategoriseRecipesTest extends TestCase
      * Re-running must replace, not accumulate: a recipe that no longer matches a
      * rule has to be released, or the counts drift upward for ever.
      */
+    /**
+     * Both name bread. One makes it — flour and yeast — and one starts from a
+     * bagel and is breakfast.
+     */
+    public function test_bread_is_bread_only_when_the_recipe_bakes_it(): void
+    {
+        $this->store('Bajgle na jogurcie', ['300 g mąki pszennej', '1 łyżeczka proszku do pieczenia', '200 g jogurtu']);
+        $this->store('Bajgiel z serkiem i ogórkiem', ['1 bajgiel', '2 łyżki serka', '1 ogórek']);
+
+        $this->categorise();
+
+        $this->assertContains('pieczywo', $this->categoriesOf('bajgle-na-jogurcie'));
+        $this->assertNotContains('pieczywo', $this->categoriesOf('bajgiel-z-serkiem-i-ogorkiem'));
+    }
+
+    /** A banana loaf is a podwieczorek, which `wypieki` already offers. */
+    public function test_a_sweet_loaf_is_not_bread(): void
+    {
+        $this->store('Chlebek bananowy', ['250 g mąki pszennej', '1 łyżeczka sody', '3 banany']);
+
+        $this->categorise();
+
+        $this->assertNotContains('pieczywo', $this->categoriesOf('chlebek-bananowy'));
+    }
+
     public function test_running_it_again_replaces_rather_than_accumulates(): void
     {
         $this->store('Zupa krem z dyni', ['500 g dyni']);
