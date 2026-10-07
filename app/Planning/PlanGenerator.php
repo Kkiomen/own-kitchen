@@ -72,6 +72,37 @@ final class PlanGenerator
     private const int CLASSICS_IN_SHORTLIST = 80;
 
     /**
+     * How many of the dishes built most on this week's offers every shortlist
+     * is sure to look at, when the week is being bought in one shop.
+     *
+     * The shortlist is otherwise half the fridge and half chance, and out of
+     * five thousand obiady chance finds the thirty that use the cheap chicken
+     * about never — the ranking cannot prefer what it never sees.
+     */
+    private const int PROMOTED_IN_SHORTLIST = 120;
+
+    /**
+     * How much each product on offer lifts a dish, up to `PROMOTED_CAP` of them.
+     *
+     * A nudge on top of the price, which already falls with the offer: the
+     * price says "this is cheaper", the lift says "and you are standing in that
+     * shop anyway". Two products on offer weigh about as much as a chicken
+     * dinner the day after a chicken lunch costs — enough to win a close call,
+     * never enough to serve the same discounted chicken four times.
+     */
+    private const float PROMOTED_LIFT = 0.07;
+
+    private const int PROMOTED_CAP = 3;
+
+    /**
+     * How much the price counts when the week is planned around a shop but
+     * nobody set a budget: "as cheap as it can be" is a direction, not a
+     * ceiling, so the cost is weighed against the meal's typical dish rather
+     * than against an allowance that does not exist.
+     */
+    private const float SHOP_COST_WEIGHT = 0.3;
+
+    /**
      * The kinds of dish both reviewers counted on their fingers: naleśniki for
      * breakfast and again for supper, three egg dishes in four days. Once a
      * day at most, and each one more in the week costs twice what another
@@ -191,6 +222,9 @@ final class PlanGenerator
      */
     private function reset(User $user): void
     {
+        $this->offers = null;
+        $this->promotedCount = [];
+        $this->typicalCost = [];
         $this->liked = [];
         $this->disliked = [];
 
@@ -236,6 +270,9 @@ final class PlanGenerator
      *
      * @param  array<string, list<MealSlot>>  $wanted  meals wanted, keyed by date,
      *                                                 in the order they are eaten
+     * @param  ShopOffers|null  $offers  the one shop the week will be bought in —
+     *                                   its offers price the dishes and lift the
+     *                                   ones built on them
      * @return array{added: int, skipped: int, empty: list<string>, overspent: int}
      *                                                                              `empty` names the meals no recipe is
      *                                                                              tagged for; `overspent` counts the
@@ -246,8 +283,11 @@ final class PlanGenerator
         array $wanted,
         int $servings = MealPlan::DEFAULT_SERVINGS,
         ?PlanTargets $targets = null,
+        ?ShopOffers $offers = null,
     ): array {
         $this->reset($user);
+        $this->offers = $offers === null || $offers->isEmpty() ? null : $offers;
+        $this->promotedCount = $this->offers === null ? [] : $this->promotedCounts($this->offers);
         $taken = $this->alreadyPlanned($user, array_keys($wanted));
         $missing = $this->shortfallFor($user);
 
@@ -760,7 +800,7 @@ final class PlanGenerator
 
         $facts = $this->facts->forRecipes(array_values(
             $shortlist->map(static fn (RecipeCandidate $recipe): int => $recipe->id)->all(),
-        ));
+        ), $this->offers);
 
         $this->known += $facts;
 
@@ -768,10 +808,13 @@ final class PlanGenerator
             fn (RecipeCandidate $recipe): bool => isset($facts[$recipe->id]) && $this->isSubstantial($facts[$recipe->id], $slot),
         );
 
+        $this->typicalCost[$slot->value] = $this->typicalCostOf($pool, $facts, static fn (): int => 1);
+
         foreach ($pool as $recipe) {
             $short = $missing === [] ? 0 : min($missing[$recipe->id] ?? self::FRIDGE_CAP, self::FRIDGE_CAP);
             $this->scores[$slot->value][$recipe->id] = self::FRIDGE_WEIGHT * $short
-                + $this->proteinPenalty($facts[$recipe->id]);
+                + $this->proteinPenalty($facts[$recipe->id])
+                + $this->shopTerm($facts[$recipe->id], 1, $slot);
         }
 
         return $pool->values();
@@ -807,7 +850,7 @@ final class PlanGenerator
         // filter or a sort left behind, and a gap in them is not a list.
         $facts = $this->facts->forRecipes(array_values(
             $shortlist->map(static fn (RecipeCandidate $recipe): int => $recipe->id)->all(),
-        ));
+        ), $this->offers);
 
         $this->known += $facts;
 
@@ -825,6 +868,12 @@ final class PlanGenerator
 
         $balanced = $this->balanced($fitting, $facts);
         $scores = [];
+
+        $this->typicalCost[$slot->value] = $this->typicalCostOf(
+            $balanced,
+            $facts,
+            fn (RecipeFact $fact): int => $this->helpingsFor($fact, $wanted, $slot),
+        );
 
         foreach ($balanced as $recipe) {
             $scores[$recipe->id] = $this->score($facts[$recipe->id], $wanted, $targets, $slot);
@@ -973,6 +1022,23 @@ final class PlanGenerator
             static fn (RecipeCandidate $recipe): bool => $classics->contains('id', $recipe->id),
         )->values();
 
+        /*
+         * And, when the week is bought in one shop, the dishes built most on
+         * what that shop has on offer — ranked by how many of their products
+         * are discounted, with chance settling ties so two weeks still differ.
+         */
+        if ($this->promotedCount !== []) {
+            $promoted = $candidates
+                ->filter(fn (RecipeCandidate $recipe): bool => isset($this->promotedCount[$recipe->id]))
+                ->shuffle()
+                ->sortByDesc(fn (RecipeCandidate $recipe): int => $this->promotedCount[$recipe->id])
+                ->take(self::PROMOTED_IN_SHORTLIST);
+            $liked = $liked->concat($promoted);
+            $candidates = $candidates->reject(
+                static fn (RecipeCandidate $recipe): bool => $promoted->contains('id', $recipe->id),
+            )->values();
+        }
+
         $covered = $candidates->take(intdiv(self::TARGETED_POOL, 2));
 
         $rest = $candidates
@@ -1072,6 +1138,8 @@ final class PlanGenerator
             + $this->proteinPenalty($fact)
             + ($each >= self::MAX_PORTIONS_EACH ? self::THIRD_HELPING_PENALTY : 0.0)
             + ($each >= self::MAX_PORTIONS_EACH && $this->isSoup($fact) ? self::THIN_SOUP_PENALTY : 0.0);
+
+        $miss += $this->shopTerm($fact, $each, $slot, $targets->budget === null);
 
         if ($targets->budget === null || $fact->costPerPortion === null) {
             return $miss;
@@ -1314,12 +1382,116 @@ final class PlanGenerator
     }
 
     /**
+     * How a dish stands when the week is bought in one shop: lifted for every
+     * product it takes from the leaflet and, when nobody set a budget, weighed
+     * by what it costs against the meal's typical dish.
+     *
+     * Zero when no shop was named, so a plain week is scored exactly as before.
+     * With a budget the existing cost term already prices the dish — at the
+     * shop's offers, through `RecipeFacts` — so the cost is not counted twice.
+     */
+    private function shopTerm(RecipeFact $fact, int $helpings, MealSlot $slot, bool $weighCost = true): float
+    {
+        if ($this->offers === null) {
+            return 0.0;
+        }
+
+        $term = -self::PROMOTED_LIFT * min($fact->promoted, self::PROMOTED_CAP);
+        $typical = $this->typicalCost[$slot->value] ?? null;
+
+        if ($weighCost && $typical !== null && $typical > 0 && $fact->costPerPortion !== null) {
+            $term += self::SHOP_COST_WEIGHT * ($fact->costPerPortion->toZloty() * $helpings / $typical - 1.0);
+        }
+
+        return $term;
+    }
+
+    /**
+     * The median cost per head of the priced dishes in a pool, or null when too
+     * few are priced to say what typical is.
+     *
+     * A median, for the reason the price book takes one: one beef tenderloin
+     * among forty ordinary dinners must not make everything else look cheap.
+     *
+     * @param  Collection<int, RecipeCandidate>  $pool
+     * @param  array<int, RecipeFact>  $facts
+     * @param  callable(RecipeFact): int  $helpings
+     */
+    private function typicalCostOf(Collection $pool, array $facts, callable $helpings): ?float
+    {
+        if ($this->offers === null) {
+            return null;
+        }
+
+        $costs = [];
+
+        foreach ($pool as $recipe) {
+            $fact = $facts[$recipe->id] ?? null;
+
+            if ($fact?->costPerPortion !== null) {
+                $costs[] = $fact->costPerPortion->toZloty() * $helpings($fact);
+            }
+        }
+
+        if (count($costs) < self::MIN_PRICED_FOR_TYPICAL) {
+            return null;
+        }
+
+        sort($costs);
+        $middle = intdiv(count($costs), 2);
+
+        return count($costs) % 2 === 1 ? $costs[$middle] : ($costs[$middle - 1] + $costs[$middle]) / 2;
+    }
+
+    private const int MIN_PRICED_FOR_TYPICAL = 10;
+
+    /**
+     * For every recipe, how many distinct products it takes from this shop's
+     * offers — one grouped query over the whole catalogue, so the shortlist can
+     * find the promotion dishes without reading anybody's ingredient list.
+     *
+     * Optional lines do not count. The finer exemptions (seasoning, staples)
+     * are applied later by `RecipeFacts`, which reads the lines anyway; this is
+     * only how the dishes get *looked at*.
+     *
+     * @return array<int, int>
+     */
+    private function promotedCounts(ShopOffers $offers): array
+    {
+        $counts = [];
+
+        foreach (array_chunk($offers->ingredientIds(), 500) as $chunk) {
+            $rows = DB::table('recipe_ingredients')
+                ->whereIn('ingredient_id', $chunk)
+                ->where('is_optional', false)
+                ->groupBy('recipe_id')
+                ->selectRaw('recipe_id, count(distinct ingredient_id) as products')
+                ->pluck('products', 'recipe_id');
+
+            foreach ($rows as $recipeId => $products) {
+                $counts[(int) $recipeId] = ($counts[(int) $recipeId] ?? 0) + (int) $products;
+            }
+        }
+
+        return $counts;
+    }
+
+    /** The shop the week is bought in, when somebody named one. */
+    private ?ShopOffers $offers = null;
+
+    /** @var array<int, int> recipe id => products it takes from the offers */
+    private array $promotedCount = [];
+
+    /** @var array<string, float|null> slot => median cost per head of its pool */
+    private array $typicalCost = [];
+
+    /**
      * A recipe's calories and cost, from what this generation already read.
      */
     private function factFor(int $recipeId): ?RecipeFact
     {
         if (! array_key_exists($recipeId, $this->known)) {
-            $this->known[$recipeId] = $this->facts->forRecipes([$recipeId])[$recipeId] ?? null;
+            $this->known[$recipeId] = $this->facts->forRecipes([$recipeId], $this->offers)[$recipeId] ?? null;
         }
 
         return $this->known[$recipeId];

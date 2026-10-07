@@ -97,6 +97,13 @@ interface MealAlternative {
     missing: number | null;
 }
 
+interface LeafletShop {
+    id: number;
+    name: string;
+    /** Products on offer that the catalogue recognises — what a plan can use. */
+    products: number;
+}
+
 interface RecipeMatch {
     id: number;
     slug: string;
@@ -136,6 +143,16 @@ const props = defineProps<{
         shares: Record<string, number>;
     };
     matches: RecipeMatch[];
+    /**
+     * The shops a week can be planned around: only those with a product on
+     * offer, most products first. `preselected` is the household's own choice
+     * of chains from the shopping plan.
+     */
+    leafletShops: {
+        shops: LeafletShop[];
+        preselected: number[];
+        max: number;
+    };
 }>();
 
 const page = usePage();
@@ -430,6 +447,22 @@ interface GenerateResult {
     overspent: number;
     /** Only when targets were set: what the week that was written adds up to. */
     week?: WeekReport;
+    /** Only when the week was planned around shops' leaflets. */
+    shop?: {
+        name: string;
+        onOffer: number;
+        /** What the leaflets say the offers save; null when none printed a "before". */
+        savings: number | null;
+        /** The kept week priced in every shop tried; empty with only one. */
+        compared: {
+            name: string;
+            buys: number;
+            onOffer: number;
+            /** Products nothing prices in that shop — its total is that much too small. */
+            unpriced: number;
+            chosen: boolean;
+        }[];
+    };
 }
 
 /**
@@ -452,6 +485,8 @@ interface WeekReport {
     confidence: number;
     fitsBudget: boolean | null;
     uncounted: number;
+    /** Products to buy that the shop the week was planned for has on offer. */
+    onOffer: number;
 }
 
 const generating = ref(false);
@@ -610,9 +645,76 @@ watch(
     () => {
         if (!generating.value) {
             generatedReport.value = null;
+            generatedShop.value = null;
         }
     },
 );
+
+/*
+ * Which shop the week was planned for, and what the others would have cost.
+ * Kept with the report and dropped with it: the prices it quotes are only true
+ * of the week as it was generated.
+ */
+const generatedShop = ref<GenerateResult['shop'] | null>(null);
+
+const cheapestBy = computed<number | null>(() => {
+    const compared = generatedShop.value?.compared ?? [];
+
+    if (compared.length < 2) {
+        return null;
+    }
+
+    const chosen = compared.find((shop) => shop.chosen);
+    // Only against shops whose total is as complete as the chosen one's: a
+    // total missing two products is not cheaper, it is unfinished.
+    const comparable = compared.filter(
+        (shop) => !shop.chosen && shop.unpriced <= (chosen?.unpriced ?? 0),
+    );
+
+    return chosen === undefined || comparable.length === 0
+        ? null
+        : Math.min(...comparable.map((shop) => shop.buys)) - chosen.buys;
+});
+
+/** "1 produkt", "3 produkty", "5 produktów" — Polish counts three ways. */
+function products(count: number): string {
+    const tens = count % 100;
+    const units = count % 10;
+
+    if (count === 1) {
+        return '1 produkt';
+    }
+
+    if (units >= 2 && units <= 4 && (tens < 12 || tens > 14)) {
+        return `${count} produkty`;
+    }
+
+    return `${count} produktów`;
+}
+
+/** The rest of "Zakupy w Netto…", built here so the punctuation is right. */
+const shopSummary = computed<string>(() => {
+    const shop = generatedShop.value;
+
+    if (!shop || shop.onOffer === 0) {
+        return '.';
+    }
+
+    const saving =
+        shop.savings === null
+            ? ''
+            : `, ok. ${formatMoney(shop.savings)} taniej niż zwykle`;
+
+    return ` — ${products(shop.onOffer)} z promocji${saving}.`;
+});
+
+/** How many more products a shop could not price than the chosen one. */
+function extraUnpriced(shop: { unpriced: number }): number {
+    const chosen = generatedShop.value?.compared.find((one) => one.chosen);
+
+    return Math.max(0, shop.unpriced - (chosen?.unpriced ?? 0));
+}
+
 let generatedTimer: ReturnType<typeof setTimeout> | undefined;
 
 /** Ticked days if there are any, otherwise the whole week on screen. */
@@ -688,6 +790,34 @@ const kcal = ref(props.defaultTargets.kcal);
 const budget = ref<number | null>(null);
 const shares = ref<Record<string, number>>({ ...props.defaultTargets.shares });
 
+/*
+ * Planning around a leaflet. Off by default, like the targets. With one shop
+ * ticked the week leans on its offers; with several, a week is planned for each
+ * and the cheapest is kept — "jadę do jednego z nich, wszystko jedno którego".
+ */
+const useShops = ref(false);
+const chosenShops = ref<number[]>([]);
+
+function toggleShop(id: number): void {
+    if (chosenShops.value.includes(id)) {
+        chosenShops.value = chosenShops.value.filter((chosen) => chosen !== id);
+
+        return;
+    }
+
+    // Each extra shop is a whole week planned and thrown away; past the cap
+    // the wait stops being worth it.
+    if (chosenShops.value.length >= props.leafletShops.max) {
+        return;
+    }
+
+    chosenShops.value = [...chosenShops.value, id];
+}
+
+const shopsReady = computed<boolean>(
+    () => !useShops.value || chosenShops.value.length > 0,
+);
+
 /** The meals the targets cover: whatever the grid above is asking for. */
 const targetedSlots = computed<string[]>(() => {
     const asked = new Set<string>();
@@ -745,6 +875,18 @@ function openGenerator(): void {
     );
     generatorServings.value = props.defaultServings;
     shares.value = { ...props.defaultTargets.shares };
+
+    // The chains the household already drives to, as far as they have offers.
+    if (chosenShops.value.length === 0) {
+        const offered = new Set(
+            props.leafletShops.shops.map((shop) => shop.id),
+        );
+
+        chosenShops.value = props.leafletShops.preselected
+            .filter((id) => offered.has(id))
+            .slice(0, props.leafletShops.max);
+    }
+
     generatorOpen.value = true;
 }
 
@@ -810,7 +952,8 @@ function generate(): void {
     if (
         generating.value ||
         wantedCount.value === 0 ||
-        (useTargets.value && !sharesAddUp.value)
+        (useTargets.value && !sharesAddUp.value) ||
+        !shopsReady.value
     ) {
         return;
     }
@@ -837,6 +980,7 @@ function generate(): void {
                       ),
                   }
                 : null,
+            shops: useShops.value ? chosenShops.value : null,
         },
         {
             preserveScroll: true,
@@ -851,6 +995,7 @@ function generate(): void {
                 generatorOpen.value = false;
                 generated.value = result;
                 generatedReport.value = result.week ?? null;
+                generatedShop.value = result.shop ?? null;
                 clearTimeout(generatedTimer);
                 generatedTimer = setTimeout(() => {
                     generated.value = null;
@@ -1100,6 +1245,78 @@ watch([sheet, generatorOpen], ([picker, generator]) => {
                         </dd>
                     </div>
                 </dl>
+
+                <!--
+                    Which shop the week was planned for, and — when several were
+                    tried — what the others would have cost. That comparison is
+                    the answer to "do którego jechać", so it gets its own lines.
+                -->
+                <div
+                    v-if="generatedShop"
+                    class="mt-4 border-t border-rule pt-3 text-sm"
+                >
+                    <p class="text-ink">
+                        Zakupy w
+                        <span class="font-semibold">{{
+                            generatedShop.name
+                        }}</span
+                        >{{ shopSummary }}
+                    </p>
+
+                    <p
+                        v-if="generatedShop.onOffer === 0"
+                        class="mt-1 text-ink-muted"
+                    >
+                        Nic z tej gazetki nie pasowało do tego tygodnia — ceny
+                        są zwykłe.
+                    </p>
+
+                    <ul
+                        v-if="generatedShop.compared.length > 1"
+                        class="mt-2 space-y-1"
+                    >
+                        <li
+                            v-for="shop in generatedShop.compared"
+                            :key="shop.name"
+                            class="flex justify-between gap-3 tabular-nums"
+                            :class="
+                                shop.chosen
+                                    ? 'font-semibold text-accent-strong'
+                                    : 'text-ink-muted'
+                            "
+                        >
+                            <span>
+                                {{ shop.name }}
+                                <span class="font-normal text-ink-faint">
+                                    · {{ shop.onOffer }} z promocji
+                                    <template v-if="extraUnpriced(shop) > 0">
+                                        · bez ceny {{ extraUnpriced(shop) }}
+                                        {{
+                                            extraUnpriced(shop) === 1
+                                                ? 'produktu'
+                                                : 'produktów'
+                                        }}
+                                    </template>
+                                </span>
+                            </span>
+                            <span>
+                                <template v-if="extraUnpriced(shop) > 0"
+                                    >od </template
+                                >{{ formatMoney(shop.buys) }}
+                            </span>
+                        </li>
+                    </ul>
+
+                    <p
+                        v-if="cheapestBy !== null && cheapestBy > 0"
+                        class="mt-1 text-ink-muted"
+                    >
+                        Te same zakupy gdzie indziej to co najmniej
+                        {{ formatMoney(cheapestBy) }} więcej. Ułożyłem po
+                        tygodniu pod każdą gazetkę i każdy wyceniłem we
+                        wszystkich sklepach — został najtańszy.
+                    </p>
+                </div>
 
                 <!--
                     The honest small print. A third of what a week calls for has
@@ -1873,6 +2090,91 @@ watch([sheet, generatorOpen], ([picker, generator]) => {
                             </div>
                         </div>
                     </div>
+
+                    <!--
+                        The leaflet. One shop ticked plans the week on its
+                        offers; several plan a week for each and keep the
+                        cheapest, because the household drives to one of them
+                        and does not mind which.
+                    -->
+                    <div
+                        v-if="props.leafletShops.shops.length > 0"
+                        class="mt-6 border-t border-rule pt-6"
+                    >
+                        <button
+                            type="button"
+                            class="flex h-13 w-full items-center justify-between text-left"
+                            @click="useShops = !useShops"
+                        >
+                            <span>
+                                <span class="font-semibold text-ink">
+                                    Najtaniej, pod promocje
+                                </span>
+                                <span
+                                    class="mt-0.5 block text-sm text-ink-muted"
+                                >
+                                    Tańsze dania i to, co jest w gazetce sklepu
+                                </span>
+                            </span>
+                            <span
+                                class="flex h-7 w-12 shrink-0 items-center rounded-full px-0.5 transition-colors"
+                                :class="
+                                    useShops ? 'bg-accent' : 'bg-paper-sunk'
+                                "
+                            >
+                                <span
+                                    class="h-6 w-6 rounded-full bg-paper shadow-sm transition-transform"
+                                    :class="useShops ? 'translate-x-5' : ''"
+                                />
+                            </span>
+                        </button>
+
+                        <div v-if="useShops" class="mt-4">
+                            <div class="flex flex-wrap gap-2">
+                                <button
+                                    v-for="shop in props.leafletShops.shops"
+                                    :key="shop.id"
+                                    type="button"
+                                    class="flex h-11 items-center gap-2 rounded-full border px-4 text-sm"
+                                    :class="
+                                        chosenShops.includes(shop.id)
+                                            ? 'border-accent bg-accent font-medium text-ink'
+                                            : 'border-rule-strong text-ink-muted'
+                                    "
+                                    :aria-pressed="
+                                        chosenShops.includes(shop.id)
+                                    "
+                                    @click="toggleShop(shop.id)"
+                                >
+                                    {{ shop.name }}
+                                    <span
+                                        class="tabular-nums"
+                                        :class="
+                                            chosenShops.includes(shop.id)
+                                                ? 'text-ink'
+                                                : 'text-ink-faint'
+                                        "
+                                    >
+                                        {{ shop.products }}
+                                    </span>
+                                </button>
+                            </div>
+
+                            <p class="mt-3 text-sm text-ink-muted">
+                                {{
+                                    chosenShops.length === 0
+                                        ? 'Zaznacz sklep, do którego jedziesz.'
+                                        : chosenShops.length === 1
+                                          ? 'Ułożę tydzień pod promocje w tym sklepie.'
+                                          : `Jedziesz do jednego z nich — ułożę tydzień dla każdego i zostawię najtańszy (do ${props.leafletShops.max}).`
+                                }}
+                            </p>
+                            <p class="mt-1 text-xs text-ink-faint">
+                                Liczba to produkty z gazetki, które znam z
+                                przepisów.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1883,14 +2185,17 @@ watch([sheet, generatorOpen], ([picker, generator]) => {
                         :disabled="
                             generating ||
                             wantedCount === 0 ||
-                            (useTargets && !sharesAddUp)
+                            (useTargets && !sharesAddUp) ||
+                            !shopsReady
                         "
                         class="h-13 flex-1 rounded-full bg-accent font-semibold text-ink disabled:opacity-60"
                         @click="generate"
                     >
                         {{
                             generating
-                                ? 'Układam…'
+                                ? useShops && chosenShops.length > 1
+                                    ? `Porównuję ${chosenShops.length} sklepy…`
+                                    : 'Układam…'
                                 : `Wygeneruj ${wantedCount} posiłków`
                         }}
                     </button>

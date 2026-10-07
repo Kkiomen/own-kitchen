@@ -94,6 +94,15 @@ return [
     'nasiona kwiat*',
     'nawoz*',
 
+    // Toys named after food. Biedronka's "Freszaki" keychains — "Brelok
+    // maskotka Ser Sergiusz", "Pieczarek Czarek" — were filed as yellow cheese
+    // and mushrooms at 0,01 zł, the cheapest cheese in the country.
+    'brelok*',
+    'maskotk*',
+    'pluszow*',
+    'pluszak*',
+    'freszaki',
+
     // The leaflet's own housekeeping: coupons and cross-promotions have a price
     // on them and no product behind them.
     'kod rabatowy',

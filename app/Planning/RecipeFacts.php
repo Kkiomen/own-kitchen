@@ -7,9 +7,11 @@ namespace App\Planning;
 use App\Enums\Appliance;
 use App\Enums\IngredientCategory;
 use App\Models\Recipe;
+use App\Models\RecipeIngredient;
 use App\Nutrition\RecipeNutrition;
 use App\Pantry\RecipeAvailability;
 use App\Pricing\IngredientCost;
+use App\Support\Measurement\MeasureBook;
 use App\Support\Money\Money;
 
 /**
@@ -36,13 +38,17 @@ final readonly class RecipeFacts
         private RecipeAvailability $availability,
         private Season $season,
         private DishFamily $families,
+        private MeasureBook $measures,
     ) {}
 
     /**
      * @param  list<int>  $recipeIds
+     * @param  ShopOffers|null  $offers  the shop the week is being bought in, when
+     *                                   somebody said which — its offers then price
+     *                                   the lines they cover
      * @return array<int, RecipeFact>
      */
-    public function forRecipes(array $recipeIds): array
+    public function forRecipes(array $recipeIds, ?ShopOffers $offers = null): array
     {
         if ($recipeIds === []) {
             return [];
@@ -63,7 +69,7 @@ final readonly class RecipeFacts
 
             $facts[$recipe->id] = new RecipeFact(
                 kcalPerPortion: $energy->reliableKcalPerPortion(),
-                costPerPortion: $this->costPerPortion($recipe),
+                costPerPortion: $this->costPerPortion($recipe, $offers),
                 proteinPerPortion: $energy->isReliable() ? $energy->perPortion?->protein : null,
                 realIngredients: $this->realIngredients($recipe),
                 dominantIngredientId: $energy->dominantIngredientId,
@@ -89,6 +95,7 @@ final readonly class RecipeFacts
                 soupKind: $this->families->of($recipe->title) === 'zupa' || in_array('zupy', $categories, true)
                     ? $this->families->soupKindOf($recipe->title)
                     : null,
+                promoted: $offers === null ? 0 : $this->promotedIn($recipe, $offers),
             );
         }
 
@@ -287,7 +294,7 @@ final readonly class RecipeFacts
      * fair between dishes — which is why the unpriced lines below are skipped
      * rather than made to disqualify a recipe.
      */
-    private function costPerPortion(Recipe $recipe): ?Money
+    private function costPerPortion(Recipe $recipe, ?ShopOffers $offers): ?Money
     {
         $total = new Money(0);
         $priced = 0;
@@ -309,7 +316,9 @@ final readonly class RecipeFacts
 
             $wanted++;
 
-            $cost = $this->costs->of($line->ingredient_id, $line->toQuantity());
+            $cost = $offers === null
+                ? $this->costs->of($line->ingredient_id, $line->toQuantity())
+                : $this->quote($offers, $line)['cost'] ?? null;
 
             if ($cost === null) {
                 continue;
@@ -335,5 +344,41 @@ final readonly class RecipeFacts
         $servings = $recipe->servings === null || $recipe->servings < 1 ? 1 : $recipe->servings;
 
         return $total->scaledBy(1 / $servings);
+    }
+
+    /**
+     * How many of the products a dish is built from are on offer in this shop.
+     *
+     * Counted over the same lines the price is — not the salt, not the oil, not
+     * an optional garnish. A dish does not become a promotion dish because the
+     * parsley on top was cheap this week. And only where the offer actually
+     * beats the usual price: a discounted premium salmon is not a reason to
+     * plan salmon.
+     */
+    private function promotedIn(Recipe $recipe, ShopOffers $offers): int
+    {
+        $found = [];
+
+        foreach ($recipe->ingredients as $line) {
+            if ($line->ingredient_id === null || $this->availability->isAssumedAtHand($line)) {
+                continue;
+            }
+
+            if ($offers->has($line->ingredient_id) && ($this->quote($offers, $line)['onOffer'] ?? false)) {
+                $found[$line->ingredient_id] = true;
+            }
+        }
+
+        return count($found);
+    }
+
+    /**
+     * @return array{cost: Money, onOffer: bool, saves: ?Money}|null
+     */
+    private function quote(ShopOffers $offers, RecipeIngredient $line): ?array
+    {
+        $id = (int) $line->ingredient_id;
+
+        return $offers->quote($id, $line->toQuantity(), $this->costs, $this->measures->for($id));
     }
 }

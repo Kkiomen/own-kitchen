@@ -24,6 +24,9 @@ use App\Support\Money\UnitPrice;
  * fact about a shop somebody is driving to this week, which is a question the
  * shopping list can ask and a week's menu cannot — plan a fortnight of meals
  * around this Thursday's leaflet and half of it is wrong by the time you cook it.
+ * When somebody *does* say which shop this week is bought in,
+ * `App\Planning\ShopOffers` lays that shop's offers over this class for that one
+ * week, rather than this class learning about promotions.
  *
  * 1. **A price per kilo/litre/piece × the amount**, when the line states one and
  *    the amount can reach the dimension the price is quoted in.

@@ -7,6 +7,7 @@ namespace App\Planning;
 use App\Models\MealPlanEntry;
 use App\Pantry\Pantry;
 use App\Pricing\IngredientCost;
+use App\Support\Measurement\MeasureBook;
 use App\Support\Measurement\Quantity;
 use App\Support\Money\Money;
 use Illuminate\Support\Collection;
@@ -37,42 +38,73 @@ use Illuminate\Support\Collection;
  * be wrong in the direction that costs money and invisible while doing it — the
  * total would simply come out too small. So the count travels with the money and
  * the screen says it out loud.
+ *
+ * **With a shop named, the week is priced in that shop.** A product it has on
+ * offer costs the offer when the offer is the cheaper choice — see
+ * `ShopOffers::quote()` — and everything else keeps its typical price, because
+ * that shop sells it too, just not discounted. What the offers save is
+ * measured against those typical prices, so it is only claimed where both
+ * figures exist.
  */
 final readonly class WeekCost
 {
     public function __construct(
         private PlannedIngredients $planned,
         private IngredientCost $costs,
+        private MeasureBook $measures,
     ) {}
 
     /**
      * @param  Collection<int, MealPlanEntry>  $entries
      */
-    public function of(Collection $entries, Pantry $pantry): WeekPrice
+    public function of(Collection $entries, Pantry $pantry, ?ShopOffers $offers = null): WeekPrice
     {
         $needs = $this->planned->of($entries);
 
-        $eats = $this->total($needs->amounts);
-        $buys = $this->total($this->planned->toBuy($needs, $pantry));
+        $eats = $this->total($needs->amounts, $offers);
+        $buys = $this->total($this->planned->toBuy($needs, $pantry), $offers);
 
         return new WeekPrice(
             eats: $eats['money'],
             buys: $buys['money'],
             unpricedProducts: $buys['unpriced'],
             products: count($needs->amounts),
+            onOffer: $buys['onOffer'],
+            savings: $buys['savings'],
         );
     }
 
     /**
      * @param  array<int, Quantity|null>  $amounts
-     * @return array{money: Money, unpriced: int}
+     * @return array{money: Money, unpriced: int, onOffer: int, savings: Money}
      */
-    private function total(array $amounts): array
+    private function total(array $amounts, ?ShopOffers $offers): array
     {
         $money = new Money(0);
+        $savings = new Money(0);
         $unpriced = 0;
+        $onOffer = 0;
 
         foreach ($amounts as $ingredientId => $amount) {
+            if ($offers?->has($ingredientId)) {
+                $quote = $offers->quote($ingredientId, $amount, $this->costs, $this->measures->for($ingredientId));
+
+                if ($quote === null) {
+                    $unpriced++;
+
+                    continue;
+                }
+
+                $money = $money->plus($quote['cost']);
+
+                if ($quote['onOffer']) {
+                    $onOffer++;
+                    $savings = $savings->plus($quote['saves'] ?? new Money(0));
+                }
+
+                continue;
+            }
+
             $cost = $this->costs->of($ingredientId, $amount);
 
             if ($cost === null) {
@@ -84,6 +116,6 @@ final readonly class WeekCost
             $money = $money->plus($cost);
         }
 
-        return ['money' => $money, 'unpriced' => $unpriced];
+        return ['money' => $money, 'unpriced' => $unpriced, 'onOffer' => $onOffer, 'savings' => $savings];
     }
 }

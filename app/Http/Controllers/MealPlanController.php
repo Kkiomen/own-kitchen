@@ -9,6 +9,8 @@ use App\Enums\MealSlot;
 use App\Models\MealPlanEntry;
 use App\Models\Recipe;
 use App\Nutrition\RecipeNutrition;
+use App\Planning\CheapestShopPlan;
+use App\Planning\LeafletShops;
 use App\Planning\MealAlternative;
 use App\Planning\MealPlan;
 use App\Planning\PlanGenerator;
@@ -16,6 +18,7 @@ use App\Planning\PlannedShopping;
 use App\Planning\PlannedWeek;
 use App\Planning\PlanTargets;
 use App\Planning\WeekSummary;
+use App\Shopping\SelectedShops;
 use App\Support\Money\Money;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\RedirectResponse;
@@ -39,6 +42,9 @@ class MealPlanController extends Controller
         private readonly RecipeListing $listing,
         private readonly WeekSummary $summary,
         private readonly RecipeNutrition $nutrition,
+        private readonly CheapestShopPlan $cheapest,
+        private readonly LeafletShops $leaflets,
+        private readonly SelectedShops $selectedShops,
     ) {}
 
     public function index(Request $request): Response
@@ -113,6 +119,19 @@ class MealPlanController extends Controller
              * week's recipes.
              */
             'week' => fn (): ?array => $this->weekReport($request, $weekStart),
+
+            /*
+             * The shops a week can be planned around, with how many products
+             * each has on offer — the number the planner can use, not the
+             * leaflet's count of lawnmowers. The ones the household already
+             * drives to (`SelectedShops`) open ticked; nothing chosen opens
+             * nothing ticked, because "all of them" is not a shop to drive to.
+             */
+            'leafletShops' => fn (): array => [
+                'shops' => $this->leaflets->choices(),
+                'preselected' => $this->selectedShops->ids($request->user()) ?? [],
+                'max' => CheapestShopPlan::MAX_SHOPS,
+            ],
         ];
     }
 
@@ -212,6 +231,9 @@ class MealPlanController extends Controller
             'targets.budget' => ['nullable', 'numeric', 'min:1', 'max:100000'],
             'targets.shares' => ['required_with:targets', 'array', 'min:1'],
             'targets.shares.*' => ['integer', 'min:1', 'max:100'],
+            // Optional too: the shops the week will be bought in, one of them.
+            'shops' => ['nullable', 'array', 'max:'.CheapestShopPlan::MAX_SHOPS],
+            'shops.*' => ['integer', 'exists:shops,id'],
         ]);
 
         $wanted = [];
@@ -224,6 +246,11 @@ class MealPlanController extends Controller
         ksort($wanted);
 
         $targets = $this->targetsFrom($data['targets'] ?? null);
+        $shops = array_values(array_unique(array_map(intval(...), $data['shops'] ?? [])));
+
+        if ($shops !== []) {
+            return $this->generateForShops($request, $wanted, $data['servings'] ?? MealPlan::DEFAULT_SERVINGS, $targets, $shops);
+        }
 
         $result = $this->generator->fill(
             $request->user(),
@@ -245,6 +272,33 @@ class MealPlanController extends Controller
                 array_map(strval(...), array_keys($wanted)),
                 $targets,
             ))]);
+    }
+
+    /**
+     * The week planned around a shop's leaflet — or several shops' leaflets,
+     * one week each, keeping the cheapest. See `CheapestShopPlan`.
+     *
+     * The report always comes back here, targets or not: the whole point of
+     * the button was the price, and it is only true at this shop's till.
+     *
+     * @param  array<string, list<MealSlot>>  $wanted
+     * @param  list<int>  $shops
+     */
+    private function generateForShops(Request $request, array $wanted, int $servings, ?PlanTargets $targets, array $shops): RedirectResponse
+    {
+        $plan = $this->cheapest->fill($request->user(), $wanted, $servings, $targets, $shops);
+        $week = $plan['week'];
+
+        return back()->with('generated', [
+            ...$plan['result'],
+            'week' => $this->reported($week),
+            'shop' => [
+                'name' => $plan['offers']->shopName,
+                'onOffer' => $week->price->onOffer,
+                'savings' => CheapestShopPlan::savingsOf($week)?->grosze,
+                'compared' => $plan['compared'],
+            ],
+        ]);
     }
 
     /**
@@ -324,6 +378,7 @@ class MealPlanController extends Controller
             'confidence' => $week->price->confidence(),
             'fitsBudget' => $week->fitsBudget(),
             'uncounted' => $week->uncounted,
+            'onOffer' => $week->price->onOffer,
         ];
     }
 

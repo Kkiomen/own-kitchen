@@ -42,7 +42,7 @@ final readonly class WeekSummary
     /**
      * @param  list<string>  $dates
      */
-    public function of(User $user, array $dates, ?PlanTargets $targets = null): PlannedWeek
+    public function of(User $user, array $dates, ?PlanTargets $targets = null, ?ShopOffers $offers = null): PlannedWeek
     {
         $entries = MealPlanEntry::query()
             ->where('user_id', $user->id)
@@ -53,7 +53,7 @@ final readonly class WeekSummary
         return new PlannedWeek(
             kcalPerPersonByDate: $this->calories($entries, $targets),
             proteinPerPersonByDate: $this->protein($entries, $targets),
-            price: $this->cost->of($entries, Pantry::of($user, $this->measures)),
+            price: $this->cost->of($entries, Pantry::of($user, $this->measures), $offers),
             uncounted: $this->uncounted($entries),
             notes: $entries->filter(static fn (MealPlanEntry $entry): bool => $entry->isNote())->count(),
             targets: $targets,

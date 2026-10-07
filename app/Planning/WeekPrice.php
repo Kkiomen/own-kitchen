@@ -21,6 +21,10 @@ final readonly class WeekPrice
         public Money $buys,
         public int $unpricedProducts,
         public int $products,
+        /** Products to buy that the named shop has on offer; zero with no shop. */
+        public int $onOffer = 0,
+        /** What those offers save against the leaflet's own "before" prices. */
+        public ?Money $savings = null,
     ) {}
 
     /**

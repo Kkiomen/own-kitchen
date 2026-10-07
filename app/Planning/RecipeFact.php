@@ -91,6 +91,11 @@ final readonly class RecipeFact
         public int $vegetables = 0,
         /** Built on processed meat or a rich cheese — see `RecipeFacts::isRich()`. */
         public bool $isRich = false,
+        /**
+         * How many of its products are on offer in the shop the week is being
+         * bought in. Zero when nobody named a shop.
+         */
+        public int $promoted = 0,
     ) {}
 
     /**
