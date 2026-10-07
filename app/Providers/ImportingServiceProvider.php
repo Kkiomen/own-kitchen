@@ -12,6 +12,7 @@ use App\Importing\Sources\Beszamel\BeszamelPageParser;
 use App\Importing\Sources\Beszamel\BeszamelRecipeSource;
 use App\Importing\Sources\CentrumRespo\CentrumRespoListingParser;
 use App\Importing\Sources\CentrumRespo\CentrumRespoRecipeSource;
+use App\Importing\Sources\House\HouseRecipeSource;
 use App\Importing\Sources\KwestiaSmaku\KwestiaSmakuPageParser;
 use App\Importing\Sources\KwestiaSmaku\KwestiaSmakuRecipeSource;
 use App\Importing\Sources\SchemaOrg\JsonLdRecipeParser;
@@ -34,8 +35,17 @@ class ImportingServiceProvider extends ServiceProvider
                 'airfryerprzepisy' => fn (): AirFryerPrzepisyRecipeSource => $this->makeAirFryerPrzepisy(),
                 'centrumrespo' => fn (): CentrumRespoRecipeSource => $this->makeCentrumRespo(),
                 'beszamel' => fn (): BeszamelRecipeSource => $this->makeBeszamel(),
+                'house' => fn (): HouseRecipeSource => $this->makeHouse(),
             ]);
         });
+    }
+
+    private function makeHouse(): HouseRecipeSource
+    {
+        /** @var list<array{slug: string, title: string, servings: int, minutes: int, ingredients: list<string>, steps: list<string>}> $recipes */
+        $recipes = require database_path('data/house-recipes.php');
+
+        return new HouseRecipeSource($recipes, (string) config('importing.sources.house.name'));
     }
 
     private function makeBeszamel(): BeszamelRecipeSource

@@ -18,6 +18,14 @@ return [
     'page_cache_ttl_hours' => (int) env('IMPORT_PAGE_CACHE_TTL_HOURS', 24 * 14),
 
     'sources' => [
+        /*
+         * The household's own plain recipes, read from a data file rather than a
+         * website — see `database/data/house-recipes.php`.
+         */
+        'house' => [
+            'name' => 'Kuchnia domowa',
+        ],
+
         'kwestiasmaku' => [
             'name' => 'kwestiasmaku.com',
             'base_url' => 'https://www.kwestiasmaku.com',

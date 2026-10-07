@@ -270,6 +270,8 @@ return [
     'Naleśniki' => [220, 6.0, 8.0, 30.0, 'crepes, prepared'],
     'Ryż arborio' => [360, 7.0, 0.6, 79.0, 'rice, white, short-grain, dry'],
     'Kasza pęczak' => [352, 9.9, 1.2, 77.7, 'barley, pearled, raw'],
+    'Kasza bulgur' => [342, 12.3, 1.3, 75.9, 'bulgur, dry'],
+    'Ryż brązowy' => [362, 7.5, 2.7, 76.2, 'rice, brown, long-grain, raw'],
     'Panko' => [380, 12.0, 3.0, 75.0, 'bread crumbs, panko, dry'],
     'Gnocchi' => [165, 4.0, 1.0, 34.0, 'gnocchi, potato, fresh'],
     'Makaron orzo' => [371, 13.0, 1.5, 74.7, 'pasta, orzo, dry'],

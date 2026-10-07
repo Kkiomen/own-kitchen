@@ -161,7 +161,7 @@ return [
     // szparagowa" resolved to Fasola on the alias "fasolka", which is a different
     // thing to cook and a different thing to buy. The two-word alias wins over
     // the one-word one because the resolver tries longer groups first.
-    ['name' => 'Fasolka szparagowa', 'category' => 'vegetable', 'unit' => 'g', 'aliases' => ['fasolki szparagowej', 'fasolkę szparagową', 'szparagowa', 'szparagowej']],
+    ['name' => 'Fasolka szparagowa', 'category' => 'vegetable', 'unit' => 'g', 'aliases' => ['fasolki szparagowej', 'fasolkę szparagową', 'szparagowa', 'szparagowej', 'fasoli szparagowej', 'fasola szparagowa', 'fasolę szparagową']],
     ['name' => 'Soczewica', 'category' => 'legume', 'unit' => 'g', 'aliases' => ['soczewicy', 'soczewica czerwona']],
     ['name' => 'Orzechy włoskie', 'category' => 'nut_seed', 'unit' => 'g', 'aliases' => ['orzechów włoskich', 'orzechy', 'orzechów']],
     ['name' => 'Orzechy laskowe', 'category' => 'nut_seed', 'unit' => 'g', 'aliases' => ['orzechów laskowych', 'orzechy laskowe', 'orzeszki laskowe', 'orzeszków laskowych']],
@@ -222,11 +222,13 @@ return [
     // resolving to Pestki dyni the moment those got an entry of their own.
     ['name' => 'Olej z pestek dyni', 'category' => 'fat', 'unit' => 'ml', 'aliases' => ['oleju z pestek dyni', 'olej dyniowy', 'oleju dyniowego']],
     ['name' => 'Olej lniany', 'category' => 'fat', 'unit' => 'ml', 'aliases' => ['oleju lnianego']],
-    ['name' => 'Ocet balsamiczny', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu balsamicznego', 'ocet']],
+    ['name' => 'Ocet balsamiczny', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu balsamicznego']],
     ['name' => 'Ocet winny', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu winnego', 'ocet winny biały', 'octu winnego białego', 'ocet z czerwonego wina', 'octu z czerwonego wina']],
     ['name' => 'Ocet ryżowy', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu ryżowego']],
     ['name' => 'Ocet jabłkowy', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu jabłkowego']],
-    ['name' => 'Ocet spirytusowy', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu spirytusowego', 'ocet 10%']],
+    // Plain "ocet" in a Polish recipe is the bottle for pickles and surówki, not
+    // balsamic: 122 lines of "2 łyżki octu" sat on Ocet balsamiczny.
+    ['name' => 'Ocet spirytusowy', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['octu spirytusowego', 'ocet 10%', 'ocet', 'octu']],
     ['name' => 'Sos sojowy', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['sosu sojowego']],
     ['name' => 'Musztarda', 'category' => 'sauce', 'unit' => 'g', 'aliases' => ['musztardy', 'musztardę', 'musztarda dijon', 'musztardy dijon', 'musztarda sarepska', 'musztardy sarepskiej', 'musztarda francuska', 'musztardy francuskiej']],
     ['name' => 'Majonez', 'category' => 'sauce', 'unit' => 'g', 'aliases' => ['majonezu', 'majonezem']],
@@ -243,8 +245,10 @@ return [
      * ingredient categories, and "someone avoiding meat must not be handed a
      * guess" outranks a carton of stock sitting in the meat aisle.
      */
-    ['name' => 'Bulion warzywny', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['bulionu', 'bulionu warzywnego', 'rosół', 'wywar', 'bulion jarzynowy', 'bulionu jarzynowego']],
-    ['name' => 'Bulion drobiowy', 'category' => 'meat', 'unit' => 'ml', 'aliases' => ['bulionu drobiowego', 'rosół drobiowy', 'rosołu drobiowego', 'bulion z kurczaka', 'bulionu z kurczaka', 'wywar drobiowy', 'wywaru drobiowego']],
+    ['name' => 'Bulion warzywny', 'category' => 'sauce', 'unit' => 'ml', 'aliases' => ['bulionu', 'bulionu warzywnego', 'wywar', 'bulion jarzynowy', 'bulionu jarzynowego']],
+    // Rosół is chicken broth, whatever else a recipe calls it: "1,5 l rosołu z
+    // kurczaka" sat on Bulion warzywny, from which the Wege category is computed.
+    ['name' => 'Bulion drobiowy', 'category' => 'meat', 'unit' => 'ml', 'aliases' => ['bulionu drobiowego', 'rosół drobiowy', 'rosołu drobiowego', 'bulion z kurczaka', 'bulionu z kurczaka', 'wywar drobiowy', 'wywaru drobiowego', 'rosół', 'rosołu', 'rosołem', 'rosół z kurczaka', 'rosołu z kurczaka', 'rosołu na kurczaku', 'wywar z kurczaka', 'wywaru z kurczaka']],
     ['name' => 'Bulion wołowy', 'category' => 'meat', 'unit' => 'ml', 'aliases' => ['bulionu wołowego', 'wywar wołowy', 'wywaru wołowego']],
     ['name' => 'Woda', 'category' => 'beverage', 'unit' => 'ml', 'staple' => true, 'aliases' => ['wody', 'wodą', 'wrzątek', 'wrzątku']],
     ['name' => 'Wino białe', 'category' => 'beverage', 'unit' => 'ml', 'aliases' => ['wina białego', 'białe wino', 'wina', 'wino', 'wina wytrawnego', 'białego wytrawnego wina']],
@@ -278,6 +282,9 @@ return [
     ['name' => 'Tortilla', 'category' => 'grain', 'unit' => 'piece', 'aliases' => ['tortille', 'tortilli', 'placki tortilli', 'tortilla pszenna', 'tortilii', 'tortilii pełnoziarnistej', 'tortilla pełnoziarnista']],
     ['name' => 'Makaron orzo', 'category' => 'grain', 'unit' => 'g', 'aliases' => ['orzo', 'makaronu orzo']],
     ['name' => 'Kasza pęczak', 'category' => 'grain', 'unit' => 'g', 'aliases' => ['kaszy pęczak', 'pęczak']],
+    // A variety claims its own two-word spelling, or the bare "kasza" of Kasza
+    // gryczana takes it: 34 lines of bulgur were buckwheat until this entry.
+    ['name' => 'Kasza bulgur', 'category' => 'grain', 'unit' => 'g', 'aliases' => ['kaszy bulgur', 'kasza bulgur', 'kaszą bulgur', 'bulgur', 'bulguru', 'bulgurem', 'drobnoziarnistego bulguru']],
     ['name' => 'Feta', 'category' => 'dairy', 'unit' => 'g', 'aliases' => ['fety', 'fetę', 'ser feta', 'sera feta', 'ser typu feta', 'sera typu feta', 'typu feta', 'ser sałatkowy', 'sera sałatkowego']],
     ['name' => 'Burrata', 'category' => 'dairy', 'unit' => 'g', 'aliases' => ['burraty', 'burratę']],
     ['name' => 'Gorgonzola', 'category' => 'dairy', 'unit' => 'g', 'aliases' => ['gorgonzoli', 'gorgonzolę', 'ser pleśniowy', 'sera pleśniowego', 'ser gorgonzola', 'sera gorgonzola', 'ser lazur', 'sera lazur', 'ser z niebieską pleśnią', 'sera z niebieską pleśnią', 'niebieską pleśnią']],

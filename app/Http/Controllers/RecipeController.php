@@ -223,7 +223,8 @@ class RecipeController extends Controller
             'appliance' => $recipe->appliance?->iconKey(),
             'isMealPrep' => $recipe->is_meal_prep,
             'sourceName' => $recipe->source_name,
-            'sourceUrl' => $recipe->source_url,
+            // A house recipe's key is not an address, so there is nothing to link to.
+            'sourceUrl' => str_starts_with((string) $recipe->source_url, 'http') ? $recipe->source_url : null,
             'importedAt' => $recipe->imported_at?->toDateTimeString(),
             'needsReview' => $recipe->needs_review,
             /*

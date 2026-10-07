@@ -243,6 +243,8 @@ return [
     'Kasza gryczana' => ['density' => 0.75, 'grams' => ['tbsp' => 13, 'cup' => 180]],
     'Kasza jaglana' => ['density' => 0.8, 'grams' => ['tbsp' => 14, 'cup' => 190]],
     'Kasza pęczak' => ['density' => 0.8, 'grams' => ['tbsp' => 14, 'cup' => 190]],
+    'Kasza bulgur' => ['density' => 0.75, 'grams' => ['tbsp' => 13, 'cup' => 180]],
+    'Ryż brązowy' => ['density' => 0.85, 'grams' => ['tbsp' => 15, 'cup' => 200]],
     'Quinoa' => ['density' => 0.75, 'grams' => ['tbsp' => 13, 'cup' => 180]],
     'Płatki owsiane' => ['density' => 0.36, 'grams' => ['tbsp' => 7, 'cup' => 90]],
     'Makaron' => ['grams' => ['package' => 500]],

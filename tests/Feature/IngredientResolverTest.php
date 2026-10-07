@@ -90,6 +90,25 @@ class IngredientResolverTest extends TestCase
         $this->assertSame('Ser żółty', $this->resolver->resolve('tartego sera')?->ingredient->name);
     }
 
+    /**
+     * Two more varieties the generic word was swallowing, found by importing the
+     * house sides: bulgur filed as buckwheat on the bare "kasza", and the plain
+     * vinegar of a surówka filed as balsamic on the bare "ocet".
+     */
+    public function test_bulgur_and_plain_vinegar_are_not_their_generic_neighbours(): void
+    {
+        $this->assertSame('Kasza bulgur', $this->resolver->resolve('kaszy bulgur')?->ingredient->name);
+        $this->assertSame('Kasza gryczana', $this->resolver->resolve('kaszy gryczanej')?->ingredient->name);
+        $this->assertSame('Ocet spirytusowy', $this->resolver->resolve('octu')?->ingredient->name);
+        $this->assertSame('Ocet balsamiczny', $this->resolver->resolve('octu balsamicznego')?->ingredient->name);
+
+        // Rosół is chicken broth: on vegetable stock it made a chicken soup "wege".
+        $this->assertSame('Bulion drobiowy', $this->resolver->resolve('rosołu z kurczaka')?->ingredient->name);
+        $this->assertSame('Bulion drobiowy', $this->resolver->resolve('rosołu')?->ingredient->name);
+        $this->assertSame('Bulion warzywny', $this->resolver->resolve('bulionu warzywnego')?->ingredient->name);
+        $this->assertSame('Fasolka szparagowa', $this->resolver->resolve('fasoli szparagowej')?->ingredient->name);
+    }
+
     public function test_an_unknown_product_is_created_but_marked_as_a_guess(): void
     {
         $resolved = $this->resolver->resolve('wynalazek kulinarny bez nazwy');

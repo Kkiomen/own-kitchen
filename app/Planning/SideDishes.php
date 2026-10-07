@@ -268,7 +268,9 @@ final class SideDishes
     {
         $kcal = $fact->kcalPerPortion;
 
-        if ($kcal === null || $fact->occasion !== null) {
+        // An occasion is not a reason to refuse a side: `pickSide()` applies the
+        // season gate, so młode ziemniaki come in June rather than never.
+        if ($kcal === null) {
             return false;
         }
 
